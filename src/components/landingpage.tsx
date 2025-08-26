@@ -145,7 +145,7 @@ export default function LandingPage() {
                                 variant="alt"
                                 title="سجّل كمندوب توصيل"
                                 desc="كن مندوب توصيل واكسب دخلًا إضافيًا معنا، سجّل الآن!"
-                                href="#courier"
+                                href="/driver"
                                 Icon={Truck}
                             />
                         </div>
@@ -156,7 +156,7 @@ export default function LandingPage() {
                                 variant="alt"
                                 title="سجّل الآن كمستثمر في شلة"
                                 desc="قُم بالاستثمار في شركتنا وتعرّف على مزايا الاستثمار."
-                                href="#invest"
+                                href="/partner"
                                 Icon={UsersRound}
                             />
                             <Tile
