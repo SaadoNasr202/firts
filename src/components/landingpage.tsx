@@ -22,6 +22,7 @@ export default function LandingPage() {
                                     alt="مع شلة كل احتياجاتك بضغطة زر"
                                     className="h-full w-full object-cover"
                                 />
+                                
                             </div>
                             {/* Overlay لزيادة وضوح النص */}
                             <div className="absolute inset-0  opacity-20" />

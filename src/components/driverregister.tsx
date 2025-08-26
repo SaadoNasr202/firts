@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 
-const DeliveryAgentForm: React.FC = () => {
+export default function DeliveryAgentForm()
+ {
 	const [formData, setFormData] = useState<{
 		firstName: string;
 		lastName: string;
@@ -282,4 +283,3 @@ const DeliveryAgentForm: React.FC = () => {
 	);
 };
 
-export default DeliveryAgentForm;
