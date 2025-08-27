@@ -12,7 +12,7 @@ export default function LandingPage() {
 		>
 			{/* المحتوى الرئيسي */}
 			<main className="flex-grow">
-				<div className="mx-auto max-w-[1292px] px-4 py-8 sm:px-6 lg:px-8">
+				<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
 					{/* ====== HERO SECTION (القسم الأول) ====== */}
 					<section className="relative mb-8 overflow-hidden rounded-lg shadow-lg">
 						<div className="relative">
@@ -119,7 +119,7 @@ export default function LandingPage() {
 										شوف كم ناقصك في بيتك مقاضي وإحنا نعطيك على الراتب!
 									</p>
 									<a
-										href="#signup"
+										href="/Kaidha"
 										className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2D943C] px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
 									>
 										سجّل الآن

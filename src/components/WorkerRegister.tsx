@@ -265,7 +265,7 @@ export default function WorkerRegister() {
                     required
                 />
             </div>
-            <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-4">
+            <div className="mt-8 flex flex-col-reverse sm:flex-row justify-start gap-4">
   <button
     type="submit"
     className="w-full sm:w-auto px-10 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors duration-300"

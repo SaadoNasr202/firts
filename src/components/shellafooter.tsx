@@ -1,12 +1,15 @@
+"use client";
 export default function Shellafooter() {
 	return (
 		<div
+
+		
 			// Use a consistent background color and modern font
 			className={`font-tajawal w-full flex-col bg-[#FFFFFF] text-gray-800`}
 			dir="rtl"
 		>
-			<footer className="mt-auto w-full py-8 text-gray-800 shadow-inner md:py-12">
-				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<footer className="mt-auto  py-8  text-gray-800 shadow-inner md:py-12">
+				<div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-6">
 						<div className="lg:col-span-2">
 							<div className="mb-4 flex items-center">
@@ -57,17 +60,17 @@ export default function Shellafooter() {
 							</h4>
 							<ul className="space-y-2 text-sm text-gray-600 md:text-base">
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/KaidhaTerms" className="hover:text-amber-500">
 										شروط قيدها
 									</a>
 								</li>
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/PrivacyPolicy" className="hover:text-amber-500">
 										سياسة الخصوصية
 									</a>
 								</li>
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/CondtionAterms" className="hover:text-amber-500">
 										الشروط والأحكام
 									</a>
 								</li>

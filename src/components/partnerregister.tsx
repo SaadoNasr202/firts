@@ -271,21 +271,22 @@ export default function StoreForm() {
                 />
             </div>
 
-            <div className="mt-8 flex flex-col-reverse justify-start gap-4 sm:flex-row">
-                <button
-                    type="submit"
-                    className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
-                >
-                    إرسال
-                </button>
-                <button
-                    type="button"
-                    onClick={handleReset}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
-                >
-                    إعادة ضبط
-                </button>
-            </div>
+            {/* الأزرار تتحول من مكدسة إلى صف على الشاشات الصغيرة */}
+				<div className="mt-8 flex flex-col justify-start gap-4 sm:flex-row">
+					<button
+						type="submit"
+						className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
+					>
+						إرسال
+					</button>
+					<button
+						type="button"
+						onClick={handleReset}
+						className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
+					>
+						إعادة ضبط
+					</button>
+				</div>
         </form>
     );
 };
