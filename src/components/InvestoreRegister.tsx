@@ -72,6 +72,7 @@ export default function InvestoreForm() {
 			</h2>
 
 			{/* حقول الإدخال في تخطيط من عمودين */}
+			{/* يتحول من عمود واحد على الشاشات الصغيرة إلى عمودين على الشاشات المتوسطة */}
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 				{/* الاسم الاول */}
 				<div className="space-y-2">
@@ -201,6 +202,7 @@ export default function InvestoreForm() {
 				</div>
 
 				{/* نبذة عن خلفيتك العلمية وخبراتك (حقل نصي كبير) */}
+				{/* هذا الحقل يمتد على عمودين لضمان مساحة كافية */}
 				<div className="space-y-2 md:col-span-2">
 					<label
 						htmlFor="background"
@@ -221,6 +223,7 @@ export default function InvestoreForm() {
 				</div>
 
 				{/* المبلغ المراد الاستثمار فيه */}
+				{/* هذا الحقل يمتد على عمودين لضمان مساحة كافية */}
 				<div className="space-y-2 md:col-span-2">
 					<label
 						htmlFor="investmentAmount"
@@ -260,6 +263,7 @@ export default function InvestoreForm() {
 				/>
 			</div>
 
+			{/* الأزرار تتحول من مكدسة إلى صف على الشاشات الصغيرة */}
 			<div className="mt-8 flex flex-col-reverse justify-start gap-4 sm:flex-row">
 				<button
 					type="submit"

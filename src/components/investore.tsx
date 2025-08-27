@@ -10,7 +10,7 @@ export default function InvestorePage() {
 						<div className="flex aspect-video h-auto min-h-[300px] w-full items-center justify-center">
 							<img
 								src="INVESTORE.png"
-								alt=""
+								alt="خلفية استثمار"
 								className="h-full w-full object-cover"
 							/>
 						</div>
@@ -25,7 +25,7 @@ export default function InvestorePage() {
 							الإنضمام كمستثمر في{" "}
 							<span className="text-[#31A342]">شلة</span>{" "}
 						</p>
-						<p className="font-['Readex_Pro' ] p-2.5 text-[16px] text-[#8C8C8C]">
+						<p className="p-2.5 font-['Readex_Pro'] text-[16px] text-[#8C8C8C]">
 							سنستحوذ على كلّ السوق وسيرغب الجميع باستخدام منتجنا{" "}
 						</p>
 					</div>
@@ -35,15 +35,14 @@ export default function InvestorePage() {
 				</section>
 
 				{/* قسم الفوائد */}
-
 				<section className="mb-8 bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
 							فوائد الدخول باستثمار تجاري
 						</h2>
-						<div className="flex flex-col items-center justify-center rounded-lg border-2 border-green-500">
+						<div className="flex flex-col items-center justify-center">
 							{/* Item 1 */}
-							<div className="relative flex w-full items-center justify-between py-4">
+							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg">
 									يساعد الاستثمار في الأعمال على ضمان نجاح الشركة على المدى
 									الطويل.
@@ -52,23 +51,23 @@ export default function InvestorePage() {
 									<div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-purple-500 to-indigo-600 text-xl font-bold text-white shadow-lg md:h-20 md:w-20 md:text-2xl">
 										1
 									</div>
-									<div className="h-12 w-0.5 bg-gray-300"></div>{" "}
-									{/* Connector line */}
+									<div className="h-12 w-0.5 bg-gray-300 lg:hidden"></div>{" "}
+									{/* Connector line - hidden on large screens */}
 								</div>
 								<p className="w-5/12 text-left font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
 								{/* Empty for spacing */}
 							</div>
 
 							{/* Item 2 */}
-							<div className="relative flex w-full items-center justify-between py-4">
+							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
 								{/* Empty for spacing */}
 								<div className="mx-4 flex flex-col items-center">
 									<div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-blue-400 to-cyan-500 text-xl font-bold text-white shadow-lg md:h-20 md:w-20 md:text-2xl">
 										2
 									</div>
-									<div className="h-12 w-0.5 bg-gray-300"></div>{" "}
-									{/* Connector line */}
+									<div className="h-12 w-0.5 bg-gray-300 lg:hidden"></div>{" "}
+									{/* Connector line - hidden on large screens */}
 								</div>
 								<p className="w-5/12 text-left font-['Readex_Pro'] text-base text-gray-700 md:text-lg">
 									الاستثمار التجاري يساعد على خلق فرص العمل.
@@ -76,7 +75,7 @@ export default function InvestorePage() {
 							</div>
 
 							{/* Item 3 */}
-							<div className="relative flex w-full items-center justify-between py-4">
+							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg">
 									يمكن أن يساعد الاستثمار في الشركات الناشئة على تعزيز النمو
 									الاقتصادي.
@@ -85,23 +84,23 @@ export default function InvestorePage() {
 									<div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-green-400 to-lime-500 text-xl font-bold text-white shadow-lg md:h-20 md:w-20 md:text-2xl">
 										3
 									</div>
-									<div className="h-12 w-0.5 bg-gray-300"></div>{" "}
-									{/* Connector line */}
+									<div className="h-12 w-0.5 bg-gray-300 lg:hidden"></div>{" "}
+									{/* Connector line - hidden on large screens */}
 								</div>
 								<p className="w-5/12 text-left font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
 								{/* Empty for spacing */}
 							</div>
 
 							{/* Item 4 */}
-							<div className="relative flex w-full items-center justify-between py-4">
+							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
 								{/* Empty for spacing */}
 								<div className="mx-4 flex flex-col items-center">
 									<div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-orange-400 to-amber-500 text-xl font-bold text-white shadow-lg md:h-20 md:w-20 md:text-2xl">
 										4
 									</div>
-									<div className="h-12 w-0.5 bg-gray-300"></div>{" "}
-									{/* Connector line */}
+									<div className="h-12 w-0.5 bg-gray-300 lg:hidden"></div>{" "}
+									{/* Connector line - hidden on large screens */}
 								</div>
 								<p className="w-5/12 text-left font-['Readex_Pro'] text-base text-gray-700 md:text-lg">
 									يمكن أن يؤدي الاستثمار في الشركات الناشئة إلى الابتكار.
@@ -109,7 +108,7 @@ export default function InvestorePage() {
 							</div>
 
 							{/* Item 5 */}
-							<div className="relative flex w-full items-center justify-between py-4">
+							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg">
 									يمكن أن يساعد الاستثمار التجاري في جذب الموظفين الموهوبين.
 								</p>
