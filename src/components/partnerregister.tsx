@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-const StoreForm: React.FC = () => {
+export default function StoreForm() {
     const [formData, setFormData] = useState<{
         storeName: string;
         storeClassification: string;
@@ -290,4 +290,3 @@ const StoreForm: React.FC = () => {
     );
 };
 
-export default StoreForm;
