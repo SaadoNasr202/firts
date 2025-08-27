@@ -135,12 +135,18 @@ export default function LandingPage() {
 
 						{/* صف 1: مقدم خدمة × مستثمر */}
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+							<button className="cursor-pointer"
+								onClick={() => {
+									router.push("/partner");
+								}}>
+
 							<Tile
 								variant="default"
 								title="سجّل مطعمك أو متجرك"
 								desc="وسّع نشاطك بالوصول إلى عملاء أكثر معنا."
 								Icon={Store}
-							/>
+								/>
+								</button>
 							<button
 								className="cursor-pointer"
 								onClick={() => {
@@ -174,7 +180,7 @@ export default function LandingPage() {
 							<button
 								className="cursor-pointer"
 								onClick={() => {
-									router.push("/partner");
+									router.push("/worker");
 								}}
 							>
 								<Tile
