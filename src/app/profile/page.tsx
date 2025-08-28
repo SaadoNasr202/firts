@@ -3,7 +3,7 @@ import NavBarCondition from "@/components/NavBarConditon";
 import ProfileList from "@/components/ProfileList";
 import Shellafooter from "@/components/shellafooter";
 
-export default function Condition(){
+export default function Profile(){
 return (
     <>
       <NavBarCondition />
