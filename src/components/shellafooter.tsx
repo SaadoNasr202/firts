@@ -88,22 +88,22 @@ export default function Shellafooter() {
 							</h4>
 							<ul className="space-y-2 text-sm text-gray-600 md:text-base">
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/driver" className="hover:text-amber-500">
 										انضم كمندوب توصيل
 									</a>
 								</li>
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/partner" className="hover:text-amber-500">
 										شريك تاجر
 									</a>
 								</li>
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/worker" className="hover:text-amber-500">
 										مقدم خدمة
 									</a>
 								</li>
 								<li>
-									<a href="#" className="hover:text-amber-500">
+									<a href="/invstore" className="hover:text-amber-500">
 										مستثمر
 									</a>
 								</li>
