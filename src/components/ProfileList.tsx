@@ -21,7 +21,7 @@ const OtherPage = ({ title }: { title: string }) => (
 		{title}
 	</div>
 );
-
+  
 export default function ProfileList() {
 	const [activePage, setActivePage] = useState("معلومات الحساب");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function ProfileList() {
 	};
 
 	return (
-		<div className="flex min-h-screen justify-center bg-gray-100 p-4 md:p-8">
+		<div className="flex min-h-screen justify-center  bg-gray-100 p-4 md:p-8">
 			<div className="flex w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-lg md:flex-row-reverse">
 				{/* زر فتح القائمة (يظهر فقط على الأجهزة الصغيرة) */}
 				{/* زر فتح القائمة (يظهر فقط على الموبايل) */}

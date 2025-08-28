@@ -2,7 +2,11 @@
 
 import React from 'react';
 
-export default function PopularStoresSlider() {
+interface PopularStoresSliderProps {
+    onStoreClick: (storeName: string) => void;
+}
+
+export default function PopularStoresSlider({ onStoreClick }: PopularStoresSliderProps) {
   const popularStores = [
     {
       title: "بيت الشاورما",
@@ -10,19 +14,25 @@ export default function PopularStoresSlider() {
       time: "20 دقيقة",
       image: "https://via.placeholder.com/400x200?text=Shawarma+House",
     },
-    {
-      title: "حظيرة",
-      description: "مقهى، مأكولات شرقية",
-      time: "20 دقيقة",
-      image: "https://via.placeholder.com/400x200?text=Hazira",
-    },
+ 
     {
       title: "بوابة السعودية",
       description: "مقهى، مطعم",
       time: "20 دقيقة",
       image: "https://via.placeholder.com/400x200?text=Saudi+Gate",
     },
- 
+    {
+      title: "فطايري",
+      description: "فطائر ومعجنات",
+      time: "25 دقيقة",
+      image: "https://via.placeholder.com/400x200?text=Fatairi",
+    },
+    {
+      title: "كريب هاوس",
+      description: "حلويات وكريب",
+      time: "30 دقيقة",
+      image: "https://via.placeholder.com/400x200?text=Crepe+House",
+    },
   ];
 
   const handleScrollRight = () => {
@@ -46,10 +56,13 @@ export default function PopularStoresSlider() {
       </button>
 
       {/* حاوية المحلات */}
-      {/* هنا تم التعديل: استبدال `space-x-4 space-x-reverse` بـ `gap-4` */}
       <div id="popular-stores-scroll-container" className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 px-4">
         {popularStores.map((store, index) => (
-          <div key={index} className="flex-shrink-0 w-80 md:w-96 flex flex-col bg-gray-100 rounded-lg overflow-hidden shadow-sm">
+          <button 
+            key={index} 
+            onClick={() => onStoreClick(store.title)}
+            className="flex-shrink-0 w-80 md:w-96 flex flex-col bg-gray-100 rounded-lg overflow-hidden shadow-sm cursor-pointer"
+          >
             <div className="relative h-48 bg-gray-200">
               <img src={store.image} alt={store.title} className="w-full h-full object-cover" />
               <span className="absolute top-2 right-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-800 shadow">
@@ -60,7 +73,7 @@ export default function PopularStoresSlider() {
               <h3 className="text-lg font-bold text-gray-800">{store.title}</h3>
               <p className="mt-1 text-sm text-gray-600">{store.description}</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 

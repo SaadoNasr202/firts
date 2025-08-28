@@ -1,126 +1,249 @@
+// HomePage.tsx
+
+"use client";
+
+import { useState } from "react";
+import Breadcrumb from "./Breadcrumb";
 import CategoriesSlider from "./CategoriesSlider";
+import { allRestaurants, restaurantMenu } from "./datar";
 import DiscountSlider from "./DiscountSlider";
+import MealDetailsPage from "./MealDetailsPage";
+import MealsPage from "./MealsPage";
 import PopularStoresSlider from "./PopularStoresSlider";
-import StoreSlider from "./StoreSlider";
+import ProductDetailsPage from "./ProductDetailsPage";
+import ProductsPage from "./ProductsPage";
+import RestaurantsPage from "./RestaurantsPage";
+import StorePage from "./StorePage";
+import SuperMarket from "./SuperMarket";
+import { allProducts } from "./data";
+import RestaurantSectionsPage from "./RestaurantPageDetails";
 
 export default function HomePage() {
+	const [currentPage, setCurrentPage] = useState("home");
+	const [selectedStore, setSelectedStore] = useState("");
+	const [selectedCategory, setSelectedCategory] = useState("");
+	const [selectedProductId, setSelectedProductId] = useState<number | null>(
+		null,
+	);
+	const [selectedRestaurantId, setSelectedRestaurantId] = useState<
+		number | null
+	>(null);
+	const [selectedSection, setSelectedSection] = useState("");
+	const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
+	const [breadcrumbPath, setBreadcrumbPath] = useState<string[]>(["الرئيسية"]);
+
+	const handleDiscountClick = (discountTitle: string) => {
+		console.log(`Discount on ${discountTitle} was clicked.`);
+	};
+
+	const handlePopularStoreClick = (storeName: string) => {
+		setBreadcrumbPath(["الرئيسية", "أشهر المحلات في منطقتك", storeName]);
+		setSelectedStore(storeName);
+		setCurrentPage("store");
+	};
+
+	const handleCategoryClick = (categoryName: string) => {
+		setBreadcrumbPath(["الرئيسية", categoryName]);
+		if (categoryName === "سوبر ماركت") {
+			setCurrentPage("supermarket");
+		} else if (categoryName === "المطاعم") {
+			setCurrentPage("restaurants");
+		} else {
+			setCurrentPage("home");
+		}
+	};
+
+	const handleStoreClick = (storeName: string) => {
+		setBreadcrumbPath(["الرئيسية", "المتاجر القريبة منك", storeName]);
+		setSelectedStore(storeName);
+		setCurrentPage("store");
+	};
+
+	const handleSupermarketStoreClick = (storeName: string) => {
+		setBreadcrumbPath(["الرئيسية", "سوبر ماركت", storeName]);
+		setSelectedStore(storeName);
+		setCurrentPage("store");
+	};
+
+	const handleStoreCategoryClick = (categoryName: string) => {
+		setBreadcrumbPath([...breadcrumbPath, categoryName]);
+		setSelectedCategory(categoryName);
+		setCurrentPage("products");
+	};
+
+	const handleProductClick = (productId: number) => {
+		const product = allProducts.find((p) => p.id === productId);
+		if (product) {
+			setBreadcrumbPath([...breadcrumbPath, product.name]);
+			setSelectedProductId(productId);
+			setCurrentPage("product-details");
+		}
+	};
+
+	const handleRestaurantClick = (restaurantId: number) => {
+		const restaurant = allRestaurants.find((r) => r.id === restaurantId);
+		if (restaurant) {
+			setBreadcrumbPath(["الرئيسية", "المطاعم", restaurant.name]);
+			setSelectedRestaurantId(restaurantId);
+			setCurrentPage("restaurant-sections"); // اسم جديد للصفحة
+		}
+	};
+
+	const handleSectionClick = (sectionName: string, restaurantId: number) => {
+		setBreadcrumbPath([...breadcrumbPath, sectionName]);
+		setSelectedSection(sectionName);
+		setCurrentPage("meals");
+	};
+
+	const handleMealClick = (mealId: number) => {
+		const allMeals = Object.values(restaurantMenu).flatMap(
+			(menu) => menu.items,
+		);
+		const meal = allMeals.find((item) => item.id === mealId);
+
+		if (meal) {
+			setBreadcrumbPath([...breadcrumbPath, meal.name]);
+			setSelectedMealId(mealId);
+			setCurrentPage("meal-details");
+		}
+	};
+
+	const handleBreadcrumbClick = (index: number) => {
+		const newPath = breadcrumbPath.slice(0, index + 1);
+		setBreadcrumbPath(newPath);
+
+		if (newPath.length === 1) {
+			setCurrentPage("home");
+			setSelectedRestaurantId(null);
+			setSelectedSection("");
+			setSelectedMealId(null);
+		} else if (newPath[1] === "سوبر ماركت") {
+			if (newPath.length === 2) setCurrentPage("supermarket");
+			else if (newPath.length === 3) setCurrentPage("store");
+			else if (newPath.length === 4) setCurrentPage("products");
+			else if (newPath.length === 5) setCurrentPage("product-details");
+			setSelectedStore(newPath[2]);
+			setSelectedCategory(newPath[3]);
+			setSelectedProductId(null);
+		} else if (newPath[1] === "المطاعم") {
+			if (newPath.length === 2) {
+				setCurrentPage("restaurants");
+			} else if (newPath.length === 3) {
+				setCurrentPage("restaurant-sections");
+				const restaurant = allRestaurants.find((r) => r.name === newPath[2]);
+				setSelectedRestaurantId(restaurant?.id || null);
+				setSelectedSection("");
+			} else if (newPath.length === 4) {
+				setCurrentPage("meals");
+				const restaurant = allRestaurants.find((r) => r.name === newPath[2]);
+				setSelectedRestaurantId(restaurant?.id || null);
+				setSelectedSection(newPath[3]);
+				setSelectedMealId(null);
+			} else if (newPath.length === 5) {
+				setCurrentPage("meal-details");
+				// Note: mealId is not in breadcrumb, so we just set page
+			}
+		}
+	};
+
 	return (
 		<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-			{/* القسم العلوي - معلومات التوصيل */}
-			<div className="flex flex-col items-start py-4 text-right">
-				<div className="flex items-center space-x-2 space-x-reverse text-sm text-gray-600">
-					<p>
-						التوصيل إلى{" "}
-						<span className="font-bold text-gray-800">
-							cc987f1f18, Sharjah - United Arab Emirates
-						</span>
-					</p>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						className="h-4 w-4"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-						/>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-						/>
-					</svg>
-				</div>
+			<div className="mb-4">
+				<Breadcrumb
+					path={breadcrumbPath}
+					onBreadcrumbClick={handleBreadcrumbClick}
+				/>
 			</div>
 
-			<hr className="my-4 border-gray-200" />
-
-			{/* قسم الأقسام */}
-			<section className="mt-8">
-				<div className="mb-4 flex items-center justify-between">
-					<h2 className="text-xl font-bold text-gray-900">أقسامنا</h2>
-					<a
-						href="#"
-						className="text-sm font-semibold text-green-600 hover:text-green-800"
-					>
-						عرض الكل
-					</a>
-				</div>
-				<CategoriesSlider />
-			</section>
-
-			{/* --- */}
-
-			{/* قسم الصور / البانر الترويجي */}
-			<section className="mt-8">
-				<div className="relative h-48 w-full overflow-hidden rounded-lg bg-gray-300 md:h-64 lg:h-80">
-					<div
-						className="absolute inset-0 bg-cover bg-center"
-						style={{
-							backgroundImage:
-								"url('https://via.placeholder.com/1200x400?text=Ramadan+Sale')",
-						}}
-					></div>
-					<div className="absolute inset-0 flex items-center justify-start bg-gradient-to-r from-black/50 to-transparent p-8 text-right">
-						<div className="text-white">
-							<h3 className="text-2xl font-bold md:text-4xl">Ramadan Sale</h3>
-							<p className="mt-2 text-lg md:text-2xl">UP TO 50 % OFF</p>
-							<button className="mt-4 rounded-full bg-yellow-400 px-6 py-2 font-semibold text-gray-800 transition-colors hover:bg-yellow-500">
-								SHOP NOW
-							</button>
+			{currentPage === "home" && (
+				<>
+					{/* ... (مكونات الصفحة الرئيسية) */}
+					<section className="mt-8">
+						<div className="mb-4 flex items-center justify-between">
+							<h2 className="text-xl font-bold text-gray-900">أقسامنا</h2>
+							<a
+								href="#"
+								className="text-sm font-semibold text-green-600 hover:text-green-800"
+								onClick={() => handleCategoryClick("أقسامنا")}
+							>
+								عرض الكل
+							</a>
 						</div>
-					</div>
-				</div>
-			</section>
+						<CategoriesSlider onCategoryClick={handleCategoryClick} />
+					</section>
+					{/* ... (بقية المكونات) */}
+					<section className="mt-8">
+						<div className="mb-4 flex items-center justify-between">
+							<h2 className="text-xl font-bold text-gray-900">أقوى الخصومات</h2>
+							<a
+								href="#"
+								className="text-sm font-semibold text-green-600 hover:text-green-800"
+							>
+								عرض الكل
+							</a>
+						</div>
+						<DiscountSlider onDiscountClick={handleDiscountClick} />
+					</section>
+					<section className="mt-8">
+						<div className="mb-4 flex items-center justify-between">
+							<h2 className="text-xl font-bold text-gray-900">
+								أشهر المحلات في منطقتك
+							</h2>
+							<a
+								href="#"
+								className="text-sm font-semibold text-green-600 hover:text-green-800"
+							>
+								عرض الكل
+							</a>
+						</div>
+						<PopularStoresSlider onStoreClick={handlePopularStoreClick} />
+					</section>
+				</>
+			)}
 
-			{/* --- */}
-
-			{/* قسم المتاجر القريبة منك */}
-			<section className="mt-8">
-				<div className="mb-4 flex items-center justify-between">
-					<h2 className="text-xl font-bold text-gray-900">
-						المتاجر القريبة منك
-					</h2>
-					<a
-						href="#"
-						className="text-sm font-semibold text-green-600 hover:text-green-800"
-					>
-						عرض الكل
-					</a>
-				</div>
-				<StoreSlider />
-			</section>
-
-			{/* --- */}
-
-			{/* القسم الجديد: أقوى الخصومات */}
-			<section className="mt-8">
-				<div className="mb-4 flex items-center justify-between">
-					<h2 className="text-xl font-bold text-gray-900">أقوى الخصومات</h2>
-					<a
-						href="#"
-						className="text-sm font-semibold text-green-600 hover:text-green-800"
-					>
-						عرض الكل
-					</a>
-				</div>
-				<DiscountSlider />
-			</section>
-
-			{/* --- */}
- {/* القسم الجديد: أشهر المحلات في منطقتك */}
-      <section className="mt-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-900">أشهر المحلات في منطقتك</h2>
-          <a href="#" className="text-sm font-semibold text-green-600 hover:text-green-800">عرض الكل</a>
-        </div>
-        <PopularStoresSlider />
-      </section>
+			{currentPage === "supermarket" && (
+				<SuperMarket onStoreClick={handleSupermarketStoreClick} />
+			)}
+			{currentPage === "store" && selectedStore && (
+				<StorePage
+					storeName={selectedStore}
+					onCategoryClick={handleStoreCategoryClick}
+				/>
+			)}
+			{currentPage === "products" && selectedCategory && (
+				<ProductsPage
+					categoryName={selectedCategory}
+					onProductClick={handleProductClick}
+				/>
+			)}
+			{currentPage === "product-details" && selectedProductId !== null && (
+				<ProductDetailsPage
+					productId={selectedProductId}
+					onProductClick={handleProductClick}
+				/>
+			)}
+			{currentPage === "restaurants" && (
+				<RestaurantsPage onRestaurantClick={handleRestaurantClick} />
+			)}
+			{currentPage === "restaurant-sections" &&
+				selectedRestaurantId !== null && (
+					<RestaurantSectionsPage
+						restaurantId={selectedRestaurantId}
+						onSectionClick={handleSectionClick}
+					/>
+				)}
+			{currentPage === "meals" &&
+				selectedRestaurantId !== null &&
+				selectedSection && (
+					<MealsPage
+						restaurantId={selectedRestaurantId}
+						sectionName={selectedSection}
+						onMealClick={handleMealClick}
+					/>
+				)}
+			{currentPage === "meal-details" && selectedMealId !== null && (
+				<MealDetailsPage mealId={selectedMealId} />
+			)}
 		</div>
 	);
 }

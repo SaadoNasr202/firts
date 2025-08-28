@@ -1,6 +1,13 @@
-"use client";
+'use client';
 
-export default function DiscountSlider() {
+import React from 'react';
+
+// Define the props for the component
+interface DiscountSliderProps {
+    onDiscountClick: (discountTitle: string) => void;
+}
+
+export default function DiscountSlider({ onDiscountClick }: DiscountSliderProps) {
 	const discounts = [
 		{
 			title: "فيلي ستيكس",
@@ -37,7 +44,7 @@ export default function DiscountSlider() {
 
 	return (
 		<div className="relative flex items-center">
-			{/* سهم التنقل الأيسر */}
+			{/* Left navigation arrow */}
 			<button
 				className="absolute -left-4 z-10 hidden rounded-full bg-white p-2 shadow-md md:block"
 				onClick={handleScrollLeft}
@@ -58,15 +65,17 @@ export default function DiscountSlider() {
 				</svg>
 			</button>
 
-			{/* حاوية الخصومات */}
+			{/* Discounts container */}
 			<div
 				id="discounts-scroll-container"
 				className="scrollbar-hide flex gap-4 overflow-x-auto px-4 pb-2"
 			>
 				{discounts.map((discount, index) => (
-					<div
+					// Changed from `div` to `button` to be interactive
+					<button
 						key={index}
-						className="flex w-80 flex-shrink-0 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm md:w-96"
+                        onClick={() => onDiscountClick(discount.title)}
+						className="flex w-80 flex-shrink-0 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm md:w-96 cursor-pointer"
 					>
 						<div className="relative h-48 bg-gray-200">
 							<img
@@ -86,11 +95,11 @@ export default function DiscountSlider() {
 								{discount.description}
 							</p>
 						</div>
-					</div>
+					</button>
 				))}
 			</div>
 
-			{/* سهم التنقل الأيمن */}
+			{/* Right navigation arrow */}
 			<button
 				className="absolute -right-4 z-10 hidden rounded-full bg-white p-2 shadow-md md:block"
 				onClick={handleScrollRight}

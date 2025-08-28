@@ -1,6 +1,13 @@
-"use client";
+'use client';
 
-export default function StoreSlider() {
+import React from 'react';
+
+// Define the component's props
+interface StoreSliderProps {
+    onStoreClick: (storeName: string) => void;
+}
+
+export default function StoreSlider({ onStoreClick }: StoreSliderProps) {
 	const handleScrollRight = () => {
 		document
 			.getElementById("stores-scroll-container")
@@ -28,7 +35,6 @@ export default function StoreSlider() {
 		"مخبز الشفاء",
 		"مأكولات زمان",
 		"عصيرات السعد",
-	
 	];
 
 	return (
@@ -60,15 +66,17 @@ export default function StoreSlider() {
 				className="scrollbar-hide flex gap-4 overflow-x-auto px-4 pb-2"
 			>
 				{stores.map((store, index) => (
-					<div
+                    // Changed from `div` to a clickable `button`
+					<button
 						key={index}
-						className="flex w-24 flex-shrink-0 flex-col items-center text-center"
+                        onClick={() => onStoreClick(store)}
+						className="flex w-24 flex-shrink-0 flex-col items-center text-center cursor-pointer"
 					>
 						<div className="mb-2 flex h-24 w-24 items-center justify-center rounded-lg bg-gray-200 shadow-md">
 							<span className="text-xs text-gray-500">متجر</span>
 						</div>
 						<p className="text-sm font-semibold text-gray-700">{store}</p>
-					</div>
+					</button>
 				))}
 			</div>
 

@@ -1,6 +1,13 @@
 "use client";
 
-export default function CategoriesSlider() {
+// تحديد نوع الخاصية (prop)
+interface CategoriesSliderProps {
+	onCategoryClick: (categoryName: string) => void;
+}
+
+export default function CategoriesSlider({
+	onCategoryClick,
+}: CategoriesSliderProps) {
 	const categories = [
 		"خدمة خدمتي",
 		"استلام وتسليم",
@@ -12,7 +19,6 @@ export default function CategoriesSlider() {
 		"العناية بالحيوانات",
 		"الصيدليات",
 		"المطاعم",
-		
 	];
 
 	const handleScrollRight = () => {
@@ -53,18 +59,20 @@ export default function CategoriesSlider() {
 			{/* حاوية الأقسام */}
 			<div
 				id="categories-scroll-container"
-				className="scrollbar-hide flex space-x-4 space-x-reverse overflow-x-auto pb-2"
+				className="scrollbar-hide flex space-x-4 space-x-reverse overflow-x-auto px-4 pb-2"
 			>
 				{categories.map((category, index) => (
-					<div
+					// جعل كل قسم زرًا تفاعليًا
+					<button
 						key={index}
-						className="flex w-24 flex-shrink-0 flex-col items-center text-center"
+						className="flex w-24 flex-shrink-0 cursor-pointer flex-col items-center text-center"
+						onClick={() => onCategoryClick(category)}
 					>
 						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 shadow-md">
 							{/* هنا سيتم وضع أيقونة القسم */}
 						</div>
 						<p className="mt-2 text-xs text-gray-700">{category}</p>
-					</div>
+					</button>
 				))}
 			</div>
 
