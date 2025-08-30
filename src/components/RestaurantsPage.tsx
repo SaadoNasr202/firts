@@ -23,7 +23,7 @@ export default function RestaurantsPage({ onRestaurantClick }: RestaurantsPagePr
 						<img
 							src={restaurant.image}
 							alt={restaurant.name}
-							className="h-32 w-full object-cover"
+							className="h-auto w-auto object-cover"
 						/>
 						<div className="p-4 text-center">
 							<h3 className="text-lg font-semibold text-gray-800">

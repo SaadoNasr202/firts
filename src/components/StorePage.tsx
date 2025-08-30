@@ -14,7 +14,7 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
     rating: 4.7,
     reviews: 500,
     deliveryTime: "25 دقيقة",
-    image: "https://via.placeholder.com/1200x400?text=Store+Banner",
+    image: "supermarketpic.jpg",
     description: "بقلة وسوبر ماركت",
     address: "2495",
   };

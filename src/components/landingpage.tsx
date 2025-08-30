@@ -37,7 +37,12 @@ export default function LandingPage() {
 									<p className="text-[31px] font-semibold text-white md:text-[39px]">
 										أكثر من 60,000 مطعم ومتجر
 									</p>
-									<button className="inline-flex items-center justify-center rounded-lg bg-[#FA9D2B] px-8 py-3 text-base text-white shadow-xl transition-all duration-300 hover:bg-[#D48925] focus:ring-4 focus:ring-[#FA9D2B]/50 focus:outline-none">
+									<button
+										className="inline-flex items-center justify-center rounded-lg bg-[#FA9D2B] px-8 py-3 text-base text-white shadow-xl transition-all duration-300 hover:bg-[#D48925] focus:ring-4 focus:ring-[#FA9D2B]/50 focus:outline-none"
+										onClick={() => {
+											router.push("HomePage");
+										}}
+									>
 										تصفّح الآن
 									</button>
 								</div>
@@ -59,11 +64,11 @@ export default function LandingPage() {
 									</p>
 								</div>
 
-								{/* الكود المعدل: تم تغيير أحجام الأيقونات لجعلها متجاوبة */}
+								{/* أيقونات متاجر التطبيقات */}
 								<div className="flex flex-wrap items-center justify-center gap-3 lg:justify-end">
 									<a
 										className="block h-12 w-36 overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
-										href="#"
+										href="https://apps.apple.com/us/app/%D8%B4%D9%84%D9%87/id6739772273?l=ar"
 									>
 										<img
 											src="appstore.png"
@@ -73,7 +78,7 @@ export default function LandingPage() {
 									</a>
 									<a
 										className="block h-12 w-36 overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
-										href="#"
+										href="https://play.google.com/store/apps/details?id=com.food.shala&hl=ar&pli=1"
 									>
 										<img
 											src="googleplay.png"
@@ -83,7 +88,7 @@ export default function LandingPage() {
 									</a>
 									<a
 										className="block h-12 w-36 overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
-										href="#"
+										href="https://play.google.com/store/apps/details?id=com.food.shala&hl=ar&pli=1"
 									>
 										<img
 											src="appgalary.png"
@@ -93,12 +98,13 @@ export default function LandingPage() {
 									</a>
 								</div>
 							</div>
-							{/* صورة التطبيق (يسار بالـRTL) */}
-							<div className="justify-self-center lg:justify-self-start">
+
+							{/* صورة التطبيق (يسار بالـRTL) - تم إضافة فئة `translate-y-` */}
+							<div className="translate-y-12 transform justify-self-center lg:justify-self-start">
 								<img
 									src="imagemobile.png"
 									alt="تطبيق شلة"
-									className="h-auto max-w-full transition-transform duration-300 hover:scale-105"
+									className="h-auto max-w-full transition-transform duration-300 "
 								/>
 							</div>
 						</div>
@@ -124,6 +130,12 @@ export default function LandingPage() {
 									>
 										سجّل الآن
 									</a>
+									<a
+										href="https://www.qaydha.com/"
+										className="mt-10 inline-flex items-center justify-center rounded-full bg-[#2D943C] px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
+									>
+										معرفة المزيد 
+									</a>
 								</div>
 								<img
 									src="date.png"
@@ -135,18 +147,19 @@ export default function LandingPage() {
 
 						{/* صف 1: مقدم خدمة × مستثمر */}
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-							<button className="cursor-pointer"
+							<button
+								className="cursor-pointer"
 								onClick={() => {
 									router.push("/partner");
-								}}>
-
-							<Tile
-								variant="default"
-								title="سجّل مطعمك أو متجرك"
-								desc="وسّع نشاطك بالوصول إلى عملاء أكثر معنا."
-								Icon={Store}
+								}}
+							>
+								<Tile
+									variant="default"
+									title="سجّل مطعمك أو متجرك"
+									desc="وسّع نشاطك بالوصول إلى عملاء أكثر معنا."
+									Icon={Store}
 								/>
-								</button>
+							</button>
 							<button
 								className="cursor-pointer"
 								onClick={() => {
@@ -164,7 +177,7 @@ export default function LandingPage() {
 
 						{/* صف 2: مندوب × تاجر */}
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <button
+							<button
 								className="cursor-pointer"
 								onClick={() => {
 									router.push("/invstore");
@@ -190,7 +203,6 @@ export default function LandingPage() {
 									Icon={BriefcaseBusiness}
 								/>
 							</button>
-							
 						</div>
 					</section>
 

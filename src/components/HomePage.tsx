@@ -5,6 +5,7 @@
 import { useState } from "react";
 import Breadcrumb from "./Breadcrumb";
 import CategoriesSlider from "./CategoriesSlider";
+import { allProducts } from "./data";
 import { allRestaurants, restaurantMenu } from "./datar";
 import DiscountSlider from "./DiscountSlider";
 import MealDetailsPage from "./MealDetailsPage";
@@ -12,11 +13,11 @@ import MealsPage from "./MealsPage";
 import PopularStoresSlider from "./PopularStoresSlider";
 import ProductDetailsPage from "./ProductDetailsPage";
 import ProductsPage from "./ProductsPage";
+import RestaurantSectionsPage from "./RestaurantPageDetails";
 import RestaurantsPage from "./RestaurantsPage";
 import StorePage from "./StorePage";
 import SuperMarket from "./SuperMarket";
-import { allProducts } from "./data";
-import RestaurantSectionsPage from "./RestaurantPageDetails";
+import NearbyStoresPage from "./NearbyStoresPage";
 
 export default function HomePage() {
 	const [currentPage, setCurrentPage] = useState("home");
@@ -58,7 +59,10 @@ export default function HomePage() {
 		setSelectedStore(storeName);
 		setCurrentPage("store");
 	};
-
+	const handleNearbyStoresClick = () => {
+		setBreadcrumbPath(["الرئيسية", "المتاجر القريبة منك"]);
+		setCurrentPage("nearby-stores");
+	};
 	const handleSupermarketStoreClick = (storeName: string) => {
 		setBreadcrumbPath(["الرئيسية", "سوبر ماركت", storeName]);
 		setSelectedStore(storeName);
@@ -143,6 +147,13 @@ export default function HomePage() {
 				setCurrentPage("meal-details");
 				// Note: mealId is not in breadcrumb, so we just set page
 			}
+		} else if (newPath[1] === "المتاجر القريبة منك") {
+			if (newPath.length === 2) {
+				setCurrentPage("nearby-stores");
+			} else if (newPath.length === 3) {
+				setCurrentPage("store");
+				setSelectedStore(newPath[2]);
+			}
 		}
 	};
 
@@ -171,7 +182,32 @@ export default function HomePage() {
 						</div>
 						<CategoriesSlider onCategoryClick={handleCategoryClick} />
 					</section>
+					<section className="mb-8 overflow-hidden rounded-lg shadow-md">
+						<img
+							src="/ramadan.png"
+							alt="Ramadan Sale"
+							className="h-160 w-full object-cover"
+						/>
+					</section>
+
 					{/* ... (بقية المكونات) */}
+
+					<section className="mt-8">
+						<div className="mb-4 flex items-center justify-between">
+							<h2 className="text-xl font-bold text-gray-900">
+								المتاجر القريبة منك
+							</h2>
+							<a
+								href="#"
+								className="text-sm font-semibold text-green-600 hover:text-green-800"
+								onClick={() => handleStoreClick("المتاجر القريبة منك")}
+							>
+								عرض الكل
+							</a>
+						</div>
+						<NearbyStoresPage onStoreClick={handleStoreClick} />
+					</section>
+
 					<section className="mt-8">
 						<div className="mb-4 flex items-center justify-between">
 							<h2 className="text-xl font-bold text-gray-900">أقوى الخصومات</h2>
@@ -184,6 +220,7 @@ export default function HomePage() {
 						</div>
 						<DiscountSlider onDiscountClick={handleDiscountClick} />
 					</section>
+
 					<section className="mt-8">
 						<div className="mb-4 flex items-center justify-between">
 							<h2 className="text-xl font-bold text-gray-900">

@@ -1,5 +1,3 @@
-"use client";
-
 // تحديد نوع الخاصية (prop)
 interface CategoriesSliderProps {
 	onCategoryClick: (categoryName: string) => void;
@@ -9,16 +7,10 @@ export default function CategoriesSlider({
 	onCategoryClick,
 }: CategoriesSliderProps) {
 	const categories = [
-		"خدمة خدمتي",
-		"استلام وتسليم",
-		"هايبر سلة",
-		"الخضار والفواكه",
-		"سوبر ماركت",
-		"المخبوزات",
-		"العطور",
-		"العناية بالحيوانات",
-		"الصيدليات",
-		"المطاعم",
+		{ name: "خدمة خدمتي", image: "supermarket.png" },
+		{ name: "استلام وتسليم", image: "supermarket.png" },
+		{ name: " طلبات", image: "supermarket.png" },
+		
 	];
 
 	const handleScrollRight = () => {
@@ -59,19 +51,22 @@ export default function CategoriesSlider({
 			{/* حاوية الأقسام */}
 			<div
 				id="categories-scroll-container"
-				className="scrollbar-hide flex space-x-4 space-x-reverse overflow-x-auto px-4 pb-2"
+				className="scrollbar-hide flex gap-5 space-x-reverse overflow-x-auto px-4 pb-2"
 			>
 				{categories.map((category, index) => (
-					// جعل كل قسم زرًا تفاعليًا
 					<button
 						key={index}
-						className="flex w-24 flex-shrink-0 cursor-pointer flex-col items-center text-center"
-						onClick={() => onCategoryClick(category)}
+						className="flex w-[85px] flex-shrink-0 cursor-pointer flex-col items-center text-center"
+						onClick={() => onCategoryClick(category.name)}
 					>
-						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 shadow-md">
-							{/* هنا سيتم وضع أيقونة القسم */}
+						<div className="flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full bg-gray-200 shadow-md">
+							<img
+								src={category.image}
+								alt={category.name}
+								className="h-full w-full object-cover"
+							/>
 						</div>
-						<p className="mt-2 text-xs text-gray-700">{category}</p>
+						<p className="mt-2 text-xs text-gray-700">{category.name}</p>
 					</button>
 				))}
 			</div>
