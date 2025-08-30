@@ -1,34 +1,51 @@
+// src/components/InvestorePage.tsx
+
+"use client";
+
+import { useState } from "react";
+
+import ContractModal from "./ContractModal";
 import InvestoreForm from "./InvestoreRegister";
+import VideoSlider from "./VideoSlider";
 
 export default function InvestorePage() {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const handleOpenModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setIsModalOpen(false);
+	};
+
 	return (
 		<main>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
 				{/* قسم صورة الخلفية */}
-				<section className="relative mb-8 overflow-hidden">
-					<div className="relative">
-						<div className="flex aspect-video h-auto min-h-[300px] w-full items-center justify-center">
-							<img
-								src="INVESTORE.png"
-								alt="خلفية استثمار"
-								className="h-full w-full object-cover"
-							/>
-						</div>
-					</div>
+				<section className="mb-8 overflow-hidden">
+					<VideoSlider />
 				</section>
 
 				{/* قسم الفورم */}
-				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
-					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
+				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-5">
+					<div className="p-10 text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
 						<p>
-							{" "}
 							الإنضمام كمستثمر في{" "}
 							<span className="text-[#31A342]">شلة</span>{" "}
 						</p>
-						<p className="p-2.5 font-['Readex_Pro'] text-[16px] text-[#8C8C8C]">
-							سنستحوذ على كلّ السوق وسيرغب الجميع باستخدام منتجنا{" "}
-						</p>
 					</div>
+
+					{/* تم تعديل هذا القسم لإظهار الزر الذي يفتح النافذة المنبثقة */}
+					<div className="mt-10 flex justify-center p-8">
+						<button
+							onClick={handleOpenModal}
+							className="flex w-full max-w-sm items-center justify-center rounded-lg border border-[#31A342] bg-white px-10 py-3 font-semibold text-[#31A342] shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
+						>
+							تحميل مسودة العقد
+						</button>
+					</div>
+
 					<div className="opacity-100">
 						<InvestoreForm />
 					</div>
@@ -168,6 +185,11 @@ export default function InvestorePage() {
 					</div>
 				</section>
 			</div>
+			<ContractModal
+				isOpen={isModalOpen}
+				onClose={handleCloseModal}
+				fileUrl="contract.pdf"
+			/>
 		</main>
 	);
 }

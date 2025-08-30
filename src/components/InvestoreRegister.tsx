@@ -64,12 +64,9 @@ export default function InvestoreForm() {
 		<form
 			onSubmit={handleSubmit}
 			onReset={handleReset}
-			className="rtl mx-auto max-w-[900px] space-y-6 text-right"
+			className="rtl mx-auto w-full space-y-6 text-right" 
 		>
 			{/* عنوان النموذج الرئيسي */}
-			<h2 className="mb-4 text-center font-['Readex_Pro'] text-3xl leading-none font-semibold tracking-normal text-green-600 md:text-[39px]">
-				معلومات المستثمر
-			</h2>
 
 			{/* حقول الإدخال في تخطيط من عمودين */}
 			{/* يتحول من عمود واحد على الشاشات الصغيرة إلى عمودين على الشاشات المتوسطة */}
@@ -90,6 +87,7 @@ export default function InvestoreForm() {
 						value={formData.firstName}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
@@ -110,6 +108,7 @@ export default function InvestoreForm() {
 						value={formData.lastName}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
@@ -130,6 +129,7 @@ export default function InvestoreForm() {
 						value={formData.email}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
@@ -148,6 +148,7 @@ export default function InvestoreForm() {
 						value={formData.city}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					>
 						<option value="">السعودية</option>
@@ -172,6 +173,7 @@ export default function InvestoreForm() {
 							value={formData.phoneNumber}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 pr-14 text-right shadow-sm focus:border-green-500 focus:ring-green-500"
+							dir="rtl" // تم إضافة هذه الخاصية
 							required
 						/>
 						<span className="absolute top-1/2 left-2.5 -translate-y-1/2 text-gray-500">
@@ -194,6 +196,7 @@ export default function InvestoreForm() {
 						value={formData.nationality}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					>
 						<option value="">السعودية</option>
@@ -202,7 +205,6 @@ export default function InvestoreForm() {
 				</div>
 
 				{/* نبذة عن خلفيتك العلمية وخبراتك (حقل نصي كبير) */}
-				{/* هذا الحقل يمتد على عمودين لضمان مساحة كافية */}
 				<div className="space-y-2 md:col-span-2">
 					<label
 						htmlFor="background"
@@ -218,12 +220,12 @@ export default function InvestoreForm() {
 						value={formData.background}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					></textarea>
 				</div>
 
 				{/* المبلغ المراد الاستثمار فيه */}
-				{/* هذا الحقل يمتد على عمودين لضمان مساحة كافية */}
 				<div className="space-y-2 md:col-span-2">
 					<label
 						htmlFor="investmentAmount"
@@ -239,6 +241,7 @@ export default function InvestoreForm() {
 						value={formData.investmentAmount}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
@@ -248,7 +251,7 @@ export default function InvestoreForm() {
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
 					الموافقة على جميع{" "}
-					<a href="#" className="font-medium text-green-600 hover:underline">
+					<a href="/CondtionAterms" className="font-medium text-green-600 hover:underline">
 						الشروط والأحكام
 					</a>
 				</label>
@@ -264,21 +267,21 @@ export default function InvestoreForm() {
 			</div>
 
 			{/* الأزرار تتحول من مكدسة إلى صف على الشاشات الصغيرة */}
-				<div className="mt-8 flex flex-col justify-start gap-4 sm:flex-row">
-					<button
-						type="submit"
-						className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
-					>
-						إرسال
-					</button>
-					<button
-						type="button"
-						onClick={handleReset}
-						className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
-					>
-						إعادة ضبط
-					</button>
-				</div>
+			<div className="mt-8 flex flex-col justify-start gap-4 sm:flex-row">
+				<button
+					type="submit"
+					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
+				>
+					إرسال
+				</button>
+				<button
+					type="button"
+					onClick={handleReset}
+					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
+				>
+					إعادة ضبط
+				</button>
+			</div>
 		</form>
 	);
 }
