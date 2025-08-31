@@ -58,7 +58,7 @@ export default function LandingPage() {
 								<div className="flex flex-col">
 									<h2 className="text-2xl font-semibold text-gray-900 md:text-4xl lg:text-5xl">
 										<span className="text-[#1C4234]">تطبيق الجوال</span>
-									</h2>
+									</h2>     
 									<p className="mt-2 text-base text-gray-700 md:text-lg">
 										حمّل تطبيق شلة على جوالك واطلب بضغطة زر
 									</p>
