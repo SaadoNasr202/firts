@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import CondtionAterms from "./CondtionAterms";
-import Favorites from "./Favorites";
-import HelpAndSupport from "./HelpASupport";
-import KaidhaTerms from "./KaidhaTerms";
+
 import KaidhaWallet from "./KaidhaWallet";
-import MyStats from "./MyStats";
+
 import MyWallet from "./MyWallet";
 import NewAddress from "./NewAddress";
-import PrivacyPolicy from "./PrivacyPolicy";
 import ProfileDetails from "./ProfileDetails";
-import RefundPolicy from "./RefundPolicy";
 import SavedAddress from "./SavedAddress";
 import Sidebar from "./Sidebar";
+import Favorites from "../HomePage/Favorites";
+import MyStats from "../HomePage/MyStats";
+import PrivacyPolicy from "../Condetion/PrivacyPolicy";
+import KaidhaTerms from "../Condetion/KaidhaTerms";
+import CondtionAterms from "../Condetion/CondtionAterms";
+import HelpAndSupport from "../Condetion/HelpASupport";
+import RefundPolicy from "../Condetion/RefundPolicy";
 
 // هذا مجرد مثال لصفحة أخرى
 const OtherPage = ({ title }: { title: string }) => (
