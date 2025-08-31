@@ -119,7 +119,7 @@ export default function Shellafooter() {
 									</a>
 								</li>
 								<li>
-									<a href="./Profile" className="hover:text-amber-500">
+									<a href="./profile" className="hover:text-amber-500">
 						Profile									</a>
 								</li>
 							</ul>
