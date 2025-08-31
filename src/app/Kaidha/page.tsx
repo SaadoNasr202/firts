@@ -1,4 +1,4 @@
-import KaidhaPage from "@/components/KaidhaPage";
+import KaidhaPage from "@/components/LandingPage/KaidhaPage";
 import Navbar from "@/components/navbar";
 import Shellafooter from "@/components/shellafooter";
 

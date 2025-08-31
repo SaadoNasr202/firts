@@ -2,7 +2,8 @@
 
 "use client";
 
-import { restaurantMenu } from "./HomePage/datar";
+import { restaurantMenu } from "./datar";
+
 
 interface MealsPageProps {
 	restaurantId: number;

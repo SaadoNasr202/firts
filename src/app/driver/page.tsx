@@ -1,6 +1,6 @@
 import Shellafooter from "@/components/shellafooter";
 import Navbar from "@/components/navbar";
-import DriverPage from "@/components/driverPage";
+import DriverPage from "@/components/LandingPage/driverPage";
 export default function driver() {
   return (
     

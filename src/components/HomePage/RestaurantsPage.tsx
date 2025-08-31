@@ -3,7 +3,7 @@
 'use client';
 
 import React from 'react';
-import { allRestaurants } from './HomePage/datar';
+import { allRestaurants } from './datar';
 
 interface RestaurantsPageProps {
 	onRestaurantClick: (restaurantId: number) => void;

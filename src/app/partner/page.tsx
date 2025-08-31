@@ -1,5 +1,5 @@
+import PartnerPage from "@/components/LandingPage/partmerPage";
 import Navbar from "@/components/navbar";
-import PartnerPage from "@/components/partmerPage";
 import Shellafooter from "@/components/shellafooter";
 export default function Partner() {
 	return (

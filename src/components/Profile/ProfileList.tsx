@@ -2,26 +2,26 @@
 
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa"; // استيراد أيقونة الإغلاق
-import CondtionAterms from "./CondtionAterms";
-import Favorites from "./Favorites";
-import HelpAndSupport from "./HelpASupport";
-import KaidhaTerms from "./KaidhaTerms";
 import KaidhaWallet from "./KaidhaWallet";
-import MyStats from "./MyStats";
 import MyWallet from "./MyWallet";
 import NewAddress from "./NewAddress";
-import PrivacyPolicy from "./PrivacyPolicy";
 import ProfileDetails from "./ProfileDetails";
 import SavedAddress from "./SavedAddress";
 import Sidebar from "./Sidebar";
-import RefundPolicy from "./RefundPolicy";
+import Favorites from "../HomePage/Favorites";
+import MyStats from "../HomePage/MyStats";
+import PrivacyPolicy from "../Condetion/PrivacyPolicy";
+import KaidhaTerms from "../Condetion/KaidhaTerms";
+import CondtionAterms from "../Condetion/CondtionAterms";
+import HelpAndSupport from "../Condetion/HelpASupport";
+import RefundPolicy from "../Condetion/RefundPolicy";
 
 const OtherPage = ({ title }: { title: string }) => (
 	<div className="p-8 text-center text-3xl font-bold text-gray-500">
 		{title}
 	</div>
 );
-  
+
 export default function ProfileList() {
 	const [activePage, setActivePage] = useState("معلومات الحساب");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function ProfileList() {
 	};
 
 	return (
-		<div className="flex min-h-screen justify-center  bg-gray-100 p-4 md:p-8">
+		<div className="flex min-h-screen justify-center bg-gray-100 p-4 md:p-8">
 			<div className="flex w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-lg md:flex-row-reverse">
 				{/* زر فتح القائمة (يظهر فقط على الأجهزة الصغيرة) */}
 				{/* زر فتح القائمة (يظهر فقط على الموبايل) */}
