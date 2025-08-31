@@ -38,7 +38,7 @@ export default function ContractTemplate({ data }: ContractTemplateProps) {
 					className="h-24 w-auto"
 				/>
 			</div>
-
+			
 			<h1 className="mb-4 text-center text-3xl font-bold">
 				عقد اتفاقية استثمار شلة التجارية
 			</h1>
