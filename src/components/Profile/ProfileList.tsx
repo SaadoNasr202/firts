@@ -64,9 +64,9 @@ export default function ProfileList() {
 				{/* زر فتح القائمة (يظهر فقط على الموبايل) */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}
-					className="fixed top-4 right-4 z-50 rounded-full bg-green-600 p-3 text-white shadow-lg md:hidden"
+					className="fixed  z[99999]  rounded-full bg-green-600 p-3 text-white shadow-lg md:hidden"
 				>
-					<FaBars size={22} />
+					<FaBars size={15} />
 				</button>
 
 				{/* الشريط الجانبي للشاشات الكبيرة (يظهر فقط على md فما فوق) */}

@@ -1,9 +1,7 @@
 "use client";
 import { BriefcaseBusiness, Store, Truck, UsersRound } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
-	const router = useRouter();
 	return (
 		<div
 			// Use a consistent background color and modern font
@@ -17,8 +15,7 @@ export default function LandingPage() {
 					<section className="relative mb-8 overflow-hidden rounded-lg shadow-lg">
 						<div className="relative">
 							{/* صورة الخلفية */}
-							{/* الكود المعدل: استخدام ارتفاع متجاوب بدلًا من الارتفاع الثابت */}
-							<div className="flex min-h-[300px] w-full items-center justify-center lg:h-[650px]">
+							<div className="flex h-[300px] w-full items-center justify-center sm:h-[400px] md:h-[500px] lg:h-[650px]">
 								<img
 									src="lanfingpage.jpg"
 									alt="مع شلة كل احتياجاتك بضغطة زر"
@@ -26,30 +23,28 @@ export default function LandingPage() {
 								/>
 							</div>
 							{/* Overlay لزيادة وضوح النص */}
-							<div className="absolute inset-0 opacity-20" />
+							<div className="absolute inset-0 bg-black opacity-40" />
 							{/* محتوى النص والزر - هذا الجزء كان متجاوبًا بالفعل */}
 							<div className="font-['Readex Pro'] absolute inset-0 flex items-center justify-center p-6 text-center">
 								<div className="space-y-4">
-									<h1 className="text-[39px] leading-tight font-bold text-white md:text-[49px]">
+									<h1 className="text-3xl leading-tight font-bold text-white sm:text-2xl md:text-[49px]">
 										مع <span className="text-[#31A342]">شلة</span> كل احتياجاتك
 										بضغطة زر
 									</h1>
-									<p className="text-[31px] font-semibold text-white md:text-[39px]">
+									<p className="text-xl font-semibold text-white sm:text-xl md:text-[39px]">
 										أكثر من 60,000 مطعم ومتجر
 									</p>
-									<button
-										className="inline-flex items-center justify-center rounded-lg bg-[#FA9D2B] px-8 py-3 text-base text-white shadow-xl transition-all duration-300 hover:bg-[#D48925] focus:ring-4 focus:ring-[#FA9D2B]/50 focus:outline-none"
-										onClick={() => {
-											router.push("HomePage");
-										}}
+									<a
+										href="/HomePage"
+										className="inline-flex items-center justify-center rounded-lg bg-[#FA9D2B] px-6 py-3 text-base text-white shadow-xl transition-all duration-300 hover:bg-[#D48925] focus:ring-4 focus:ring-[#FA9D2B]/50 focus:outline-none sm:px-8 sm:py-4 sm:text-lg"
 									>
 										تصفّح الآن
-									</button>
+									</a>
 								</div>
 							</div>
 						</div>
 					</section>
-   
+
 					{/* ====== Mobile App SECTION (تطبيق الجوال) ====== */}
 					<section className="mb-8 rounded-xl bg-[#EAF6EC] p-6 shadow-md md:p-12">
 						<div className="grid items-center gap-6 lg:grid-cols-2">
@@ -58,7 +53,7 @@ export default function LandingPage() {
 								<div className="flex flex-col">
 									<h2 className="text-2xl font-semibold text-gray-900 md:text-4xl lg:text-5xl">
 										<span className="text-[#1C4234]">تطبيق الجوال</span>
-									</h2>     
+									</h2>
 									<p className="mt-2 text-base text-gray-700 md:text-lg">
 										حمّل تطبيق شلة على جوالك واطلب بضغطة زر
 									</p>
@@ -100,11 +95,11 @@ export default function LandingPage() {
 							</div>
 
 							{/* صورة التطبيق (يسار بالـRTL) - تم إضافة فئة `translate-y-` */}
-							<div className="translate-y-12 transform justify-self-center lg:justify-self-start">
+							<div className="transform self-end justify-self-center  sm:translate-y-30">
 								<img
 									src="imagemobile.png"
 									alt="تطبيق شلة"
-									className="h-auto max-w-full transition-transform duration-300 "
+									className="h-auto max-w-full -translate-y-[-25px]   md:translate-y-[-70px] lg:translate-y-[-70px]"
 								/>
 							</div>
 						</div>
@@ -134,7 +129,7 @@ export default function LandingPage() {
 										href="https://www.qaydha.com/"
 										className="mt-10 inline-flex items-center justify-center rounded-full bg-[#2D943C] px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
 									>
-										معرفة المزيد 
+										معرفة المزيد 
 									</a>
 								</div>
 								<img
@@ -150,7 +145,7 @@ export default function LandingPage() {
 							<button
 								className="cursor-pointer"
 								onClick={() => {
-									router.push("/partner");
+									window.location.href = "/partner";
 								}}
 							>
 								<Tile
@@ -163,7 +158,7 @@ export default function LandingPage() {
 							<button
 								className="cursor-pointer"
 								onClick={() => {
-									router.push("/driver");
+									window.location.href = "/driver";
 								}}
 							>
 								<Tile
@@ -180,7 +175,7 @@ export default function LandingPage() {
 							<button
 								className="cursor-pointer"
 								onClick={() => {
-									router.push("/invstore");
+									window.location.href = "/invstore";
 								}}
 							>
 								<Tile
@@ -193,7 +188,7 @@ export default function LandingPage() {
 							<button
 								className="cursor-pointer"
 								onClick={() => {
-									router.push("/worker");
+									window.location.href = "/worker";
 								}}
 							>
 								<Tile
