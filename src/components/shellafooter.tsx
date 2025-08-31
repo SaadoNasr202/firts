@@ -118,6 +118,10 @@ export default function Shellafooter() {
 										تواصل معنا
 									</a>
 								</li>
+								<li>
+									<a href="./Profile" className="hover:text-amber-500">
+						Profile									</a>
+								</li>
 							</ul>
 						</div>
 					</div>
