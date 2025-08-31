@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { allProducts } from "./data"; // استيراد البيانات
+import { allProducts } from "./HomePage/data"; // استيراد البيانات
 
 interface ProductDetailsPageProps {
 	productId: number;

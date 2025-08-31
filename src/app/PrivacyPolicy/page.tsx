@@ -1,5 +1,5 @@
-import NavBarCondition from "@/components/NavBarConditon";
-import PrivacyPolicy from "@/components/PrivacyPolicy";
+import NavBarCondition from "@/components/Condetion/NavBarConditon";
+import PrivacyPolicy from "@/components/Condetion/PrivacyPolicy";
 import Shellafooter from "@/components/shellafooter";
 
 export default function PrivacyPol(){

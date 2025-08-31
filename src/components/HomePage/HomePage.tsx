@@ -10,7 +10,6 @@ import { allRestaurants, restaurantMenu } from "./datar";
 import DiscountSlider from "./DiscountSlider";
 import MealDetailsPage from "./MealDetailsPage";
 import MealsPage from "./MealsPage";
-import PopularStoresSlider from "./PopularStoresSlider";
 import ProductDetailsPage from "./ProductDetailsPage";
 import ProductsPage from "./ProductsPage";
 import RestaurantSectionsPage from "./RestaurantPageDetails";
@@ -18,6 +17,7 @@ import RestaurantsPage from "./RestaurantsPage";
 import StorePage from "./StorePage";
 import SuperMarket from "./SuperMarket";
 import NearbyStoresPage from "./NearbyStoresPage";
+import PopularStoresSlider from "./PopularStoresSlider";
 
 export default function HomePage() {
 	const [currentPage, setCurrentPage] = useState("home");

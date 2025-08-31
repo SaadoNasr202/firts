@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 
-import ContractModal from "./ContractModal";
+import ContractModal from "../Condetion/ContractModal";
 import InvestoreForm from "./InvestoreRegister";
 import VideoSlider from "./VideoSlider";
 

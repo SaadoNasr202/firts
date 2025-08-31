@@ -1,6 +1,6 @@
 "use client";
 
-import { allProducts } from "./data"; // استيراد البيانات
+import { allProducts } from "./HomePage/data"; // استيراد البيانات
 
 // تحديد الواجهة (interface) للمكون
 interface ProductsPageProps {
