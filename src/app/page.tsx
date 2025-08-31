@@ -1,4 +1,4 @@
-import LandingPage from "@/components/landingpage";
+import LandingPage from "@/components/LandingPage/landingpage";
 import Navbar from "@/components/navbar";
 import Shellafooter from "@/components/shellafooter";
 export default function Home() {
