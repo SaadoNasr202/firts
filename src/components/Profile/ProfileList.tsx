@@ -64,7 +64,7 @@ export default function ProfileList() {
 				{/* زر فتح القائمة (يظهر فقط على الموبايل) */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}
-					className="fixed  z[99999]  rounded-full bg-green-600 p-3 text-white shadow-lg md:hidden"
+					className="fixed top-  z[99999]  rounded-full bg-green-600 p-3 text-white shadow-lg md:hidden"
 				>
 					<FaBars size={15} />
 				</button>
