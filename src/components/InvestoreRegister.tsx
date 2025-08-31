@@ -1,29 +1,32 @@
+// src/components/InvestoreForm.tsx
 "use client";
 
 import React, { useState } from "react";
 
 export default function InvestoreForm() {
-	// حالة لتخزين بيانات النموذج (Form)
 	const [formData, setFormData] = useState({
 		firstName: "",
-		lastName: "",
+		fatherName: "",
+		family: "",
+		birthDate: "",
 		email: "",
-		city: "",
+		nationalEmail: "",
+		iban: "",
+		grandfatherName: "",
+		idNumber: "",
 		phoneNumber: "",
-		nationality: "",
+		city: "",
+		bankName: "",
 		investmentAmount: "",
-		background: "",
 		agreed: false,
 	});
 
-	// دالة للتعامل مع تغييرات الحقول
 	const handleChange = (
 		e: React.ChangeEvent<
 			HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 		>,
 	) => {
 		const { name } = e.target;
-		// استخدام حارس النوع للتحقق من نوع العنصر قبل الوصول إلى الخاصية
 		let value: string | boolean;
 
 		if (e.target instanceof HTMLInputElement && e.target.type === "checkbox") {
@@ -38,88 +41,139 @@ export default function InvestoreForm() {
 		}));
 	};
 
-	// دالة للتعامل مع إرسال النموذج (Form)
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("Form Data Submitted:", formData);
-		// يمكنك إضافة منطق إرسال البيانات إلى الخادم هنا
-	};
-
-	// دالة لإعادة ضبط النموذج (Form)
-	const handleReset = () => {
-		setFormData({
-			firstName: "",
-			lastName: "",
-			email: "",
-			city: "",
-			phoneNumber: "",
-			nationality: "",
-			investmentAmount: "",
-			background: "",
-			agreed: false,
-		});
 	};
 
 	return (
 		<form
 			onSubmit={handleSubmit}
-			onReset={handleReset}
-			className="rtl mx-auto w-full space-y-6 text-right" 
+			className="rtl mx-auto w-full space-y-6 text-right"
+			dir="rtl"
 		>
-			{/* عنوان النموذج الرئيسي */}
-
-			{/* حقول الإدخال في تخطيط من عمودين */}
-			{/* يتحول من عمود واحد على الشاشات الصغيرة إلى عمودين على الشاشات المتوسطة */}
+			{/* شبكة حقلين في كل صف */}
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-				{/* الاسم الاول */}
+				{/* الصف الأول */}
 				<div className="space-y-2">
 					<label
 						htmlFor="firstName"
 						className="block text-sm font-semibold text-gray-700"
 					>
-						الاسم الاول
+						الاسم الأول
 					</label>
 					<input
 						type="text"
 						id="firstName"
 						name="firstName"
-						placeholder="الرجاء ادخال الاسم الاول"
+						placeholder="الاسم الأول"
 						value={formData.firstName}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
-
-				{/* الاسم الاخير */}
 				<div className="space-y-2">
 					<label
-						htmlFor="lastName"
+						htmlFor="fatherName"
 						className="block text-sm font-semibold text-gray-700"
 					>
-						الاسم الاخير
+						اسم الأب
 					</label>
 					<input
 						type="text"
-						id="lastName"
-						name="lastName"
-						placeholder="الرجاء ادخال الاسم الاخير"
-						value={formData.lastName}
+						id="fatherName"
+						name="fatherName"
+						placeholder="اسم الأب"
+						value={formData.fatherName}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
 
-				{/* البريد الالكتروني */}
+				{/* الصف الثاني */}
+				<div className="space-y-2">
+					<label
+						htmlFor="family"
+						className="block text-sm font-semibold text-gray-700"
+					>
+						اسم العائلة
+					</label>
+					<input
+						type="text"
+						id="family"
+						name="family"
+						placeholder="اسم العائلة"
+						value={formData.family}
+						onChange={handleChange}
+						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						required
+					/>
+				</div>
+				<div className="space-y-2">
+					<label
+						htmlFor="grandfatherName"
+						className="block text-sm font-semibold text-gray-700"
+					>
+						اسم الجد
+					</label>
+					<input
+						type="text"
+						id="grandfatherName"
+						name="grandfatherName"
+						placeholder="اسم الجد"
+						value={formData.grandfatherName}
+						onChange={handleChange}
+						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						required
+					/>
+				</div>
+
+				{/* الصف الثالث */}
+				<div className="space-y-2">
+					<label
+						htmlFor="birthDate"
+						className="block text-sm font-semibold text-gray-700"
+					>
+						تاريخ الميلاد
+					</label>
+					<input
+						type="date"
+						id="birthDate"
+						name="birthDate"
+						value={formData.birthDate}
+						onChange={handleChange}
+						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						required
+					/>
+				</div>
+				<div className="space-y-2">
+					<label
+						htmlFor="idNumber"
+						className="block text-sm font-semibold text-gray-700"
+					>
+						رقم الهوية
+					</label>
+					<input
+						type="text"
+						id="idNumber"
+						name="idNumber"
+						placeholder="رقم الهوية"
+						value={formData.idNumber}
+						onChange={handleChange}
+						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						required
+					/>
+				</div>
+
+				{/* الصف الرابع */}
 				<div className="space-y-2">
 					<label
 						htmlFor="email"
 						className="block text-sm font-semibold text-gray-700"
 					>
-						البريد الالكتروني
+						البريد الإلكتروني
 					</label>
 					<input
 						type="email"
@@ -129,34 +183,9 @@ export default function InvestoreForm() {
 						value={formData.email}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
-
-				{/* مدينة الاقامة */}
-				<div className="space-y-2">
-					<label
-						htmlFor="city"
-						className="block text-sm font-semibold text-gray-700"
-					>
-						مدينة الاقامة
-					</label>
-					<select
-						id="city"
-						name="city"
-						value={formData.city}
-						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
-						required
-					>
-						<option value="">السعودية</option>
-						{/* يمكنك إضافة المزيد من الخيارات هنا */}
-					</select>
-				</div>
-
-				{/* رقم الهاتف */}
 				<div className="space-y-2">
 					<label
 						htmlFor="phoneNumber"
@@ -169,12 +198,12 @@ export default function InvestoreForm() {
 							type="tel"
 							id="phoneNumber"
 							name="phoneNumber"
-							placeholder="55xxxxxxx"
+							placeholder="رقم الهاتف"
 							value={formData.phoneNumber}
 							onChange={handleChange}
-							className="w-full rounded-md border border-gray-300 p-2.5 pr-14 text-right shadow-sm focus:border-green-500 focus:ring-green-500"
-							dir="rtl" // تم إضافة هذه الخاصية
+							className="w-full rounded-md border border-gray-300 p-2.5 pr-14 shadow-sm focus:border-green-500 focus:ring-green-500"
 							required
+							dir="rtl"
 						/>
 						<span className="absolute top-1/2 left-2.5 -translate-y-1/2 text-gray-500">
 							+966 🇸🇦
@@ -182,73 +211,105 @@ export default function InvestoreForm() {
 					</div>
 				</div>
 
-				{/* الجنسية */}
+				{/* الصف الخامس */}
 				<div className="space-y-2">
 					<label
-						htmlFor="nationality"
+						htmlFor="nationalEmail"
 						className="block text-sm font-semibold text-gray-700"
 					>
-						الجنسية
+						البريد الإلكتروني حسب العنوان الوطني
 					</label>
-					<select
-						id="nationality"
-						name="nationality"
-						value={formData.nationality}
+					<input
+						type="email"
+						id="nationalEmail"
+						name="nationalEmail"
+						placeholder="البريد الإلكتروني حسب العنوان الوطني"
+						value={formData.nationalEmail}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
 						required
-					>
-						<option value="">السعودية</option>
-						{/* يمكنك إضافة المزيد من الخيارات هنا */}
-					</select>
+					/>
 				</div>
-
-				{/* نبذة عن خلفيتك العلمية وخبراتك (حقل نصي كبير) */}
-				<div className="space-y-2 md:col-span-2">
+				<div className="space-y-2">
 					<label
-						htmlFor="background"
+						htmlFor="city"
 						className="block text-sm font-semibold text-gray-700"
 					>
-						نبذة عن خلفيتك العلمية وخبراتك
+						المنطقة
 					</label>
-					<textarea
-						id="background"
-						name="background"
-						rows={4}
-						placeholder="اكتب هنا"
-						value={formData.background}
+					<input
+						type="text"
+						id="city"
+						name="city"
+						placeholder="المنطقة"
+						value={formData.city}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
 						required
-					></textarea>
+					/>
 				</div>
 
-				{/* المبلغ المراد الاستثمار فيه */}
-				<div className="space-y-2 md:col-span-2">
+				{/* الصف السادس */}
+				<div className="space-y-2">
+					<label
+						htmlFor="iban"
+						className="block text-sm font-semibold text-gray-700"
+					>
+						رقم الآيبان
+					</label>
+					<input
+						type="text"
+						id="iban"
+						name="iban"
+						placeholder="رقم الآيبان"
+						value={formData.iban}
+						onChange={handleChange}
+						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						required
+					/>
+				</div>
+				<div className="space-y-2">
+					<label
+						htmlFor="bankName"
+						className="block text-sm font-semibold text-gray-700"
+					>
+						اسم البنك
+					</label>
+					<input
+						type="text"
+						id="bankName"
+						name="bankName"
+						placeholder="اسم البنك"
+						value={formData.bankName}
+						onChange={handleChange}
+						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
+						required
+					/>
+				</div>
+
+				{/* الصف السابع */}
+				<div className="space-y-2">
 					<label
 						htmlFor="investmentAmount"
 						className="block text-sm font-semibold text-gray-700"
 					>
-						المبلغ المراد الاستثمار فيه
+						المبلغ المراد استثماره
 					</label>
 					<input
-						type="text"
+						type="number"
 						id="investmentAmount"
 						name="investmentAmount"
-						placeholder="10000SAR"
+						placeholder="المبلغ المراد استثماره"
 						value={formData.investmentAmount}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
-						dir="rtl" // تم إضافة هذه الخاصية
 						required
 					/>
 				</div>
 			</div>
 
-			{/* قسم المعلومات الإضافية والموافقة */}
-			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
+			{/* الموافقة */}
+			<div className="mt-8 flex items-center justify-start space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
 					الموافقة على جميع{" "}
 					<a href="/CondtionAterms" className="font-medium text-green-600 hover:underline">
@@ -266,20 +327,14 @@ export default function InvestoreForm() {
 				/>
 			</div>
 
-			{/* الأزرار تتحول من مكدسة إلى صف على الشاشات الصغيرة */}
-			<div className="mt-8 flex flex-col justify-start gap-4 sm:flex-row">
+			{/* زر الإرسال */}
+			<div className="mt-8 flex justify-center">
 				<button
 					type="submit"
-					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
+					className="w-full max-w-sm rounded-lg bg-white px-10 py-3 font-semibold text-[#31A342] shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
+					style={{ border: "2px solid #31A342" }}
 				>
-					إرسال
-				</button>
-				<button
-					type="button"
-					onClick={handleReset}
-					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
-				>
-					إعادة ضبط
+					عرض مسودة العقد
 				</button>
 			</div>
 		</form>
