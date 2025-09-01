@@ -45,7 +45,7 @@ export default function KaidhaRegister({
 	}); // Default to Riyadh
 
 	const handleSumbit = async () => {
-		const result  =await postFormKaidhaAction(InputField);
+		const result  =await postFormKaidhaAction(formData);
 		if (result){
 			console.log("true");
 			
