@@ -48,7 +48,7 @@ async function postFormDeliveryDriverAction(
 			updatedAt: new Date(),
 		};
 
-		await db.insert(TB_DeliveryDrivers).values(newData);
+		//await db.insert(TB_DeliveryDrivers).values("");
 
 		return { success: true };
 	} catch (error) {
