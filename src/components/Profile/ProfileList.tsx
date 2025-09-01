@@ -1,20 +1,21 @@
+// src/components/ProfileList.tsx
 "use client";
 
+import { MenuIcon, X } from "lucide-react";
 import { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa"; // استيراد أيقونة الإغلاق
+import CondtionAterms from "../Condetion/CondtionAterms";
+import HelpAndSupport from "../Condetion/HelpASupport";
+import KaidhaTerms from "../Condetion/KaidhaTerms";
+import PrivacyPolicy from "../Condetion/PrivacyPolicy";
+import RefundPolicy from "../Condetion/RefundPolicy";
+import Favorites from "../HomePage/Favorites";
+import MyStats from "../HomePage/MyStats";
 import KaidhaWallet from "./KaidhaWallet";
 import MyWallet from "./MyWallet";
 import NewAddress from "./NewAddress";
 import ProfileDetails from "./ProfileDetails";
 import SavedAddress from "./SavedAddress";
 import Sidebar from "./Sidebar";
-import Favorites from "../HomePage/Favorites";
-import MyStats from "../HomePage/MyStats";
-import PrivacyPolicy from "../Condetion/PrivacyPolicy";
-import KaidhaTerms from "../Condetion/KaidhaTerms";
-import CondtionAterms from "../Condetion/CondtionAterms";
-import HelpAndSupport from "../Condetion/HelpASupport";
-import RefundPolicy from "../Condetion/RefundPolicy";
 
 const OtherPage = ({ title }: { title: string }) => (
 	<div className="p-8 text-center text-3xl font-bold text-gray-500">
@@ -60,42 +61,40 @@ export default function ProfileList() {
 	return (
 		<div className="flex min-h-screen justify-center bg-gray-100 p-4 md:p-8">
 			<div className="flex w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-lg md:flex-row-reverse">
-				{/* زر فتح القائمة (يظهر فقط على الأجهزة الصغيرة) */}
-				{/* زر فتح القائمة (يظهر فقط على الموبايل) */}
-				<button
-					onClick={() => setIsSidebarOpen(true)}
-					className="fixed top-  z[99999]  rounded-full bg-green-600 p-3 text-white shadow-lg md:hidden"
-				>
-					<FaBars size={15} />
-				</button>
+				{/* Hamburger Button for Mobile */}
+				<div className="flex justify-end p-4 md:hidden">
+					<button
+						onClick={() => setIsSidebarOpen(true)}
+						className="rounded-md p-2 text-gray-700 hover:bg-gray-100"
+					>
+						<MenuIcon size={24} />
+					</button>
+				</div>
 
-				{/* الشريط الجانبي للشاشات الكبيرة (يظهر فقط على md فما فوق) */}
+				{/* Desktop Sidebar */}
 				<div className="hidden w-[420px] border-l border-gray-200 bg-gray-50 px-6 py-8 md:block">
 					<Sidebar activePage={activePage} setActivePage={setActivePage} />
 				</div>
 
-				{/* الشريط الجانبي للجوال (يظهر فقط عند isSidebarOpen) */}
+				{/* Mobile Sidebar Modal */}
 				{isSidebarOpen && (
 					<>
-						{/* الغطاء الشفاف لإغلاق القائمة */}
 						<div
 							className="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
 							onClick={() => setIsSidebarOpen(false)}
 						></div>
-
-						{/* قائمة الشريط الجانبي الفعلية */}
-						<div className="fixed top-0 right-0 z-50 h-full w-3/4 border-l border-gray-200 bg-gray-50 px-6 py-8">
+						<div className="fixed top-0 right-0 z-50 max-h-full w-3/4 transform overflow-y-auto border-l border-gray-200 bg-gray-50 px-6 py-8 transition-transform">
 							<button
 								onClick={() => setIsSidebarOpen(false)}
 								className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
 							>
-								<FaTimes size={24} />
+								<X size={24} />
 							</button>
 							<Sidebar
 								activePage={activePage}
 								setActivePage={(page) => {
 									setActivePage(page);
-									setIsSidebarOpen(false); // إغلاق القائمة بعد الاختيار
+									setIsSidebarOpen(false);
 								}}
 							/>
 						</div>

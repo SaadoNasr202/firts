@@ -1,5 +1,5 @@
 import KaidhaTerms from "@/components/Condetion/KaidhaTerms";
-import NavBarCondition from "@/components/Condetion/NavBarConditon";
+import NavBarCondition from "@/components/Profile/NavBarConditon";
 import PrivacyPolicy from "@/components/Condetion/PrivacyPolicy";
 import Shellafooter from "@/components/shellafooter";
 

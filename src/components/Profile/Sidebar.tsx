@@ -1,3 +1,7 @@
+// src/components/Sidebar.tsx
+"use client";
+
+// قائمة العناصر
 const sidebarItems: string[] = [
 	"معلومات الحساب",
 	"العناوين المحفوظة",
@@ -20,7 +24,7 @@ interface SidebarProps {
 	activePage: string; // لمعرفة أي زر نشط
 	setActivePage: (page: string) => void; // وظيفة لتغيير الصفحة
 }
-  
+
 export default function Sidebar({ activePage, setActivePage }: SidebarProps) {
 	return (
 		<nav>
@@ -28,10 +32,8 @@ export default function Sidebar({ activePage, setActivePage }: SidebarProps) {
 				{sidebarItems.map((item, index) => (
 					<li
 						key={index}
-						// عند النقر، استدعي وظيفة تغيير الصفحة مع اسم الزر
 						onClick={() => setActivePage(item)}
 						className={`cursor-pointer rounded-lg p-3 text-right transition-colors ${
-							// هنا نحدد لون الزر إذا كان هو الزر النشط حالياً
 							activePage === item
 								? "border-r-4 border-green-700 bg-green-100 font-semibold text-green-700"
 								: "text-gray-600 hover:bg-gray-200"
