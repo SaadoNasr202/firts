@@ -1,14 +1,13 @@
 "use client";
 
-import { FormData } from "@/app/Kaidha/page";
+import { KaidhaFormData } from "@/app/Kaidha/page";
 import React, { useState } from "react";
-// We will use inline SVG for the upload icon to avoid external dependencies.
-
-// This is the main React component for the delivery driver registration form.
 export default function KaidhaRegister({
 	postFormKaidhaAction,
 }: {
-	postFormKaidhaAction: (formData: FormData) => Promise<{ success: boolean }>;
+	postFormKaidhaAction: (
+		formData: KaidhaFormData,
+	) => Promise<{ success: boolean }>;
 }) {
 	// State to manage all form data based on the new image.
 	const [formData, setFormData] = useState({
@@ -45,16 +44,13 @@ export default function KaidhaRegister({
 	}); // Default to Riyadh
 
 	const handleSumbit = async () => {
-		const result  =await postFormKaidhaAction(formData);
-		if (result){
-			console.log("true");
-			
-		}
-		else {
+		const result = await postFormKaidhaAction(formData);
+		if (!result) {
 			console.log("false");
-			
+		} else {
+			console.log("true");
 		}
-	}
+	};
 
 	const handleChange = (
 		e: React.ChangeEvent<
@@ -116,46 +112,6 @@ export default function KaidhaRegister({
 		setMapLocation({ lat: 24.7136, lng: 46.6753 });
 	};
 
-	// A reusable component for a single input field with RTL styling.
-	const InputField = ({
-		label,
-		name,
-		type,
-		placeholder,
-		value,
-		onChange,
-		required = true,
-		icon,
-	}: {
-		label: string;
-		name: string;
-		type: string;
-		placeholder: string;
-		value: string;
-		onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-		required?: boolean;
-		icon?: string;
-	}) => (
-		<div className="flex flex-col">
-			<label
-				htmlFor={name}
-				className="mb-2 text-right font-semibold text-gray-700"
-			>
-				{label}
-			</label>
-			<input
-				type={type}
-				id={name}
-				name={name}
-				placeholder={placeholder}
-				value={value}
-				onChange={onChange}
-				className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-				required={required}
-			/>
-		</div>
-	);
-
 	// A reusable component for a select dropdown field.
 	const SelectField = ({
 		label,
@@ -163,7 +119,7 @@ export default function KaidhaRegister({
 		options,
 		value,
 		onChange,
-		required = true,
+		required = false,
 	}: {
 		label: string;
 		name: string;
@@ -207,54 +163,108 @@ export default function KaidhaRegister({
 				</h2>
 				<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
 					{/* First Row of Inputs */}
-					<InputField
-						label="الاسم الأول"
-						name="firstName"
-						type="text"
-						placeholder=""
-						value={formData.firstName}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="اسم العائلة"
-						name="lastName"
-						type="text"
-						placeholder=""
-						value={formData.lastName}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="اسم الأب"
-						name="fatherName"
-						type="text"
-						placeholder=""
-						value={formData.fatherName}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="اسم الجد"
-						name="grandFatherName"
-						type="text"
-						placeholder=""
-						value={formData.grandFatherName}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="تاريخ الميلاد"
-						name="birthDate"
-						type="date"
-						placeholder="MM/DD/YY"
-						value={formData.birthDate}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="الجنسية"
-						name="nationality"
-						type="text"
-						placeholder="سعودي"
-						value={formData.nationality}
-						onChange={handleChange}
-					/>
+					<div className="flex flex-col">
+						<label
+							htmlFor="firstName"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							الاسم الأول
+						</label>
+						<input
+							type="text"
+							id="firstName"
+							name="firstName"
+							placeholder=""
+							value={formData.firstName}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="lastName"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							اسم العائلة
+						</label>
+						<input
+							type="text"
+							id="lastName"
+							name="lastName"
+							placeholder=""
+							value={formData.lastName}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="fatherName"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							اسم الأب
+						</label>
+						<input
+							type="text"
+							id="fatherName"
+							name="fatherName"
+							placeholder=""
+							value={formData.fatherName}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="grandFatherName"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							اسم الجد
+						</label>
+						<input
+							type="text"
+							id="grandFatherName"
+							name="grandFatherName"
+							placeholder=""
+							value={formData.grandFatherName}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="birthDate"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							تاريخ الميلاد
+						</label>
+						<input
+							type="date"
+							id="birthDate"
+							name="birthDate"
+							placeholder="MM/DD/YY"
+							value={formData.birthDate}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="nationality"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							الجنسية
+						</label>
+						<input
+							type="text"
+							id="nationality"
+							name="nationality"
+							placeholder="سعودي"
+							value={formData.nationality}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
 
 					{/* Second Row of Inputs */}
 					<SelectField
@@ -295,48 +305,93 @@ export default function KaidhaRegister({
 						value={formData.idType}
 						onChange={handleChange}
 					/>
-					<InputField
-						label="رقم الهوية"
-						name="personalIdNumber"
-						type="text"
-						placeholder="001447888554"
-						value={formData.personalIdNumber}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="تاريخ الانتهاء"
-						name="idExpirationDate"
-						type="date"
-						placeholder="MM/DD/YY"
-						value={formData.idExpirationDate}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="رقم الجوال"
-						name="phoneNumber"
-						type="tel"
-						placeholder="+966"
-						value={formData.phoneNumber}
-						onChange={handleChange}
-					/>
+					<div className="flex flex-col">
+						<label
+							htmlFor="personalIdNumber"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							رقم الهوية
+						</label>
+						<input
+							type="text"
+							id="personalIdNumber"
+							name="personalIdNumber"
+							placeholder="001447888554"
+							value={formData.personalIdNumber}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="idExpirationDate"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							تاريخ الانتهاء
+						</label>
+						<input
+							type="date"
+							id="idExpirationDate"
+							name="idExpirationDate"
+							placeholder="MM/DD/YY"
+							value={formData.idExpirationDate}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="phoneNumber"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							رقم الجوال
+						</label>
+						<input
+							type="tel"
+							id="phoneNumber"
+							name="phoneNumber"
+							placeholder="+966"
+							value={formData.phoneNumber}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
 
 					{/* Third Row of Inputs */}
-					<InputField
-						label="رقم الواتساب"
-						name="whatsappNumber"
-						type="tel"
-						placeholder="+966"
-						value={formData.whatsappNumber}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="بريد إلكتروني"
-						name="email"
-						type="email"
-						placeholder="example@example.com"
-						value={formData.email}
-						onChange={handleChange}
-					/>
+					<div className="flex flex-col">
+						<label
+							htmlFor="whatsappNumber"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							رقم الواتساب
+						</label>
+						<input
+							type="tel"
+							id="whatsappNumber"
+							name="whatsappNumber"
+							placeholder="+966"
+							value={formData.whatsappNumber}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="email"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							بريد إلكتروني
+						</label>
+						<input
+							type="email"
+							id="email"
+							name="email"
+							placeholder="example@example.com"
+							value={formData.email}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
 					<SelectField
 						label="نوع المنزل"
 						name="homeType"
@@ -359,30 +414,57 @@ export default function KaidhaRegister({
 					/>
 
 					{/* Fourth Row of Inputs */}
-					<InputField
-						label="المدينة"
-						name="city"
-						type="text"
-						placeholder="الرياض"
-						value={formData.city}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="الحي"
-						name="neighborhood"
-						type="text"
-						placeholder="حي الغروب"
-						value={formData.neighborhood}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="العنوان التفصيلي للمنزل"
-						name="addressDetails"
-						type="text"
-						placeholder="جدة، شارع 500 تفرع 2"
-						value={formData.addressDetails}
-						onChange={handleChange}
-					/>
+					<div className="flex flex-col">
+						<label
+							htmlFor="city"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							المدينة
+						</label>
+						<input
+							type="text"
+							id="city"
+							name="city"
+							placeholder="الرياض"
+							value={formData.city}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="neighborhood"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							الحي
+						</label>
+						<input
+							type="text"
+							id="neighborhood"
+							name="neighborhood"
+							placeholder="حي الغروب"
+							value={formData.neighborhood}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="addressDetails"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							العنوان التفصيلي للمنزل
+						</label>
+						<input
+							type="text"
+							id="addressDetails"
+							name="addressDetails"
+							placeholder="جدة، شارع 500 تفرع 2"
+							value={formData.addressDetails}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
 				</div>
 
 				{/* Map Location Section */}
@@ -401,46 +483,91 @@ export default function KaidhaRegister({
 					معلومات العمل
 				</h2>
 				<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
-					<InputField
-						label="اسم الشركة"
-						name="companyName"
-						type="text"
-						placeholder=""
-						value={formData.companyName}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="المسمى الوظيفي"
-						name="jobTitle"
-						type="text"
-						placeholder=""
-						value={formData.jobTitle}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="عدد سنين العمل"
-						name="yearsOfExperience"
-						type="text"
-						placeholder=""
-						value={formData.yearsOfExperience}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="إجمالي الراتب"
-						name="grossSalary"
-						type="text"
-						placeholder=""
-						value={formData.grossSalary}
-						onChange={handleChange}
-					/>
-					<InputField
-						label="العنوان التفصيلي للعمل"
-						name="workAddress"
-						type="text"
-						placeholder="جدة، شارع 500 تفرع 2"
-						value={formData.workAddress}
-						onChange={handleChange}
-					/>
+					<div className="flex flex-col">
+						<label
+							htmlFor="companyName"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							اسم الشركة
+						</label>
+						<input
+							type="text"
+							id="companyName"
+							name="companyName"
+							placeholder=""
+							value={formData.companyName}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="jobTitle"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							المسمى الوظيفي
+						</label>
+						<input
+							type="text"
+							id="jobTitle"
+							name="jobTitle"
+							placeholder=""
+							value={formData.jobTitle}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="yearsOfExperience"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							عدد سنين العمل
+						</label>
+						<input
+							type="text"
+							id="yearsOfExperience"
+							name="yearsOfExperience"
+							placeholder=""
+							value={formData.yearsOfExperience}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="grossSalary"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							إجمالي الراتب
+						</label>
+						<input
+							type="text"
+							id="grossSalary"
+							name="grossSalary"
+							placeholder=""
+							value={formData.grossSalary}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="workAddress"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							العنوان التفصيلي للعمل
+						</label>
+						<input
+							type="text"
+							id="workAddress"
+							name="workAddress"
+							placeholder="جدة، شارع 500 تفرع 2"
+							value={formData.workAddress}
+							onChange={handleChange}
+							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						/>
+					</div>
 				</div>
 
 				{/* Additional Income and Installment Section */}
@@ -468,24 +595,36 @@ export default function KaidhaRegister({
 					</div>
 
 					<div className="col-span-1 grid grid-cols-1 items-end gap-x-8 gap-y-6 sm:grid-cols-3 md:col-span-2 lg:col-span-4">
-						<InputField
-							label="مبلغ الالتزام"
-							name="commitmentAmount"
-							type="text"
-							placeholder=""
-							value=""
-							onChange={() => {}}
-							required={false}
-						/>
-						<InputField
-							label="اسم الجهة"
-							name="entityName"
-							type="text"
-							placeholder=""
-							value=""
-							onChange={() => {}}
-							required={false}
-						/>
+						<div className="flex flex-col">
+							<label
+								htmlFor="commitmentAmount"
+								className="mb-2 text-right font-semibold text-gray-700"
+							>
+								مبلغ الالتزام
+							</label>
+							<input
+								type="text"
+								id="commitmentAmount"
+								name="commitmentAmount"
+								placeholder=""
+								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+							/>
+						</div>
+						<div className="flex flex-col">
+							<label
+								htmlFor="entityName"
+								className="mb-2 text-right font-semibold text-gray-700"
+							>
+								اسم الجهة
+							</label>
+							<input
+								type="text"
+								id="entityName"
+								name="entityName"
+								placeholder=""
+								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+							/>
+						</div>
 						{/* The remove button is now inside the new grid container */}
 						<button className="w-25 rounded-lg bg-[#BC7620] px-4 py-3 font-semibold text-white transition-colors hover:bg-red-600 focus:ring-2 focus:ring-red-400">
 							إزالة
@@ -503,36 +642,47 @@ export default function KaidhaRegister({
 					</div>
 
 					<div className="col-span-1 grid grid-cols-1 items-end gap-x-8 gap-y-6 sm:grid-cols-3 md:col-span-2 lg:col-span-4">
-						<InputField
-							label="المبلغ"
-							name="additionalAmount"
-							type="text"
-							placeholder=""
-							value=""
-							onChange={() => {}}
-							required={false}
-						/>
-						<InputField
-							label="جهة الدخل"
-							name="incomeSource"
-							type="text"
-							placeholder=""
-							value=""
-							onChange={() => {}}
-							required={false}
-						/>
+						<div className="flex flex-col">
+							<label
+								htmlFor="additionalAmount"
+								className="mb-2 text-right font-semibold text-gray-700"
+							>
+								المبلغ
+							</label>
+							<input
+								type="text"
+								id="additionalAmount"
+								name="additionalAmount"
+								placeholder=""
+								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+							/>
+						</div>
+						<div className="flex flex-col">
+							<label
+								htmlFor="incomeSource"
+								className="mb-2 text-right font-semibold text-gray-700"
+							>
+								جهة الدخل
+							</label>
+							<input
+								type="text"
+								id="incomeSource"
+								name="incomeSource"
+								placeholder=""
+								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+							/>
+						</div>
 						{/* The remove button is now inside the new grid container and has a fixed width */}
 						<button className="w-25 rounded-lg bg-[#BC7620] px-4 py-3 font-semibold text-white transition-colors hover:bg-red-600 focus:ring-2 focus:ring-red-400">
 							إزالة
 						</button>
 					</div>
 				</div>
-				
 
 				{/* الأزرار تتحول من مكدسة إلى صف على الشاشات الصغيرة */}
 				<div className="mt-8 flex flex-col justify-end gap-4 sm:flex-row">
 					<button
-					onClick={handleSumbit}
+						onClick={handleSumbit}
 						type="submit"
 						className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 					>

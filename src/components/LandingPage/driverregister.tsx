@@ -5,11 +5,12 @@ import React, { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 
 export default function DeliveryAgentForm({
-  postFormDeliveryDriverAction,
+	postFormDeliveryDriverAction,
 }: {
-  postFormDeliveryDriverAction: (formData: FormData) => Promise<{ success: boolean }>;
-})
- {
+	postFormDeliveryDriverAction: (
+		formData: FormData,
+	) => Promise<{ success: boolean }>;
+}) {
 	const [formData, setFormData] = useState<{
 		firstName: string;
 		lastName: string;
@@ -19,7 +20,7 @@ export default function DeliveryAgentForm({
 		personalIdNumber: string;
 		email: string;
 		region: string;
-		idImage: File | String;
+		idImage: string;
 		agreed: boolean;
 	}>({
 		firstName: "",
@@ -44,19 +45,13 @@ export default function DeliveryAgentForm({
 		}));
 	};
 
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files[0]) {
-			setFormData((prevData) => ({
-				...prevData,
-				idImage: e.target.files![0],
-			}));
+	const handleSumbit = async () => {
+		const result = await postFormDeliveryDriverAction(formData);
+		if (!result) {
+			console.log("false");
+		} else {
+			console.log("true");
 		}
-	};
-
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		console.log("Form Data Submitted:", formData);
-		// يمكنك إضافة منطق إرسال البيانات إلى الخادم هنا
 	};
 
 	const handleReset = () => {
@@ -75,7 +70,7 @@ export default function DeliveryAgentForm({
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="h-full w-full p-4 md:p-8">
+		<form onSubmit={handleSumbit} className="h-full w-full p-4 md:p-8">
 			{/* تم إضافة هذا السطر */}
 			<h2 className="mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
 				معلومات عامل التوصيل
@@ -242,9 +237,8 @@ export default function DeliveryAgentForm({
 						id="idImage"
 						name="idImage"
 						accept="image/*"
-						onChange={handleFileChange}
+						onChange={handleChange}
 						className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-						required
 					/>
 					<div className="flex flex-col items-center">
 						<FaUpload className="mb-2 text-4xl text-gray-400" />
@@ -269,22 +263,22 @@ export default function DeliveryAgentForm({
 					required
 				/>
 			</div>
-			<div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-4">
-  <button
-    type="submit"
-    className="w-full sm:w-auto px-10 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors duration-300"
-  >
-    إرسال
-  </button>
-  <button
-    type="button"
-    onClick={handleReset}
-    className="w-full sm:w-auto px-10 py-3 bg-white text-gray-500 font-semibold rounded-lg border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors duration-300"
-  >
-    إعادة ضبط
-  </button>
-</div>
+			<div className="mt-8 flex flex-col-reverse justify-end gap-4 sm:flex-row">
+				<button
+					onClick={handleSumbit}
+					type="submit"
+					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
+				>
+					إرسال
+				</button>
+				<button
+					type="button"
+					onClick={handleReset}
+					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
+				>
+					إعادة ضبط
+				</button>
+			</div>
 		</form>
 	);
-};
-
+}

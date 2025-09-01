@@ -1,13 +1,15 @@
 "use client";
 
-import { FormData } from "@/app/worker/page";
+import { WorkerFormData } from "@/app/worker/page";
 import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 
 export default function WorkerRegister({
 	postFormWorkerAction,
 }: {
-	postFormWorkerAction: (formData: FormData) => Promise<{ success: boolean }>;
+	postFormWorkerAction: (
+		formData: WorkerFormData,
+	) => Promise<{ success: boolean }>;
 }) {
 	const [formData, setFormData] = useState<{
 		firstName: string;
@@ -18,7 +20,7 @@ export default function WorkerRegister({
 		personalIdNumber: string;
 		email: string;
 		region: string;
-		idImage: File | null;
+		idImage: string;
 		agreed: boolean;
 	}>({
 		firstName: "",
@@ -29,10 +31,17 @@ export default function WorkerRegister({
 		personalIdNumber: "",
 		email: "",
 		region: "",
-		idImage: null,
+		idImage: "",
 		agreed: false,
 	});
-
+	const handleSumbit = async () => {
+		const result = await postFormWorkerAction(formData);
+		if (!result) {
+			console.log("false");
+		} else {
+			console.log("true");
+		}
+	};
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
@@ -41,15 +50,6 @@ export default function WorkerRegister({
 			...prevData,
 			[name]: type === "checkbox" ? checked : value,
 		}));
-	};
-
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files[0]) {
-			setFormData((prevData) => ({
-				...prevData,
-				idImage: e.target.files![0],
-			}));
-		}
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -68,7 +68,7 @@ export default function WorkerRegister({
 			personalIdNumber: "",
 			email: "",
 			region: "",
-			idImage: null,
+			idImage: "",
 			agreed: false,
 		});
 	};
@@ -237,13 +237,12 @@ export default function WorkerRegister({
 				</label>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<input
-						type="file"
+						type="text"
 						id="idImage"
 						name="idImage"
-						accept="image/*"
-						onChange={handleFileChange}
+						placeholder="url"
+						onChange={handleChange}
 						className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-						required
 					/>
 					<div className="flex flex-col items-center">
 						<FaUpload className="mb-2 text-4xl text-gray-400" />
@@ -270,6 +269,7 @@ export default function WorkerRegister({
 			</div>
 			<div className="mt-8 flex flex-col-reverse justify-start gap-4 sm:flex-row">
 				<button
+					onClick={handleSumbit}
 					type="submit"
 					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 				>

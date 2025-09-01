@@ -11,7 +11,6 @@ export default function PrivacyPolicy() {
 				/>
 				<h1>سياسة الخصوصية</h1>
 			</div>
-
 			<div className="w-full rounded-lg bg-white p-8 shadow-md">
 				<p className="mb-4 text-gray-700">
 					في عصر التكنولوجيا المالية (FinTech)، تُعدّ تطبيقات الهواتف الذكية

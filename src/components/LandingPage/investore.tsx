@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 
-import { FormData } from "@/app/invstore/page";
+import { InvestoreFormData } from "@/app/invstore/page";
 import ContractModal from "./ContractModal";
 import InvestoreForm from "./InvestoreRegister";
 import VideoSlider from "./VideoSlider";
@@ -11,7 +11,7 @@ import VideoSlider from "./VideoSlider";
 export default function InvestorePage({
 	postInvestoreAction,
 }: {
-	postInvestoreAction: (formData: FormData) => Promise<{ success: boolean }>;
+	postInvestoreAction: (formData: InvestoreFormData) => Promise<{ success: boolean; message?:string }>;
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -78,7 +78,6 @@ export default function InvestorePage({
 								<p className="w-5/12 text-left font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
 								{/* Empty for spacing */}
 							</div>
-
 							{/* Item 2 */}
 							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
@@ -94,7 +93,6 @@ export default function InvestorePage({
 									الاستثمار التجاري يساعد على خلق فرص العمل.
 								</p>
 							</div>
-
 							{/* Item 3 */}
 							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg">
@@ -111,7 +109,6 @@ export default function InvestorePage({
 								<p className="w-5/12 text-left font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
 								{/* Empty for spacing */}
 							</div>
-
 							{/* Item 4 */}
 							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg"></p>{" "}
@@ -127,7 +124,6 @@ export default function InvestorePage({
 									يمكن أن يؤدي الاستثمار في الشركات الناشئة إلى الابتكار.
 								</p>
 							</div>
-
 							{/* Item 5 */}
 							<div className="relative flex w-full items-center justify-between rounded-lg border-2 border-green-500 py-4">
 								<p className="w-5/12 text-right font-['Readex_Pro'] text-base text-gray-700 md:text-lg">

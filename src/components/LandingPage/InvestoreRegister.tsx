@@ -1,13 +1,13 @@
 // src/components/InvestoreForm.tsx
 "use client";
 
-import { FormData } from "@/app/invstore/page";
+import { InvestoreFormData } from "@/app/invstore/page";
 import React, { useState } from "react";
 
 export default function InvestoreForm({
   postInvestoreAction,
 }: {
-  postInvestoreAction: (formData: FormData) => Promise<{ success: boolean }>;
+  postInvestoreAction: (formData: InvestoreFormData) => Promise<{ success: boolean; message?:string }>;
 }) {
 	const [formData, setFormData] = useState({
 		first_name: "",

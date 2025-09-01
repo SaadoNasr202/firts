@@ -9,7 +9,7 @@ export default function driver() {
 	return (
 		<div className={`font-tajawal w-full bg-[#F0F2F5] text-gray-800`} dir="">
 			<Navbar />
-			<DriverPage  postFormDeliveryDriverAction={postFormDeliveryDriverAction}/>
+			<DriverPage postFormDeliveryDriverAction={postFormDeliveryDriverAction} />
 			<Shellafooter />
 		</div>
 	);
@@ -23,7 +23,7 @@ export interface FormData {
 	personalIdNumber: string;
 	email: string;
 	region: string;
-	idImage: File | null;
+	idImage: string;
 	agreed: boolean;
 }
 
@@ -44,12 +44,13 @@ async function postFormDeliveryDriverAction(
 			region: formData.region,
 			idImage: formData.idImage,
 			agreed: formData.agreed,
-			createdAt: new Date(),
-			updatedAt: new Date(),
 		};
 
-		//await db.insert(TB_DeliveryDrivers).values("");
-
+		try {
+			await db.insert(TB_DeliveryDrivers).values(newData);
+		} catch (error) {
+			console.log(error);
+		}
 		return { success: true };
 	} catch (error) {
 		console.error("Error inserting delivery driver data:", error);

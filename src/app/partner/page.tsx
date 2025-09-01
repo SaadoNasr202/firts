@@ -13,8 +13,8 @@ export default function Partner() {
 			<Shellafooter />
 		</div>
 	);
-}		
-export interface FormData {
+}
+export interface PartnerFormData {
 	storeName: string;
 	storeClassification: string;
 	whatYourStoreOffers: string;
@@ -28,7 +28,7 @@ export interface FormData {
 }
 
 async function postFormPartnerAction(
-	formData: FormData,
+	formData: PartnerFormData,
 ): Promise<{ success: boolean }> {
 	"use server";
 	try {
@@ -44,11 +44,13 @@ async function postFormPartnerAction(
 			personalIdNumber: formData.personalIdNumber,
 			detailedAddress: formData.detailedAddress,
 			agreed: formData.agreed,
-			createdAt: new Date(),
-			updatedAt: new Date(),
 		};
 
-		await db.insert(TB_Partner).values(newData);
+		try {
+			await db.insert(TB_Partner).values(newData);
+		} catch (error) {
+			console.log(error);
+		}
 
 		return { success: true };
 	} catch (error) {

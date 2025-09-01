@@ -1,12 +1,12 @@
 "use client";
 
-import { FormData } from "@/app/partner/page";
+import { PartnerFormData } from "@/app/partner/page";
 import StoreForm from "./partnerregister";
 
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
-	postFormPartnerAction: (formData: FormData) => Promise<{ success: boolean }>;
+	postFormPartnerAction: (formData: PartnerFormData) => Promise<{ success: boolean }>;
 }) {
 	return (
 		<div>

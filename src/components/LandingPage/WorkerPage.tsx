@@ -1,12 +1,12 @@
 "use client";
 
-import { FormData } from "@/app/worker/page";
+import { WorkerFormData } from "@/app/worker/page";
 import WorkerRegister from "./WorkerRegister";
 
 export default function WorkerPage({
   postFormWorkerAction,
 }: {
-  postFormWorkerAction: (formData: FormData) => Promise<{ success: boolean }>;
+  postFormWorkerAction: (formData: WorkerFormData) => Promise<{ success: boolean }>;
 }) {
 	return (
 		<main>

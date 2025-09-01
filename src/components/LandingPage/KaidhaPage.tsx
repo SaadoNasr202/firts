@@ -1,12 +1,12 @@
 "use client";
 
-import { FormData } from "@/app/Kaidha/page";
+import { KaidhaFormData } from "@/app/Kaidha/page";
 import KaidhaRegister from "./KaidhaRegister";
 
 export default function KaidhaPage({
 	postFormKaidhaAction,
 }: {
-	postFormKaidhaAction: (formData: FormData) => Promise<{ success: boolean }>;
+	postFormKaidhaAction: (formData: KaidhaFormData) => Promise<{ success: boolean }>;
 }) {
 	return (
 		<main>

@@ -14,8 +14,8 @@ export default function Kaidha() {
 		</div>
 	);
 }
-	
-export interface FormData {
+
+export interface KaidhaFormData {
 	firstName: string;
 	lastName: string;
 	fatherName: string;
@@ -44,7 +44,7 @@ export interface FormData {
 }
 
 async function postFormKaidhaAction(
-	formData: FormData,
+	formData: KaidhaFormData,
 ): Promise<{ success: boolean }> {
 	"use server";
 	try {
@@ -54,13 +54,13 @@ async function postFormKaidhaAction(
 			lastName: formData.lastName,
 			fatherName: formData.fatherName,
 			grandFatherName: formData.grandFatherName,
-			birthDate: new Date(formData.birthDate).toISOString(),
+			//birthDate: new Date(formData.birthDate).toISOString(),
 			nationality: formData.nationality,
 			socialStatus: formData.socialStatus,
 			familyMembersCount: parseInt(formData.familyMembersCount) || 0,
 			idType: formData.idType,
 			personalIdNumber: formData.personalIdNumber,
-			idExpirationDate: new Date(formData.idExpirationDate).toISOString(), // Convert to string
+			//idExpirationDate: new Date(formData.idExpirationDate).toISOString(), // Convert to string
 			phoneNumber: formData.phoneNumber,
 			whatsappNumber: formData.whatsappNumber,
 			email: formData.email,
@@ -75,13 +75,17 @@ async function postFormKaidhaAction(
 			yearsOfExperience: parseInt(formData.yearsOfExperience) || 0,
 			grossSalary: formData.grossSalary,
 			workAddress: formData.workAddress,
-			createdTime: new Date(),
-			lastUpdateTime: new Date(),
 		};
-		await db.insert(TB_KaidhaUsers).values(newData);
+		try {
+			await db.insert(TB_KaidhaUsers).values(newData);
+		} catch (error) {
+			console.log("error: " + error);
+		}
 
 		return { success: true };
 	} catch (error) {
+		console.log("error: " + error);
+
 		return {
 			success: false,
 		};
