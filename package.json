@@ -21,6 +21,7 @@
     "geist": "^1.4.2",
     "lucia": "^3.2.2",
     "lucide-react": "^0.540.0",
+    "nanoid": "^5.1.5",
     "next": "^14.2.32",
     "next-transpile-modules": "^10.0.1",
     "postgres": "^3.4.7",

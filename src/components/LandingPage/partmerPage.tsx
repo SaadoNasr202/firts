@@ -1,9 +1,13 @@
-
 "use client";
 
+import { FormData } from "@/app/partner/page";
 import StoreForm from "./partnerregister";
 
-export default function PartnerPage() {
+export default function PartnerPage({
+	postFormPartnerAction,
+}: {
+	postFormPartnerAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
 	return (
 		<div>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
@@ -31,7 +35,7 @@ export default function PartnerPage() {
 					</div>
 
 					<div className="">
-						<StoreForm />
+						<StoreForm postFormPartnerAction={postFormPartnerAction}/>
 					</div>
 				</section>
 

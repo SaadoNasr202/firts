@@ -1,10 +1,15 @@
 "use client";
 
+import { FormData } from "@/app/Kaidha/page";
 import React, { useState } from "react";
 // We will use inline SVG for the upload icon to avoid external dependencies.
 
 // This is the main React component for the delivery driver registration form.
-export default function KaidhaRegister() {
+export default function KaidhaRegister({
+	postFormKaidhaAction,
+}: {
+	postFormKaidhaAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
 	// State to manage all form data based on the new image.
 	const [formData, setFormData] = useState({
 		firstName: "",
@@ -38,6 +43,18 @@ export default function KaidhaRegister() {
 		lat: 24.7136,
 		lng: 46.6753,
 	}); // Default to Riyadh
+
+	const handleSumbit = async () => {
+		const result  =await postFormKaidhaAction(InputField);
+		if (result){
+			console.log("true");
+			
+		}
+		else {
+			console.log("false");
+			
+		}
+	}
 
 	const handleChange = (
 		e: React.ChangeEvent<
@@ -515,6 +532,7 @@ export default function KaidhaRegister() {
 				{/* الأزرار تتحول من مكدسة إلى صف على الشاشات الصغيرة */}
 				<div className="mt-8 flex flex-col justify-end gap-4 sm:flex-row">
 					<button
+					onClick={handleSumbit}
 						type="submit"
 						className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 					>

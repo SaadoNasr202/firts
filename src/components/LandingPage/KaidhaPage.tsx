@@ -1,8 +1,13 @@
 "use client";
 
+import { FormData } from "@/app/Kaidha/page";
 import KaidhaRegister from "./KaidhaRegister";
 
-export default function KaidhaPage() {
+export default function KaidhaPage({
+	postFormKaidhaAction,
+}: {
+	postFormKaidhaAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
 	return (
 		<main>
 			{/* قم بإضافة حاوية رئيسية لتحديد أقصى عرض ووضعها في المنتصف */}
@@ -28,13 +33,10 @@ export default function KaidhaPage() {
 				</section>
 				{/* قسم الفورم */}
 				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
-					
 					<div className="opacity-100">
-						<KaidhaRegister />
+						<KaidhaRegister postFormKaidhaAction={postFormKaidhaAction} />
 					</div>
 				</section>
-
-				
 			</div>
 		</main>
 	);

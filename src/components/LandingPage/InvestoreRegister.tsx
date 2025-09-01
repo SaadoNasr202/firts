@@ -1,24 +1,29 @@
 // src/components/InvestoreForm.tsx
 "use client";
 
+import { FormData } from "@/app/invstore/page";
 import React, { useState } from "react";
 
-export default function InvestoreForm() {
+export default function InvestoreForm({
+  postInvestoreAction,
+}: {
+  postInvestoreAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
 	const [formData, setFormData] = useState({
-		first_name: "", // كان firstName
-		father_name: "", // كان fatherName
-		family_name: "", // كان family
-		grandfather_name: "", // كان grandfatherName
-		birth_date: "", // كان birthDate
-		national_id: "", // كان idNumber
-		email: "", // لم يتغير
-		phone: "", // كان phoneNumber
-		national_address_email: "", // كان nationalEmail
-		region: "", // كان city
-		iban: "", // لم يتغير
-		bank_name: "", // كان bankName
-		amount: "", // كان investmentAmount
-		agreed: false, // لم يتغير
+		first_name: "",
+		father_name: "",
+		family_name: "", 
+		grandfather_name: "", 
+		birth_date: "",
+		national_id: "", 
+		email: "",
+		phone: "", 
+		national_address_email: "", 
+		region: "",
+		iban: "", 
+		bank_name: "",
+		amount: "", 
+		agreed: false, 
 	});
 
 	const [pdfUrl, setPdfUrl] = useState<string | null>(null);

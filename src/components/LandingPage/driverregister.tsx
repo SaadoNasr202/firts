@@ -1,9 +1,14 @@
 "use client";
 
+import { FormData } from "@/app/driver/page";
 import React, { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 
-export default function DeliveryAgentForm()
+export default function DeliveryAgentForm({
+  postFormDeliveryDriverAction,
+}: {
+  postFormDeliveryDriverAction: (formData: FormData) => Promise<{ success: boolean }>;
+})
  {
 	const [formData, setFormData] = useState<{
 		firstName: string;
@@ -14,7 +19,7 @@ export default function DeliveryAgentForm()
 		personalIdNumber: string;
 		email: string;
 		region: string;
-		idImage: File | null;
+		idImage: File | String;
 		agreed: boolean;
 	}>({
 		firstName: "",
@@ -25,7 +30,7 @@ export default function DeliveryAgentForm()
 		personalIdNumber: "",
 		email: "",
 		region: "",
-		idImage: null,
+		idImage: "",
 		agreed: false,
 	});
 
@@ -64,7 +69,7 @@ export default function DeliveryAgentForm()
 			personalIdNumber: "",
 			email: "",
 			region: "",
-			idImage: null,
+			idImage: "",
 			agreed: false,
 		});
 	};

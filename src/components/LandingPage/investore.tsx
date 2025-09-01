@@ -7,8 +7,13 @@ import { useState } from "react";
 import ContractModal from "../Condetion/ContractModal";
 import InvestoreForm from "./InvestoreRegister";
 import VideoSlider from "./VideoSlider";
+import { FormData } from "@/app/invstore/page";
 
-export default function InvestorePage() {
+export default function InvestorePage({
+  postInvestoreAction,
+}: {
+  postInvestoreAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const handleOpenModal = () => {
@@ -47,7 +52,7 @@ export default function InvestorePage() {
 					</div>
 
 					<div className="opacity-100">
-						<InvestoreForm />
+						<InvestoreForm postInvestoreAction={postInvestoreAction}/>
 					</div>
 				</section>
 

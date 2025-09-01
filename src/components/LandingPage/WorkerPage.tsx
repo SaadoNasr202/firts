@@ -1,8 +1,13 @@
 "use client";
 
+import { FormData } from "@/app/worker/page";
 import WorkerRegister from "./WorkerRegister";
 
-export default function WorkerPage() {
+export default function WorkerPage({
+  postFormWorkerAction,
+}: {
+  postFormWorkerAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
 	return (
 		<main>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
@@ -25,7 +30,7 @@ export default function WorkerPage() {
 						الانضمام كمقدم خدمة
 					</div>
 					<div className="opacity-100">
-						<WorkerRegister />
+						<WorkerRegister postFormWorkerAction={postFormWorkerAction} />
 					</div>
 				</section>
 

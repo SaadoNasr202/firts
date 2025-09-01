@@ -1,8 +1,13 @@
 "use client";
 
+import { FormData } from "@/app/partner/page";
 import React, { useState } from "react";
 
-export default function StoreForm() {
+export default function StoreForm({
+	postFormPartnerAction,
+}: {
+	postFormPartnerAction: (formData: FormData) => Promise<{ success: boolean }>;
+}) {
     const [formData, setFormData] = useState<{
         storeName: string;
         storeClassification: string;

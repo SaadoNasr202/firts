@@ -1,6 +1,11 @@
+import { FormData } from "@/app/driver/page";
 import DeliveryAgentForm from "./driverregister";
 
-export default function DriverPage(){
+export default function DriverPage({
+  postFormDeliveryDriverAction,
+}: {
+  postFormDeliveryDriverAction: (formData: FormData) => Promise<{ success: boolean }>;
+}){   
     return (
         <main>
         <div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
@@ -23,7 +28,7 @@ export default function DriverPage(){
               الانضمام كعامل توصيل
             </div>
             <div className="opacity-100">
-              <DeliveryAgentForm />
+              <DeliveryAgentForm postFormDeliveryDriverAction={postFormDeliveryDriverAction}/>
             </div>
           </section>
           
