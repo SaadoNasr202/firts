@@ -1,18 +1,17 @@
 // src/components/InvestorePage.tsx
-
 "use client";
 
 import { useState } from "react";
 
-import ContractModal from "../Condetion/ContractModal";
+import { FormData } from "@/app/invstore/page";
+import ContractModal from "./ContractModal";
 import InvestoreForm from "./InvestoreRegister";
 import VideoSlider from "./VideoSlider";
-import { FormData } from "@/app/invstore/page";
 
 export default function InvestorePage({
-  postInvestoreAction,
+	postInvestoreAction,
 }: {
-  postInvestoreAction: (formData: FormData) => Promise<{ success: boolean }>;
+	postInvestoreAction: (formData: FormData) => Promise<{ success: boolean }>;
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -52,7 +51,7 @@ export default function InvestorePage({
 					</div>
 
 					<div className="opacity-100">
-						<InvestoreForm postInvestoreAction={postInvestoreAction}/>
+						<InvestoreForm postInvestoreAction={postInvestoreAction} />
 					</div>
 				</section>
 
