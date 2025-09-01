@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, boolean, integer, date, numeric } from "drizz
 
 export const TB_user = pgTable("user", {
 	id: text("id").primaryKey(),
-	userName: text("username").notNull().unique(),
+	username: text("username").notNull().unique(),
 	password: text("password").notNull(),
 	createdTime: timestamp("created_time", {
 		withTimezone: true,
