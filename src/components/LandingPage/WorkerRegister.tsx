@@ -4,6 +4,50 @@ import { WorkerFormData } from "@/app/worker/page";
 import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 
+// مكون الإشعارات
+const Notification = ({ message, type, isVisible, onClose }: {
+	message: string;
+	type: 'success' | 'error';
+	isVisible: boolean;
+	onClose: () => void;
+}) => {
+	if (!isVisible) return null;
+
+	return (
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+			<div className="bg-black bg-opacity-50 absolute inset-0" onClick={onClose}></div>
+			<div className={`relative p-4 rounded-lg shadow-lg max-w-sm w-full mx-4 transition-all duration-300 ${
+				type === 'success' 
+					? 'bg-green-500 text-white' 
+					: 'bg-red-500 text-white'
+			}`}>
+				<div className="flex items-center justify-between">
+					<div className="flex items-center">
+						{type === 'success' ? (
+							<svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+							</svg>
+						) : (
+							<svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+							</svg>
+						)}
+						<span className="font-medium text-sm sm:text-base">{message}</span>
+					</div>
+					<button
+						onClick={onClose}
+						className="ml-4 text-white hover:text-gray-200 flex-shrink-0"
+					>
+						<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+							<path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function WorkerRegister({
 	postFormWorkerAction,
 }: {
@@ -34,12 +78,78 @@ export default function WorkerRegister({
 		idImage: "",
 		agreed: false,
 	});
+
+	// State for notifications
+	const [notification, setNotification] = useState({
+		message: '',
+		type: 'success' as 'success' | 'error',
+		isVisible: false
+	});
+
+	// التحقق من صحة النموذج
+	const validateForm = () => {
+		const requiredFields = [
+			'firstName', 'lastName', 'deliveryType', 'vehicleType', 'idType',
+			'personalIdNumber', 'email', 'region'
+		];
+
+		for (const field of requiredFields) {
+			if (!formData[field as keyof typeof formData] || 
+				(formData[field as keyof typeof formData] as string).trim() === '') {
+				return {
+					isValid: false,
+					message: `يرجى ملء جميع الحقول المطلوبة`
+				};
+			}
+		}
+
+		if (!formData.agreed) {
+			return {
+				isValid: false,
+				message: `يرجى الموافقة على الشروط والأحكام`
+			};
+		}
+
+		return { isValid: true, message: '' };
+	};
+
 	const handleSumbit = async () => {
-		const result = await postFormWorkerAction(formData);
-		if (!result) {
-			console.log("false");
-		} else {
-			console.log("true");
+		// التحقق من صحة النموذج أولاً
+		const validation = validateForm();
+		if (!validation.isValid) {
+			setNotification({
+				message: validation.message,
+				type: 'error',
+				isVisible: true
+			});
+			return;
+		}
+
+		try {
+			const result = await postFormWorkerAction(formData);
+			if (result.success) {
+				setNotification({
+					message: 'تم تسجيل البيانات بنجاح!',
+					type: 'success',
+					isVisible: true
+				});
+				// إعادة تعيين النموذج بعد النجاح
+				setTimeout(() => {
+					handleReset();
+				}, 2000);
+			} else {
+				setNotification({
+					message: 'حدث خطأ أثناء تسجيل البيانات',
+					type: 'error',
+					isVisible: true
+				});
+			}
+		} catch (error) {
+			setNotification({
+				message: 'حدث خطأ أثناء تسجيل البيانات',
+				type: 'error',
+				isVisible: true
+			});
 		}
 	};
 	const handleChange = (
@@ -283,6 +393,12 @@ export default function WorkerRegister({
 					إعادة ضبط
 				</button>
 			</div>
+			<Notification
+				message={notification.message}
+				type={notification.type}
+				isVisible={notification.isVisible}
+				onClose={() => setNotification({ ...notification, isVisible: false })}
+			/>
 		</form>
 	);
 }
