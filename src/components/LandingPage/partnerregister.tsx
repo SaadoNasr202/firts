@@ -2,6 +2,7 @@
 
 import { PartnerFormData } from "@/app/partner/page";
 import React, { useState } from "react";
+import PhoneInput from "react-phone-input-2";
 
 // مكون الإشعارات
 const Notification = ({ message, type, isVisible, onClose }: {
@@ -274,28 +275,34 @@ export default function StoreForm({
 
 				{/* Phone Number */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="phoneNumber"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						رقم الهاتف
-					</label>
-					<div className="relative flex w-full">
-						<span className="absolute top-0 right-0 h-full rounded-r-lg border-y border-r border-gray-300 bg-gray-50 p-3 text-gray-500">
-							+966
-						</span>
-						<input
-							type="tel"
-							id="phoneNumber"
-							name="phoneNumber"
-							placeholder=""
+						<label
+							htmlFor="phoneNumber"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							رقم الجوال
+						</label>
+						<PhoneInput
+							country={"sa"}
 							value={formData.phoneNumber}
-							onChange={handleChange}
-							className="w-full rounded-lg border border-gray-300 p-3 pl-16 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
-							required
+							onChange={(phone) =>
+								setFormData({ ...formData, phoneNumber: phone })
+							}
+							inputStyle={{
+								width: "100%",
+								direction: "rtl",
+								textAlign: "right",
+								paddingRight: "52px",
+							}}
+							containerStyle={{ direction: "rtl" }}
+							inputProps={{
+								name: "phoneNumber",
+								required: true,
+								autoFocus: true,
+								className:
+									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
+							}}
 						/>
 					</div>
-				</div>
 
 				{/* Branch Count */}
 				<div className="flex flex-col">

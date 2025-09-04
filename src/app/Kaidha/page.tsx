@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar";
 import Shellafooter from "@/components/shellafooter";
 import { db } from "@/lib/db";
 import { TB_KaidhaUsers } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 export default function Kaidha() {
@@ -45,7 +46,7 @@ export interface KaidhaFormData {
 
 async function postFormKaidhaAction(
 	formData: KaidhaFormData,
-): Promise<{ success: boolean }> {
+): Promise<{ success: boolean }|{message: string;field: string}> {
 	"use server";
 	try {
 		const newData = {
@@ -54,13 +55,13 @@ async function postFormKaidhaAction(
 			lastName: formData.lastName,
 			fatherName: formData.fatherName,
 			grandFatherName: formData.grandFatherName,
-			//birthDate: new Date(formData.birthDate).toISOString(),
+			birthDate: formData.birthDate ? new Date(formData.birthDate) : null,
 			nationality: formData.nationality,
 			socialStatus: formData.socialStatus,
 			familyMembersCount: parseInt(formData.familyMembersCount) || 0,
 			idType: formData.idType,
 			personalIdNumber: formData.personalIdNumber,
-			//idExpirationDate: new Date(formData.idExpirationDate).toISOString(), // Convert to string
+			idExpirationDate: formData.idExpirationDate ? new Date(formData.idExpirationDate) : null,
 			phoneNumber: formData.phoneNumber,
 			whatsappNumber: formData.whatsappNumber,
 			email: formData.email,
@@ -76,6 +77,14 @@ async function postFormKaidhaAction(
 			grossSalary: formData.grossSalary,
 			workAddress: formData.workAddress,
 		};
+		try {
+			const existingData = await db.select().from(TB_KaidhaUsers).where(eq(TB_KaidhaUsers.personalIdNumber, formData.personalIdNumber));
+			if(existingData.length){
+				return { message: "الرقم القومي موجود بالفعل", field: "personalIdNumber" };
+			}
+		} catch (error) {
+			console.log("error: " + error);
+		}
 		try {
 			await db.insert(TB_KaidhaUsers).values(newData);
 		} catch (error) {

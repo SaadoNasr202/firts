@@ -14,7 +14,7 @@ const Notification = ({ message, type, isVisible, onClose }: {
 	if (!isVisible) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+<div className="fixed inset-0 flex items-center justify-center p-4" dir="rtl">
 			<div className="bg-black bg-opacity-50 absolute inset-0" onClick={onClose}></div>
 			<div className={`relative p-4 rounded-lg shadow-lg max-w-sm w-full mx-4 transition-all duration-300 ${
 				type === 'success' 
@@ -191,24 +191,7 @@ export default function WorkerRegister({
 			</h2>
 
 			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
-				<div className="flex flex-col">
-					<label
-						htmlFor="firstName"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						الاسم الأول
-					</label>
-					<input
-						type="text"
-						id="firstName"
-						name="firstName"
-						placeholder="أحمد"
-						value={formData.firstName}
-						onChange={handleChange}
-						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-						required
-					/>
-				</div>
+				
 				<div className="flex flex-col">
 					<label
 						htmlFor="lastName"
@@ -222,6 +205,24 @@ export default function WorkerRegister({
 						name="lastName"
 						placeholder="خلف"
 						value={formData.lastName}
+						onChange={handleChange}
+						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						required
+					/>
+				</div>
+				<div className="flex flex-col">
+					<label
+						htmlFor="firstName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						الاسم الأول
+					</label>
+					<input
+						type="text"
+						id="firstName"
+						name="firstName"
+						placeholder="أحمد"
+						value={formData.firstName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required

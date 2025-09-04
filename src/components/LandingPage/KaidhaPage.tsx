@@ -6,7 +6,7 @@ import KaidhaRegister from "./KaidhaRegister";
 export default function KaidhaPage({
 	postFormKaidhaAction,
 }: {
-	postFormKaidhaAction: (formData: KaidhaFormData) => Promise<{ success: boolean }>;
+	postFormKaidhaAction: (formData: KaidhaFormData) => Promise<{ success: boolean }|{message: string;field: string}>;
 }) {
 	return (
 		<main>

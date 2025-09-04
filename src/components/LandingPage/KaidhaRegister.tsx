@@ -2,11 +2,18 @@
 
 import { KaidhaFormData } from "@/app/Kaidha/page";
 import React, { useState } from "react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css"; // استيراد التنسيقات
 
 // مكون الإشعارات
-const Notification = ({ message, type, isVisible, onClose }: {
+const Notification = ({
+	message,
+	type,
+	isVisible,
+	onClose,
+}: {
 	message: string;
-	type: 'success' | 'error';
+	type: "success" | "error";
 	isVisible: boolean;
 	onClose: () => void;
 }) => {
@@ -14,31 +21,56 @@ const Notification = ({ message, type, isVisible, onClose }: {
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-			<div className="bg-black bg-opacity-50 absolute inset-0" onClick={onClose}></div>
-			<div className={`relative p-4 rounded-lg shadow-lg max-w-sm w-full mx-4 transition-all duration-300 ${
-				type === 'success' 
-					? 'bg-green-500 text-white' 
-					: 'bg-red-500 text-white'
-			}`}>
+			<div
+				className="bg-opacity-50 absolute inset-0 bg-black"
+				onClick={onClose}
+			></div>
+			<div
+				className={`relative mx-4 w-full max-w-sm rounded-lg p-4 shadow-lg transition-all duration-300 ${
+					type === "success"
+						? "bg-green-500 text-white"
+						: "bg-red-500 text-white"
+				}`}
+			>
 				<div className="flex items-center justify-between">
 					<div className="flex items-center">
-						{type === 'success' ? (
-							<svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+						{type === "success" ? (
+							<svg
+								className="mr-2 h-5 w-5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fillRule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clipRule="evenodd"
+								/>
 							</svg>
 						) : (
-							<svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+							<svg
+								className="mr-2 h-5 w-5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fillRule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+									clipRule="evenodd"
+								/>
 							</svg>
 						)}
-						<span className="font-medium text-sm sm:text-base">{message}</span>
+						<span className="text-sm font-medium sm:text-base">{message}</span>
 					</div>
 					<button
 						onClick={onClose}
-						className="ml-4 text-white hover:text-gray-200 flex-shrink-0"
+						className="ml-4 flex-shrink-0 text-white hover:text-gray-200"
 					>
-						<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-							<path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+						<svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+							<path
+								fillRule="evenodd"
+								d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+								clipRule="evenodd"
+							/>
 						</svg>
 					</button>
 				</div>
@@ -52,7 +84,7 @@ export default function KaidhaRegister({
 }: {
 	postFormKaidhaAction: (
 		formData: KaidhaFormData,
-	) => Promise<{ success: boolean }>;
+	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
 	// State to manage all form data based on the new image.
 	const [formData, setFormData] = useState({
@@ -90,38 +122,47 @@ export default function KaidhaRegister({
 
 	// State for notifications
 	const [notification, setNotification] = useState({
-		message: '',
-		type: 'success' as 'success' | 'error',
-		isVisible: false
+		message: "",
+		type: "success" as "success" | "error",
+		isVisible: false,
 	});
-
 	// التحقق من صحة النموذج
 	const validateForm = () => {
 		const requiredFields = [
-			'firstName', 'lastName', 'fatherName', 'grandFatherName', 'birthDate',
-			'nationality', 'socialStatus', 'familyMembersCount', 'idType',
-			'personalIdNumber', 'idExpirationDate', 'phoneNumber', 'whatsappNumber',
-			'email', 'homeType', 'homeNature', 'city', 'neighborhood', 'addressDetails'
+			"firstName",
+			"lastName",
+			"fatherName",
+			"grandFatherName",
+			"birthDate",
+			"nationality",
+			"socialStatus",
+			"familyMembersCount",
+			"idType",
+			"personalIdNumber",
+			"idExpirationDate",
+			"phoneNumber",
+			"whatsappNumber",
+			"email",
+			"homeType",
+			"homeNature",
+			"city",
+			"neighborhood",
+			"addressDetails",
 		];
 
 		for (const field of requiredFields) {
-			if (!formData[field as keyof typeof formData] || 
-				(formData[field as keyof typeof formData] as string).trim() === '') {
+			if (
+				!formData[field as keyof typeof formData] ||
+				(formData[field as keyof typeof formData] as string).trim() === ""
+			) {
 				return {
 					isValid: false,
-					message: `يرجى ملء جميع الحقول المطلوبة`
+					message: `يرجى ملء جميع الحقول المطلوبة`,
 				};
 			}
 		}
 
-		if (!formData.agreed) {
-			return {
-				isValid: false,
-				message: `يرجى الموافقة على الشروط والأحكام`
-			};
-		}
-
-		return { isValid: true, message: '' };
+		return { isValid: true, message: "" };
 	};
 
 	const handleSumbit = async () => {
@@ -130,37 +171,50 @@ export default function KaidhaRegister({
 		if (!validation.isValid) {
 			setNotification({
 				message: validation.message,
-				type: 'error',
-				isVisible: true
+				type: "error",
+				isVisible: true,
 			});
 			return;
 		}
-
-		try {
-			const result = await postFormKaidhaAction(formData);
-			if (result.success) {
+		if (formData.birthDate >= new Date("2005-12-31").toISOString()) {
+			setNotification({
+				message: "تاريخ الميلاد يجب أن يكون قبل 2005-12-31",
+				type: "error",
+				isVisible: true,
+			});
+		} else {
+			try {
+				const result = await postFormKaidhaAction(formData);
+				if ("success" in result && result.success) {
+					setNotification({
+						message: "تم تسجيل البيانات بنجاح!",
+						type: "success",
+						isVisible: true,
+					});
+					// إعادة تعيين النموذج بعد النجاح
+					setTimeout(() => {
+						handleReset();
+					}, 2000);
+				} else if ("message" in result && result.message) {
+					setNotification({
+						message: result.message,
+						type: "error",
+						isVisible: true,
+					});
+				} else {
+					setNotification({
+						message: "حدث خطأ أثناء تسجيل البيانات",
+						type: "error",
+						isVisible: true,
+					});
+				}
+			} catch (error) {
 				setNotification({
-					message: 'تم تسجيل البيانات بنجاح!',
-					type: 'success',
-					isVisible: true
-				});
-				// إعادة تعيين النموذج بعد النجاح
-				setTimeout(() => {
-					handleReset();
-				}, 2000);
-			} else {
-				setNotification({
-					message: 'حدث خطأ أثناء تسجيل البيانات',
-					type: 'error',
-					isVisible: true
+					message: "حدث خطأ أثناء تسجيل البيانات",
+					type: "error",
+					isVisible: true,
 				});
 			}
-		} catch (error) {
-			setNotification({
-				message: 'حدث خطأ أثناء تسجيل البيانات',
-				type: 'error',
-				isVisible: true
-			});
 		}
 	};
 
@@ -170,7 +224,6 @@ export default function KaidhaRegister({
 		>,
 	) => {
 		const { name } = e.target;
-		// استخدام حارس النوع للتحقق من نوع العنصر قبل الوصول إلى الخاصية
 		let value: string | boolean;
 
 		if (e.target instanceof HTMLInputElement && e.target.type === "checkbox") {
@@ -358,6 +411,7 @@ export default function KaidhaRegister({
 							value={formData.birthDate}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+							max="2005-12-31"
 						/>
 					</div>
 					<div className="flex flex-col">
@@ -458,15 +512,33 @@ export default function KaidhaRegister({
 						>
 							رقم الجوال
 						</label>
-						<input
-							type="tel"
-							id="phoneNumber"
-							name="phoneNumber"
-							placeholder="+966"
-							value={formData.phoneNumber}
-							onChange={handleChange}
-							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-						/>
+						 <PhoneInput
+                                country={"sa"}
+                                value={formData.phoneNumber}
+                                onChange={(phone) => setFormData({ ...formData, phoneNumber: phone })}
+                               inputStyle={{
+								width: "100%",
+                               
+								direction: "ltr",
+								textAlign: "left",
+								paddingRight: "52px",
+                                
+							}}
+                            buttonStyle={
+                                {height:"100%",
+                                    width:"10%",
+                                    direction:"ltr",
+                                                                    }
+                            }
+                            containerStyle={{ direction: "rtl" }}
+
+                                inputProps={{
+                                    name: "phoneNumber",
+                                    required: true,
+                                    autoFocus: true,
+									className:"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+                                }}
+/>
 					</div>
 
 					{/* Third Row of Inputs */}
@@ -477,14 +549,35 @@ export default function KaidhaRegister({
 						>
 							رقم الواتساب
 						</label>
-						<input
-							type="tel"
-							id="whatsappNumber"
-							name="whatsappNumber"
-							placeholder="+966"
+							
+						<PhoneInput
+							country={"sa"}
 							value={formData.whatsappNumber}
-							onChange={handleChange}
-							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+							onChange={(phone) =>
+								setFormData({ ...formData, whatsappNumber: phone })
+							}
+							inputStyle={{
+								width: "100%",
+                               
+								direction: "ltr",
+								textAlign: "left",
+								paddingRight: "52px",
+                                
+							}}
+                            buttonStyle={
+                                {height:"100%",
+                                    width:"10%",
+                                    direction:"ltr",
+                                                                    }
+                            }
+							containerStyle={{ direction: "rtl" }}
+							inputProps={{
+								name: "phoneNumber",
+								required: true,
+								autoFocus: true,
+								className:
+									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
+							}}
 						/>
 					</div>
 					<div className="flex flex-col">

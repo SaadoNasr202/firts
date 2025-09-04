@@ -3,6 +3,7 @@
 
 import { InvestoreFormData } from "@/app/invstore/page";
 import React, { useState } from "react";
+import PhoneInput from "react-phone-input-2";
 
 // مكون الإشعارات
 const Notification = ({
@@ -412,26 +413,32 @@ export default function InvestoreForm({
 					</div>
 					<div className="space-y-2">
 						<label
-							htmlFor="phone"
-							className="block text-sm font-semibold text-gray-700"
+							
 						>
 							رقم الهاتف
 						</label>
 						<div className="relative">
-							<input
-								type="tel"
-								id="phone"
-								name="phone"
-								placeholder="رقم الهاتف"
-								value={formData.phone}
-								onChange={handleChange}
-								className="w-full rounded-md border border-gray-300 p-2.5 pr-14 shadow-sm focus:border-green-500 focus:ring-green-500"
-								required
-								dir="rtl"
-							/>
-							<span className="absolute top-1/2 left-2.5 -translate-y-1/2 text-gray-500">
-								+966 🇸🇦
-							</span>
+							<PhoneInput
+							country={"sa"}
+							value={formData.phone}
+							onChange={(phone) =>
+								setFormData({ ...formData, phone: phone })
+							}
+							inputStyle={{
+								width: "100%",
+								direction: "ltr",
+								textAlign: "left",
+								paddingRight: "52px",
+							}}
+							containerStyle={{ direction: "rtl" }}
+							inputProps={{
+								name: "phone",
+								required: true,
+								autoFocus: true,
+								className:
+									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
+							}}
+						/>
 						</div>
 					</div>
 
