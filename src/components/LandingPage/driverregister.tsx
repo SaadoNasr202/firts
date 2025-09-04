@@ -434,7 +434,11 @@ export default function DeliveryAgentForm({
 							}
 						}}
 						onUploadError={(error: Error) => {
-							alert(`ERROR! ${error.message}`);
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
 						}}
 					/>
 				</div>
@@ -457,7 +461,11 @@ export default function DeliveryAgentForm({
 							}
 						}}
 						onUploadError={(error: Error) => {
-							alert(`ERROR! ${error.message}`);
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
 						}}
 					/>
 				</div>
@@ -479,7 +487,11 @@ export default function DeliveryAgentForm({
 							}
 						}}
 						onUploadError={(error: Error) => {
-							alert(`ERROR! ${error.message}`);
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
 						}}
 					/>
 				</div>
@@ -501,7 +513,11 @@ export default function DeliveryAgentForm({
 							}
 						}}
 						onUploadError={(error: Error) => {
-							alert(`ERROR! ${error.message}`);
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
 						}}
 					/>
 				</div>
