@@ -426,8 +426,12 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
+								setNotification({
+									message: "تم رفع صورة الهوية الشخصية بنجاح",
+									type: "success",
+									isVisible: true,
+								});
 							}
-							alert("Upload Completed");
 						}}
 						onUploadError={(error: Error) => {
 							alert(`ERROR! ${error.message}`);
@@ -445,8 +449,12 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idVichle: url }));
+								setNotification({
+									message: "تم رفع صورة الرخصة بنجاح",
+									type: "success",
+									isVisible: true,
+								});
 							}
-							alert("Upload Completed");
 						}}
 						onUploadError={(error: Error) => {
 							alert(`ERROR! ${error.message}`);
@@ -463,8 +471,12 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idDriver: url }));
+								setNotification({
+									message: "تم رفع صورة الاستمارة بنجاح",
+									type: "success",
+									isVisible: true,
+								});
 							}
-							alert("Upload Completed");
 						}}
 						onUploadError={(error: Error) => {
 							alert(`ERROR! ${error.message}`);
@@ -481,8 +493,12 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, Picture: url }));
+								setNotification({
+									message: "تم رفع الصورة الشخصية بنجاح",
+									type: "success",
+									isVisible: true,
+								});
 							}
-							alert("Upload Completed");
 						}}
 						onUploadError={(error: Error) => {
 							alert(`ERROR! ${error.message}`);
