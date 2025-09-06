@@ -188,6 +188,6 @@ export default function InvestorePage({
 				onClose={handleCloseModal}
 				fileUrl="/contract.pdf"
 			/>
-		</main>		
+		</main>	
 	);
 }
