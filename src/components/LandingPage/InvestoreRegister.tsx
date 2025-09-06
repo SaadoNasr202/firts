@@ -3,8 +3,10 @@
 
 import { InvestoreFormData } from "@/app/invstore/page";
 import React, { useState } from "react";
+import { pdfjs } from "react-pdf";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 // مكون الإشعارات
 const Notification = ({
@@ -108,6 +110,7 @@ export default function InvestoreForm({
 	const [isOpen, setIsOpen] = useState(false);
 	const [isContractGenerated, setIsContractGenerated] = useState(false);
 	const [isNafathLoading, setNafathLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// State for notifications
 	const [notification, setNotification] = useState({
@@ -190,7 +193,7 @@ export default function InvestoreForm({
 				{
 					method: "POST",
 					headers: {
-						"Content-Type": "application/json",
+						"Content-Type": "application/pdf",
 					},
 					body: JSON.stringify(formData),
 				},
@@ -219,8 +222,6 @@ export default function InvestoreForm({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
-		// التحقق من صحة النموذج أولاً
 		const validation = validateForm();
 		if (!validation.isValid) {
 			setNotification({
@@ -231,43 +232,34 @@ export default function InvestoreForm({
 			return;
 		}
 
-		try {
-			const response = await fetch(
-				"https://shellafood.com/api/v1/investor/contract-pdf?pdf=1",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(formData),
-				},
-			);
+		setIsLoading(true);
 
-			if (!response.ok) {
-				throw new Error("فشل إنشاء ملف PDF");
-			}
+		try {
+			const response = await fetch("/api/proxy/contract-pdf", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(formData),
+			});
+
+			if (!response.ok) throw new Error("فشل إنشاء ملف PDF");
 
 			const blob = await response.blob();
 			const url = URL.createObjectURL(blob);
-			setPdfUrl(url);
-			setIsOpen(true); // افتح الـ Modal بعد جلب الملفd
-			setIsContractGenerated(true);
 
-			// إظهار رسالة نجاح
+			// عرض الـ PDF مباشرة بعد انتهاء التحميل
+			setPdfUrl(url);
+			setIsOpen(true); // افتح الـ Modal بعد جلب الملف
+			setIsContractGenerated(true);
+		} catch (error: any) {
+			console.error(error);
 			setNotification({
-				message: "تم إنشاء العقد بنجاح!",
-				type: "success",
-				isVisible: true,
-			});
-		} catch (error) {
-			console.error("Error generating PDF:", error);
-			// إظهار رسالة خطأ
-			setNotification({
-				message: "حدث خطأ أثناء إنشاء العقد",
+				message: error.message || "حدث خطأ أثناء إنشاء العقد",
 				type: "error",
 				isVisible: true,
 			});
 			setIsContractGenerated(false);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -423,7 +415,6 @@ export default function InvestoreForm({
 								onChange={(phone) => setFormData({ ...formData, phone: phone })}
 								inputStyle={{
 									width: "100%",
-
 									direction: "ltr",
 									textAlign: "left",
 									paddingRight: "52px",
@@ -565,17 +556,17 @@ export default function InvestoreForm({
 						type="submit"
 						className="w-full max-w-sm rounded-lg bg-white px-10 py-3 font-semibold text-[#31A342] shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 						style={{ border: "2px solid #31A342" }}
+						disabled={isLoading}
 					>
-						عرض العقد
+						{isLoading ? "جاري إنشاء العقد..." : "عرض العقد"}
 					</button>
 				</div>
 			</form>
-									
+
 			{/* شاشة منبثقة لعرض PDF */}
-			{isOpen && pdfUrl && (
+			{isOpen && (
 				<div className="bg-opacity-60 fixed inset-0 z-50 flex items-center justify-center bg-black">
 					<div className="relative w-11/12 max-w-4xl rounded-lg bg-white p-4 shadow-lg">
-						{/* زر إغلاق */}
 						<button
 							onClick={() => setIsOpen(false)}
 							className="absolute top-2 left-2 rounded-md bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-300"
@@ -583,12 +574,16 @@ export default function InvestoreForm({
 							✕ إغلاق
 						</button>
 
-						<h2 className="mb-4 text-lg font-bold text-gray-700">العقد</h2>
-
-						<iframe
-							src={pdfUrl}
-							className="h-[600px] w-full rounded-md border"
-						></iframe>
+						{pdfUrl ? (
+							<iframe
+								src={pdfUrl}
+								className="h-[80vh] min-h-[400px] w-full rounded-md border"
+							></iframe>
+						) : (
+							<div className="flex h-[600px] w-full items-center justify-center rounded-md border bg-gray-100 font-semibold text-gray-700">
+								جاري تحميل العقد...
+							</div>
+						)}
 
 						{isContractGenerated && (
 							<div className="mt-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
@@ -613,6 +608,12 @@ export default function InvestoreForm({
 			)}
 
 			{/* إشعارات */}
+			<Notification
+				message={notification.message}
+				type={notification.type}
+				isVisible={notification.isVisible}
+				onClose={() => setNotification({ ...notification, isVisible: false })}
+			/>
 		</div>
 	);
 }
