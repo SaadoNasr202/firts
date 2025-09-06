@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       const errorText = await res.text();
       return new Response(errorText, { status: res.status });
     }
-
+      
     const arrayBuffer = await res.arrayBuffer();
     return new Response(arrayBuffer, {
       headers: { "Content-Type": "application/pdf" },
