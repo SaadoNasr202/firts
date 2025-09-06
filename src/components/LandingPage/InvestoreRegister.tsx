@@ -250,7 +250,7 @@ export default function InvestoreForm({
 			const blob = await response.blob();
 			const url = URL.createObjectURL(blob);
 			setPdfUrl(url);
-			setIsOpen(true); // افتح الـ Modal بعد جلب الملف
+			setIsOpen(true); // افتح الـ Modal بعد جلب الملفd
 			setIsContractGenerated(true);
 
 			// إظهار رسالة نجاح
