@@ -581,7 +581,7 @@ export default function InvestoreForm({
 							<div className="flex h-[600px] w-full items-center justify-center rounded-md border bg-gray-100 font-semibold text-gray-700">
 								جاري تحميل العقد...
 							</div>
-						)}			
+						)}
 
 						{isContractGenerated && (
 							<div className="mt-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
