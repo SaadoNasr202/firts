@@ -248,7 +248,7 @@ export default function InvestoreForm({
 
 			// عرض الـ PDF مباشرة بعد انتهاء التحميل
 			setPdfUrl(url);
-			setIsOpen(true);
+			setIsOpen(true); // افتح الـ Modal بعد جلب الملف
 			setIsContractGenerated(true);
 		} catch (error: any) {
 			console.error(error);
