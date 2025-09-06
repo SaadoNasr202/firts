@@ -3,10 +3,8 @@
 
 import { InvestoreFormData } from "@/app/invstore/page";
 import React, { useState } from "react";
-import { pdfjs } from "react-pdf";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 // مكون الإشعارات
 const Notification = ({

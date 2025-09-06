@@ -7,6 +7,8 @@ import { InvestoreFormData } from "@/app/invstore/page";
 import ContractModal from "./ContractModal";
 import InvestoreForm from "./InvestoreRegister";
 import VideoSlider from "./VideoSlider";
+import dynamic from "next/dynamic";
+
 
 export default function InvestorePage({
 	postInvestoreAction,
