@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar";
 import Shellafooter from "@/components/shellafooter";
 import { db } from "@/lib/db";
 import { TB_Partner } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 export default function Partner() {
@@ -32,7 +33,7 @@ export interface PartnerFormData {
 
 async function postFormPartnerAction(
 	formData: PartnerFormData,
-): Promise<{ success: boolean }> {
+): Promise<{ success: boolean } |{message: string;field: string}> {
 	"use server";
 	try {
 		const newData = {
@@ -51,6 +52,14 @@ async function postFormPartnerAction(
 			detailedAddress: formData.detailedAddress,
 			agreed: formData.agreed,
 		};
+		try {
+			const existingData = await db.select().from(TB_Partner).where(eq(TB_Partner.personalIdNumber, formData.personalIdNumber));
+			if(existingData.length){
+				return { message: "الرقم القومي موجود بالفعل", field: "personalIdNumber" };
+			}
+		} catch (error) {
+			console.log("error: " + error);
+		}
 
 		try {
 			await db.insert(TB_Partner).values(newData);

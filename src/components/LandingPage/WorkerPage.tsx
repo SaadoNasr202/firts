@@ -1,27 +1,22 @@
 "use client";
 
 import { WorkerFormData } from "@/app/worker/page";
+import ImageWorkerSlider from "./SliderWorker";
 import WorkerRegister from "./WorkerRegister";
 
 export default function WorkerPage({
-  postFormWorkerAction,
+	postFormWorkerAction,
 }: {
-  postFormWorkerAction: (formData: WorkerFormData) => Promise<{ success: boolean }>;
+	postFormWorkerAction: (
+		formData: WorkerFormData,
+	) => Promise<{ success: boolean }|{message: string;field: string}>;
 }) {
 	return (
 		<main>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
 				{/* قسم صورة الخلفية */}
 				<section className="relative mb-8 overflow-hidden">
-					<div className="relative">
-						<div className="flex aspect-video h-auto min-h-[300px] w-full items-center justify-center">
-							<img
-								src="worker.png"
-								alt=""
-								className="h-full w-full object-cover"
-							/>
-						</div>
-					</div>
+					<ImageWorkerSlider />
 				</section>
 
 				{/* قسم الفورم */}

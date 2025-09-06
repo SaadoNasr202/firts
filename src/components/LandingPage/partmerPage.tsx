@@ -7,7 +7,7 @@ import ImagePartnerSlider from "./SliderPartner";
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
-	postFormPartnerAction: (formData: PartnerFormData) => Promise<{ success: boolean }>;
+	postFormPartnerAction: (formData: PartnerFormData) => Promise<{ success: boolean } |{message: string;field: string}>;
 }) {
 	return (
 		<div>

@@ -85,7 +85,7 @@ export default function StoreForm({
 }: {
 	postFormPartnerAction: (
 		formData: PartnerFormData,
-	) => Promise<{ success: boolean }>;
+	) => Promise<{ success: boolean }|{message: string;field: string}>;
 }) {
 	const [formData, setFormData] = useState<{
 		storeName: string;
@@ -174,31 +174,42 @@ export default function StoreForm({
 			return;
 		}
 
-		try {
-			const result = await postFormPartnerAction(formData);
-			if (result.success) {
-				setNotification({
-					message: "تم تسجيل البيانات بنجاح!",
-					type: "success",
-					isVisible: true,
-				});
-				// إعادة تعيين النموذج بعد النجاح
-				setTimeout(() => {
+		if (formData.personalIdNumber.length > 10) {
+			setNotification({
+				message: "الرقم القومي اكبر من 10 خانات",
+				type: "error",
+				isVisible: true,
+			});
+		} else {
+			try {
+				const result = await postFormPartnerAction(formData);
+				if ("success" in result && result.success) {
+					setNotification({
+						message: "تم تسجيل البيانات بنجاح!",
+						type: "success",
+						isVisible: true,
+					});
 					handleReset();
-				}, 2000);
-			} else {
+				} else if ("message" in result && result.message) {
+					setNotification({
+						message: result.message,
+						type: "error",
+						isVisible: true,
+					});
+				} else {
+					setNotification({
+						message: "حدث خطأ اثناء الستجيل",
+						type: "error",
+						isVisible: true,
+					});
+				}
+			} catch (error) {
 				setNotification({
 					message: "حدث خطأ أثناء تسجيل البيانات",
 					type: "error",
 					isVisible: true,
 				});
 			}
-		} catch (error) {
-			setNotification({
-				message: "حدث خطأ أثناء تسجيل البيانات",
-				type: "error",
-				isVisible: true,
-			});
 		}
 	};
 	const handleChange = (
@@ -389,7 +400,7 @@ export default function StoreForm({
 						type="text"
 						id="personalIdNumber"
 						name="personalIdNumber"
-						placeholder="EX: XXXXX-XXXXXXX-X"
+						placeholder="EX:1234567890"
 						value={formData.personalIdNumber}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
