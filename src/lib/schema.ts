@@ -57,6 +57,7 @@ export const TB_KaidhaUsers = pgTable("KaidhaUser", {
 	grossSalary: text("gross_salary"),
 	workAddress: text("work_address"),
 });
+        
 export const TB_Partner = pgTable("KaidhaStore", {
     id: text("id").primaryKey(),
     storeName: text("store_name").notNull(),

@@ -4,6 +4,7 @@ import { PartnerFormData } from "@/app/partner/page";
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { UploadButton } from "../uploadthing";
 
 // مكون الإشعارات
 const Notification = ({
@@ -96,6 +97,9 @@ export default function StoreForm({
 		englishStoreName: string;
 		personalIdNumber: string;
 		detailedAddress: string;
+		idImage: string;
+		Municipallicense: string;
+		Storefrontimage: string;
 		agreed: boolean;
 	}>({
 		storeName: "",
@@ -107,6 +111,9 @@ export default function StoreForm({
 		englishStoreName: "",
 		personalIdNumber: "",
 		detailedAddress: "",
+		idImage: "",
+		Municipallicense: "",
+		Storefrontimage: "",
 		agreed: false,
 	});
 
@@ -128,6 +135,8 @@ export default function StoreForm({
 			"phoneNumber",
 			"englishStoreName",
 			"personalIdNumber",
+			"idImage",
+			"Storefrontimage",
 			"detailedAddress",
 		];
 
@@ -221,6 +230,9 @@ export default function StoreForm({
 			englishStoreName: "",
 			personalIdNumber: "",
 			detailedAddress: "",
+			idImage: "",
+			Municipallicense: "",
+			Storefrontimage: "",
 			agreed: false,
 		});
 	};
@@ -371,7 +383,7 @@ export default function StoreForm({
 						htmlFor="personalIdNumber"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						رقم الهوية الشخصية
+						رقم الهوية الشخصية / الإقامة
 					</label>
 					<input
 						type="text"
@@ -405,7 +417,87 @@ export default function StoreForm({
 					/>
 				</div>
 			</div>
+			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
+				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
+					<label>صورة الهوية /الإقامة </label>
+					<UploadButton
+						endpoint="imageUploader"
+						onClientUploadComplete={(res) => {
+							console.log("Files:", res);
+							const first = res?.[0];
+							const url = (first as any)?.serverData?.url || first?.url;
+							if (url) {
+								setFormData((prev) => ({ ...prev, idImage: url }));
+								setNotification({
+									message: "تم رفع صورة الهوية الشخصية بنجاح",
+									type: "success",
+									isVisible: true,
+								});
+							}
+						}}
+						onUploadError={(error: Error) => {
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
+						}}
+					/>
+				</div>
 
+				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
+					<label> رخصة البلدية (ان وجدت)</label>
+					<UploadButton
+						endpoint="imageUploader"
+						onClientUploadComplete={(res) => {
+							console.log("Files:", res);
+							const first = res?.[0];
+							const url = (first as any)?.serverData?.url || first?.url;
+							if (url) {
+								setFormData((prev) => ({ ...prev, Municipallicense: url }));
+								setNotification({
+									message: "تم رفع صورة الرخصة بنجاح",
+									type: "success",
+									isVisible: true,
+								});
+							}
+						}}
+						onUploadError={(error: Error) => {
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
+						}}
+					/>
+				</div>
+				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
+					<label> صورة واجهة المحل /الشعار </label>
+					<UploadButton
+						endpoint="imageUploader"
+						onClientUploadComplete={(res) => {
+							console.log("Files:", res);
+							const first = res?.[0];
+							const url = (first as any)?.serverData?.url || first?.url;
+							if (url) {
+								setFormData((prev) => ({ ...prev, Storefrontimage: url }));
+								setNotification({
+									message: "تم رفع صورة المتجر/اللوجو بنجاح",
+									type: "success",
+									isVisible: true,
+								});
+							}
+						}}
+						onUploadError={(error: Error) => {
+							setNotification({
+								message: error.message,
+								type: "error",
+								isVisible: true,
+							});
+						}}
+					/>
+				</div>
+			</div>
 			{/* Detailed Address */}
 			<div className="mt-6 flex flex-col">
 				<label

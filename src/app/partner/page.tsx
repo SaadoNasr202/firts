@@ -23,6 +23,9 @@ export interface PartnerFormData {
 	phoneNumber: string;
 	englishStoreName: string;
 	personalIdNumber: string;
+	idImage: string;
+	Municipallicense: string;
+	Storefrontimage: string;
 	detailedAddress: string;
 	agreed: boolean;
 }
@@ -42,6 +45,9 @@ async function postFormPartnerAction(
 			phoneNumber: formData.phoneNumber,
 			englishStoreName: formData.englishStoreName,
 			personalIdNumber: formData.personalIdNumber,
+			idImage:formData.idImage,
+			Municipallicense:formData.Municipallicense,
+			Storefrontimage:formData.Storefrontimage,
 			detailedAddress: formData.detailedAddress,
 			agreed: formData.agreed,
 		};
