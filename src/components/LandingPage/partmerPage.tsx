@@ -2,6 +2,7 @@
 
 import { PartnerFormData } from "@/app/partner/page";
 import StoreForm from "./partnerregister";
+import ImagePartnerSlider from "./SliderPartner";
 
 export default function PartnerPage({
 	postFormPartnerAction,
@@ -13,15 +14,7 @@ export default function PartnerPage({
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
 				{/* قسم صورة الخلفية */}
 				<section className="relative mb-8 overflow-hidden">
-					<div className="relative">
-						<div className="flex aspect-video h-auto min-h-[300px] w-full items-center justify-center">
-							<img
-								src="partner.jpg"
-								alt=""
-								className="h-full w-full object-cover"
-							/>
-						</div>
-					</div>
+					<ImagePartnerSlider />
 				</section>
 
 				{/* قسم الفورم */}

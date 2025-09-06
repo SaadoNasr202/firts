@@ -4,6 +4,7 @@
 import { InvestoreFormData } from "@/app/invstore/page";
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 // مكون الإشعارات
 const Notification = ({
@@ -412,33 +413,31 @@ export default function InvestoreForm({
 						/>
 					</div>
 					<div className="space-y-2">
-						<label
-							
-						>
+						<label className="mb-2 text-right font-semibold text-gray-700">
 							رقم الهاتف
 						</label>
 						<div className="relative">
 							<PhoneInput
-							country={"sa"}
-							value={formData.phone}
-							onChange={(phone) =>
-								setFormData({ ...formData, phone: phone })
-							}
-							inputStyle={{
-								width: "100%",
-								direction: "ltr",
-								textAlign: "left",
-								paddingRight: "52px",
-							}}
-							containerStyle={{ direction: "rtl" }}
-							inputProps={{
-								name: "phone",
-								required: true,
-								autoFocus: true,
-								className:
-									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
-							}}
-						/>
+								country={"sa"}
+								value={formData.phone}
+								onChange={(phone) => setFormData({ ...formData, phone: phone })}
+								inputStyle={{
+									width: "100%",
+
+									direction: "ltr",
+									textAlign: "left",
+									paddingRight: "52px",
+								}}
+								buttonStyle={{ height: "100%", width: "6%", direction: "ltr" }}
+								containerStyle={{ direction: "rtl" }}
+								inputProps={{
+									name: "phone",
+									required: true,
+									autoFocus: true,
+									className:
+										"rounded-lg border border-gray-300 p-3 text-right  focus:ring-green-500 focus:outline-none",
+								}}
+							/>
 						</div>
 					</div>
 
