@@ -570,7 +570,7 @@ export default function InvestoreForm({
 					</button>
 				</div>
 			</form>
-
+									
 			{/* شاشة منبثقة لعرض PDF */}
 			{isOpen && pdfUrl && (
 				<div className="bg-opacity-60 fixed inset-0 z-50 flex items-center justify-center bg-black">

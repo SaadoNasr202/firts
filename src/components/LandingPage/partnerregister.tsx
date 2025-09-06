@@ -497,6 +497,7 @@ export default function StoreForm({
 									type: "success",
 									isVisible: true,
 								});
+								
 							}
 						}}
 						onUploadError={(error: Error) => {
