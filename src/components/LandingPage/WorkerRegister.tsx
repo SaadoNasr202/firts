@@ -328,7 +328,6 @@ export default function WorkerRegister({
 						<option value="تسوق من سوبرماركت">تسوق من سوبرماركت</option>
 						<option value="خدمات منزلية">خدمات منزلية</option>
 						<option value=" أخرى">أخرى </option>
-
 					</select>
 				</div>
 				<div className="flex flex-col">
@@ -369,7 +368,6 @@ export default function WorkerRegister({
 						<option value="car">سيارة</option>
 						<option value="bycicle">دراجة هوائية</option>
 						<option value="لابوجد">لايوجد </option>
-
 					</select>
 				</div>
 				<div className="flex flex-col">
@@ -521,7 +519,10 @@ export default function WorkerRegister({
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
 					الموافقة على جميع{" "}
-					<a href="#" className="font-medium text-green-600 hover:underline">
+					<a
+						href="/CondtionAterms"
+						className="font-medium text-green-600 hover:underline"
+					>
 						الشروط والأحكام
 					</a>
 				</label>

@@ -525,7 +525,10 @@ export default function DeliveryAgentForm({
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
 					الموافقة على جميع{" "}
-					<a href="#" className="font-medium text-green-600 hover:underline">
+					<a
+						href="/CondtionAterms"
+						className="font-medium text-green-600 hover:underline"
+					>
 						الشروط والأحكام
 					</a>
 				</label>

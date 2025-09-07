@@ -7,7 +7,6 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
 
-
 const defaultCenter = { lat: 24.7136, lng: 46.6753 };
 
 // مكون الإشعارات
@@ -550,7 +549,7 @@ export default function StoreForm({
 										);
 									} else alert("المتصفح لا يدعم تحديد الموقع");
 								}}
-								className="absolute top-14 right-0 z-50 rounded-lg  px-4 py-2 font-semibold text-black shadow-lg transition hover:"
+								className="hover: absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition"
 							>
 								📍 موقعي
 							</button>
@@ -564,7 +563,10 @@ export default function StoreForm({
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
 					الموافقة على جميع{" "}
-					<a href="#" className="font-medium text-green-600 hover:underline">
+					<a
+						href="/CondtionAterms"
+						className="font-medium text-green-600 hover:underline"
+					>
 						الشروط والأحكام
 					</a>
 				</label>
