@@ -6,26 +6,10 @@ import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
-const containerStyle = {
-	width: "100%",
-	height: "400px",
-};
+
 
 const defaultCenter = { lat: 24.7136, lng: 46.6753 };
 
-// CSS للزر "موقعي"
-const mapButtonStyle = `
-  .custom-map-control-button {
-    background: white;
-    border: 2px solid #4ade80;
-    border-radius: 5px;
-    padding: 6px 12px;
-    margin: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-  }
-`;
 // مكون الإشعارات
 const Notification = ({
 	message,
@@ -566,7 +550,7 @@ export default function StoreForm({
 										);
 									} else alert("المتصفح لا يدعم تحديد الموقع");
 								}}
-								className="absolute top-14 right-0 z-50 rounded-lg bg-green-500 px-4 py-2 font-semibold text-white shadow-lg transition hover:bg-green-600"
+								className="absolute top-14 right-0 z-50 rounded-lg  px-4 py-2 font-semibold text-black shadow-lg transition hover:"
 							>
 								📍 موقعي
 							</button>

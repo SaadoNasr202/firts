@@ -1,11 +1,12 @@
 "use client";
 
 import { KaidhaFormData } from "@/app/Kaidha/page";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // استيراد التنسيقات
+const defaultCenter = { lat: 24.7136, lng: 46.6753 };
 
-// مكون الإشعارات
 const Notification = ({
 	message,
 	type,
@@ -86,7 +87,9 @@ export default function KaidhaRegister({
 		formData: KaidhaFormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
-	// State to manage all form data based on the new image.
+	const { isLoaded } = useLoadScript({
+		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+	});
 	const [formData, setFormData] = useState({
 		firstName: "",
 		lastName: "",
@@ -512,33 +515,29 @@ export default function KaidhaRegister({
 						>
 							رقم الجوال
 						</label>
-						 <PhoneInput
-                                country={"sa"}
-                                value={formData.phoneNumber}
-                                onChange={(phone) => setFormData({ ...formData, phoneNumber: phone })}
-                               inputStyle={{
+						<PhoneInput
+							country={"sa"}
+							value={formData.phoneNumber}
+							onChange={(phone) =>
+								setFormData({ ...formData, phoneNumber: phone })
+							}
+							inputStyle={{
 								width: "100%",
-                               
+
 								direction: "ltr",
 								textAlign: "left",
 								paddingRight: "52px",
-                                
 							}}
-                            buttonStyle={
-                                {height:"100%",
-                                    width:"10%",
-                                    direction:"ltr",
-                                                                    }
-                            }
-                            containerStyle={{ direction: "rtl" }}
-
-                                inputProps={{
-                                    name: "phoneNumber",
-                                    required: true,
-                                    autoFocus: true,
-									className:"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                }}
-/>
+							buttonStyle={{ height: "100%", width: "10%", direction: "ltr" }}
+							containerStyle={{ direction: "rtl" }}
+							inputProps={{
+								name: "phoneNumber",
+								required: true,
+								autoFocus: true,
+								className:
+									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
+							}}
+						/>
 					</div>
 
 					{/* Third Row of Inputs */}
@@ -549,7 +548,7 @@ export default function KaidhaRegister({
 						>
 							رقم الواتساب
 						</label>
-							
+
 						<PhoneInput
 							country={"sa"}
 							value={formData.whatsappNumber}
@@ -558,18 +557,12 @@ export default function KaidhaRegister({
 							}
 							inputStyle={{
 								width: "100%",
-                               
+
 								direction: "ltr",
 								textAlign: "left",
 								paddingRight: "52px",
-                                
 							}}
-                            buttonStyle={
-                                {height:"100%",
-                                    width:"10%",
-                                    direction:"ltr",
-                                                                    }
-                            }
+							buttonStyle={{ height: "100%", width: "10%", direction: "ltr" }}
 							containerStyle={{ direction: "rtl" }}
 							inputProps={{
 								name: "phoneNumber",
@@ -677,10 +670,78 @@ export default function KaidhaRegister({
 					تحديد موقع السكن على الخريطة
 				</h2>
 				<div
-					className="flex items-center justify-center rounded-lg border border-gray-300 bg-gray-200 p-4 text-center text-gray-500"
-					style={{ height: "350px" }}
+					className="flex items-center justify-center rounded-lg border border-gray-300 p-4 text-center text-gray-500"
+					style={{ height: "500px" }}
 				>
-					<p>هنا ستكون الخريطة</p>
+					<div className="relative h-full w-full">
+						{isLoaded ? (
+							<>
+								<GoogleMap
+									mapContainerStyle={{ width: "100%", height: "100%" }}
+									center={
+										formData.addressDetails
+											? {
+													lat: parseFloat(
+														formData.addressDetails.split(",")[0],
+													),
+													lng: parseFloat(
+														formData.addressDetails.split(",")[1],
+													),
+												}
+											: defaultCenter
+									}
+									zoom={10}
+									onClick={(e) => {
+										if (e.latLng) {
+											const lat = e.latLng.lat().toString();
+											const lng = e.latLng.lng().toString();
+											setFormData((prev) => ({
+												...prev,
+												addressDetails: `${lat},${lng}`,
+											}));
+										}
+									}}
+								>
+									{formData.addressDetails && (
+										<Marker
+											position={{
+												lat: parseFloat(formData.addressDetails.split(",")[0]),
+												lng: parseFloat(formData.addressDetails.split(",")[1]),
+											}}
+										/>
+									)}
+								</GoogleMap>
+
+								{/* زر تحديد الموقع */}
+								<div className="absolute top-14 right-0 z-50">
+									<button
+										onClick={() => {
+											if (navigator.geolocation) {
+												navigator.geolocation.getCurrentPosition(
+													(pos) => {
+														const position = {
+															lat: pos.coords.latitude,
+															lng: pos.coords.longitude,
+														};
+														setFormData((prev) => ({
+															...prev,
+															addressDetails: `${position.lat},${position.lng}`,
+														}));
+													},
+													() => alert("فشل في تحديد موقعك 😢"),
+												);
+											} else alert("المتصفح لا يدعم تحديد الموقع");
+										}}
+										className="rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition hover:bg-gray-200"
+									>
+										📍 موقعي
+									</button>
+								</div>
+							</>
+						) : (
+							<p>جاري تحميل الخريطة...</p>
+						)}
+					</div>
 				</div>
 
 				{/* Job Information Section */}
@@ -782,10 +843,78 @@ export default function KaidhaRegister({
 					تحديد موقع العمل على الخريطة
 				</h2>
 				<div
-					className="flex items-center justify-center rounded-lg border border-gray-300 bg-gray-200 p-4 text-center text-gray-500"
-					style={{ height: "350px" }}
+					className="flex items-center justify-center rounded-lg border border-gray-300 p-4 text-center text-gray-500"
+					style={{ height: "500px" }}
 				>
-					<p>هنا ستكون الخريطة</p>
+					<div className="relative h-full w-full">
+						{isLoaded ? (
+							<>
+								<GoogleMap
+									mapContainerStyle={{ width: "100%", height: "100%" }}
+									center={
+										formData.addressDetails
+											? {
+													lat: parseFloat(
+														formData.addressDetails.split(",")[0],
+													),
+													lng: parseFloat(
+														formData.addressDetails.split(",")[1],
+													),
+												}
+											: defaultCenter
+									}
+									zoom={10}
+									onClick={(e) => {
+										if (e.latLng) {
+											const lat = e.latLng.lat().toString();
+											const lng = e.latLng.lng().toString();
+											setFormData((prev) => ({
+												...prev,
+												addressDetails: `${lat},${lng}`,
+											}));
+										}
+									}}
+								>
+									{formData.addressDetails && (
+										<Marker
+											position={{
+												lat: parseFloat(formData.addressDetails.split(",")[0]),
+												lng: parseFloat(formData.addressDetails.split(",")[1]),
+											}}
+										/>
+									)}
+								</GoogleMap>
+
+								{/* زر تحديد الموقع */}
+								<div className="absolute top-14 right-0 z-50">
+									<button
+										onClick={() => {
+											if (navigator.geolocation) {
+												navigator.geolocation.getCurrentPosition(
+													(pos) => {
+														const position = {
+															lat: pos.coords.latitude,
+															lng: pos.coords.longitude,
+														};
+														setFormData((prev) => ({
+															...prev,
+															addressDetails: `${position.lat},${position.lng}`,
+														}));
+													},
+													() => alert("فشل في تحديد موقعك 😢"),
+												);
+											} else alert("المتصفح لا يدعم تحديد الموقع");
+										}}
+										className="rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition hover:bg-gray-200"
+									>
+										📍 موقعي
+									</button>
+								</div>
+							</>
+						) : (
+							<p>جاري تحميل الخريطة...</p>
+						)}
+					</div>
 				</div>
 
 				<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
