@@ -6,16 +6,26 @@ import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
-// إعدادات الخريطة
 const containerStyle = {
 	width: "100%",
 	height: "400px",
 };
 
-const center = {
-	lat: 24.7136, // افتراضياً: الرياض
-	lng: 46.6753,
-};
+const defaultCenter = { lat: 24.7136, lng: 46.6753 };
+
+// CSS للزر "موقعي"
+const mapButtonStyle = `
+  .custom-map-control-button {
+    background: white;
+    border: 2px solid #4ade80;
+    border-radius: 5px;
+    padding: 6px 12px;
+    margin: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+  }
+`;
 // مكون الإشعارات
 const Notification = ({
 	message,
@@ -502,34 +512,69 @@ export default function StoreForm({
 				<label className="mb-2 text-right font-semibold text-gray-700">
 					موقع المتجر على الخريطة
 				</label>
-				{isLoaded ? (
-					<GoogleMap
-						mapContainerStyle={containerStyle}
-						center={center}
-						zoom={10}
-						onClick={(e) => {
-							if (e.latLng) {
-								const lat = e.latLng.lat().toString();
-								const lng = e.latLng.lng().toString();
-								setFormData((prev) => ({
-									...prev,
-									location: JSON.stringify({ lat, lng }), // ✅ JSON string
-								}));
-							}
-						}}
-					>
-						{formData.location && formData.location && (
-							<Marker
-								position={{
-									lat: parseFloat(formData.location.split(",")[0]),
-									lng: parseFloat(formData.location.split(",")[1]),
+				<div className="relative h-[400px] w-full">
+					{isLoaded ? (
+						<>
+							<GoogleMap
+								mapContainerStyle={{ width: "100%", height: "100%" }}
+								center={
+									formData.location
+										? {
+												lat: parseFloat(formData.location.split(",")[0]),
+												lng: parseFloat(formData.location.split(",")[1]),
+											}
+										: defaultCenter
+								}
+								zoom={10}
+								onClick={(e) => {
+									if (e.latLng) {
+										const lat = e.latLng.lat().toString();
+										const lng = e.latLng.lng().toString();
+										setFormData((prev) => ({
+											...prev,
+											location: `${lat},${lng}`,
+										}));
+									}
 								}}
-							/>
-						)}
-					</GoogleMap>
-				) : (
-					<p>جاري تحميل الخريطة...</p>
-				)}
+							>
+								{formData.location && (
+									<Marker
+										position={{
+											lat: parseFloat(formData.location.split(",")[0]),
+											lng: parseFloat(formData.location.split(",")[1]),
+										}}
+									/>
+								)}
+							</GoogleMap>
+
+							{/* زر تحديد الموقع */}
+							<button
+								onClick={() => {
+									if (navigator.geolocation) {
+										navigator.geolocation.getCurrentPosition(
+											(pos) => {
+												const position = {
+													lat: pos.coords.latitude,
+													lng: pos.coords.longitude,
+												};
+												setFormData((prev) => ({
+													...prev,
+													location: `${position.lat},${position.lng}`,
+												}));
+											},
+											() => alert("فشل في تحديد موقعك 😢"),
+										);
+									} else alert("المتصفح لا يدعم تحديد الموقع");
+								}}
+								className="absolute top-14 right-0 z-50 rounded-lg bg-green-500 px-4 py-2 font-semibold text-white shadow-lg transition hover:bg-green-600"
+							>
+								📍 موقعي
+							</button>
+						</>
+					) : (
+						<p>جاري تحميل الخريطة...</p>
+					)}
+				</div>
 			</div>
 
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
