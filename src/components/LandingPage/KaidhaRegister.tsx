@@ -87,6 +87,8 @@ export default function KaidhaRegister({
 		formData: KaidhaFormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
+	const [hasAdditionalIncome, setHasAdditionalIncome] = useState("no"); // نعم / لا
+
 	const { isLoaded } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
 	});
@@ -110,18 +112,20 @@ export default function KaidhaRegister({
 		city: "",
 		neighborhood: "",
 		addressDetails: "",
+		locationhouse: "",
 		agreed: false,
 		companyName: "",
 		jobTitle: "",
 		yearsOfExperience: "",
 		grossSalary: "",
 		workAddress: "",
+		locationwork: "",
+		Installments: "",
+		hasAdditionalIncome: "",
+		additionalAmount: "",
+		incomeSource: "",
 	});
 	// New state for map location
-	const [mapLocation, setMapLocation] = useState({
-		lat: 24.7136,
-		lng: 46.6753,
-	}); // Default to Riyadh
 
 	// State for notifications
 	const [notification, setNotification] = useState({
@@ -145,12 +149,16 @@ export default function KaidhaRegister({
 			"idExpirationDate",
 			"phoneNumber",
 			"whatsappNumber",
+			"locationhouse",
 			"email",
 			"homeType",
 			"homeNature",
 			"city",
 			"neighborhood",
+			"locationwork",
 			"addressDetails",
+			"Installments",
+			"hasAdditionalIncome",
 		];
 
 		for (const field of requiredFields) {
@@ -179,7 +187,10 @@ export default function KaidhaRegister({
 			});
 			return;
 		}
-		if (formData.birthDate >= new Date("2005-12-31").toISOString()) {
+		if (
+			formData.birthDate >= new Date("2005-12-31").toISOString() &&
+			formData.personalIdNumber.length > 10
+		) {
 			setNotification({
 				message: "تاريخ الميلاد يجب أن يكون قبل 2005-12-31",
 				type: "error",
@@ -245,7 +256,6 @@ export default function KaidhaRegister({
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("Form Data Submitted:", formData);
-		console.log("Map Location Submitted:", mapLocation);
 		// يمكنك إضافة منطق إرسال البيانات إلى الخادم هنا
 	};
 	// Handle form reset, clearing all fields to their initial state.
@@ -275,9 +285,14 @@ export default function KaidhaRegister({
 			jobTitle: "",
 			yearsOfExperience: "",
 			grossSalary: "",
+			locationwork: "",
+			locationhouse: "",
 			workAddress: "",
+			Installments: "",
+			hasAdditionalIncome: "",
+			additionalAmount: "",
+			incomeSource: "",
 		});
-		setMapLocation({ lat: 24.7136, lng: 46.6753 });
 	};
 
 	// A reusable component for a select dropdown field.
@@ -535,7 +550,7 @@ export default function KaidhaRegister({
 								required: true,
 								autoFocus: true,
 								className:
-									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
+									"rounded-lg border border-gray-300 p-3 text-right  focus:outline-none",
 							}}
 						/>
 					</div>
@@ -679,14 +694,10 @@ export default function KaidhaRegister({
 								<GoogleMap
 									mapContainerStyle={{ width: "100%", height: "100%" }}
 									center={
-										formData.addressDetails
+										formData.locationhouse
 											? {
-													lat: parseFloat(
-														formData.addressDetails.split(",")[0],
-													),
-													lng: parseFloat(
-														formData.addressDetails.split(",")[1],
-													),
+													lat: parseFloat(formData.locationhouse.split(",")[0]),
+													lng: parseFloat(formData.locationhouse.split(",")[1]),
 												}
 											: defaultCenter
 									}
@@ -697,16 +708,16 @@ export default function KaidhaRegister({
 											const lng = e.latLng.lng().toString();
 											setFormData((prev) => ({
 												...prev,
-												addressDetails: `${lat},${lng}`,
+												locationhouse: `${lat},${lng}`,
 											}));
 										}
 									}}
 								>
-									{formData.addressDetails && (
+									{formData.locationhouse && (
 										<Marker
 											position={{
-												lat: parseFloat(formData.addressDetails.split(",")[0]),
-												lng: parseFloat(formData.addressDetails.split(",")[1]),
+												lat: parseFloat(formData.locationhouse.split(",")[0]),
+												lng: parseFloat(formData.locationhouse.split(",")[1]),
 											}}
 										/>
 									)}
@@ -725,7 +736,7 @@ export default function KaidhaRegister({
 														};
 														setFormData((prev) => ({
 															...prev,
-															addressDetails: `${position.lat},${position.lng}`,
+															locationhouse: `${position.lat},${position.lng}`,
 														}));
 													},
 													() => alert("فشل في تحديد موقعك 😢"),
@@ -852,14 +863,10 @@ export default function KaidhaRegister({
 								<GoogleMap
 									mapContainerStyle={{ width: "100%", height: "100%" }}
 									center={
-										formData.addressDetails
+										formData.locationwork
 											? {
-													lat: parseFloat(
-														formData.addressDetails.split(",")[0],
-													),
-													lng: parseFloat(
-														formData.addressDetails.split(",")[1],
-													),
+													lat: parseFloat(formData.locationwork.split(",")[0]),
+													lng: parseFloat(formData.locationwork.split(",")[1]),
 												}
 											: defaultCenter
 									}
@@ -870,16 +877,16 @@ export default function KaidhaRegister({
 											const lng = e.latLng.lng().toString();
 											setFormData((prev) => ({
 												...prev,
-												addressDetails: `${lat},${lng}`,
+												locationwork: `${lat},${lng}`,
 											}));
 										}
 									}}
 								>
-									{formData.addressDetails && (
+									{formData.locationwork && (
 										<Marker
 											position={{
-												lat: parseFloat(formData.addressDetails.split(",")[0]),
-												lng: parseFloat(formData.addressDetails.split(",")[1]),
+												lat: parseFloat(formData.locationwork.split(",")[0]),
+												lng: parseFloat(formData.locationwork.split(",")[1]),
 											}}
 										/>
 									)}
@@ -898,7 +905,7 @@ export default function KaidhaRegister({
 														};
 														setFormData((prev) => ({
 															...prev,
-															addressDetails: `${position.lat},${position.lng}`,
+															locationwork: `${position.lat},${position.lng}`,
 														}));
 													},
 													() => alert("فشل في تحديد موقعك 😢"),
@@ -921,48 +928,17 @@ export default function KaidhaRegister({
 					{/* First row of additional income */}
 					<div className="col-span-1 flex flex-col items-start gap-2 pt-5 md:col-span-2 lg:col-span-4">
 						<div className="text-left text-xl font-semibold text-gray-700">
-							هل لديك أقساط ؟
+							<SelectField
+								label=" هل لديك أقساط"
+								name="Installments"
+								options={[
+									{ value: "نعم", label: "نعم" },
+									{ value: "لا", label: "لا" },
+								]}
+								value={formData.Installments}
+								onChange={handleChange}
+							/>{" "}
 						</div>
-						<button className="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500">
-							إضافة قسط
-						</button>
-					</div>
-
-					<div className="col-span-1 grid grid-cols-1 items-end gap-x-8 gap-y-6 sm:grid-cols-3 md:col-span-2 lg:col-span-4">
-						<div className="flex flex-col">
-							<label
-								htmlFor="commitmentAmount"
-								className="mb-2 text-right font-semibold text-gray-700"
-							>
-								مبلغ الالتزام
-							</label>
-							<input
-								type="text"
-								id="commitmentAmount"
-								name="commitmentAmount"
-								placeholder=""
-								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-							/>
-						</div>
-						<div className="flex flex-col">
-							<label
-								htmlFor="entityName"
-								className="mb-2 text-right font-semibold text-gray-700"
-							>
-								اسم الجهة
-							</label>
-							<input
-								type="text"
-								id="entityName"
-								name="entityName"
-								placeholder=""
-								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-							/>
-						</div>
-						{/* The remove button is now inside the new grid container */}
-						<button className="w-25 rounded-lg bg-[#BC7620] px-4 py-3 font-semibold text-white transition-colors hover:bg-red-600 focus:ring-2 focus:ring-red-400">
-							إزالة
-						</button>
 					</div>
 
 					{/* Second row of additional income */}
@@ -970,46 +946,86 @@ export default function KaidhaRegister({
 						<div className="text-left text-xl font-semibold text-gray-700">
 							مصادر دخل إضافية
 						</div>
-						<button className="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500">
-							إضافة مصدر عمل آخر
-						</button>
-					</div>
 
-					<div className="col-span-1 grid grid-cols-1 items-end gap-x-8 gap-y-6 sm:grid-cols-3 md:col-span-2 lg:col-span-4">
-						<div className="flex flex-col">
-							<label
-								htmlFor="additionalAmount"
-								className="mb-2 text-right font-semibold text-gray-700"
-							>
-								المبلغ
+						{/* اختيار نعم / لا */}
+						<div className="flex gap-4">
+							<label className="flex items-center gap-2">
+								<input
+									type="radio"
+									name="hasAdditionalIncome"
+									value="yes"
+									checked={formData.hasAdditionalIncome === "yes"}
+									onChange={() =>
+										setFormData((prev) => ({
+											...prev,
+											hasAdditionalIncome: "yes",
+										}))
+									}
+								/>
+								نعم
 							</label>
-							<input
-								type="text"
-								id="additionalAmount"
-								name="additionalAmount"
-								placeholder=""
-								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-							/>
-						</div>
-						<div className="flex flex-col">
-							<label
-								htmlFor="incomeSource"
-								className="mb-2 text-right font-semibold text-gray-700"
-							>
-								جهة الدخل
+							<label className="flex items-center gap-2">
+								<input
+									type="radio"
+									name="hasAdditionalIncome"
+									value="no"
+									checked={formData.hasAdditionalIncome === "no"}
+									onChange={() =>
+										setFormData((prev) => ({
+											...prev,
+											hasAdditionalIncome: "no",
+										}))
+									}
+								/>
+								لا
 							</label>
-							<input
-								type="text"
-								id="incomeSource"
-								name="incomeSource"
-								placeholder=""
-								className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-							/>
 						</div>
-						{/* The remove button is now inside the new grid container and has a fixed width */}
-						<button className="w-25 rounded-lg bg-[#BC7620] px-4 py-3 font-semibold text-white transition-colors hover:bg-red-600 focus:ring-2 focus:ring-red-400">
-							إزالة
-						</button>
+
+						{formData.hasAdditionalIncome === "yes" && (
+							<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+								<div className="flex flex-col">
+									<label
+										htmlFor="additionalAmount"
+										className="mb-2 text-right font-semibold text-gray-700"
+									>
+										المبلغ
+									</label>
+									<input
+										type="text"
+										id="additionalAmount"
+										value={formData.additionalAmount}
+										onChange={(e) =>
+											setFormData((prev) => ({
+												...prev,
+												additionalAmount: e.target.value,
+											}))
+										}
+										className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+									/>
+								</div>
+
+								<div className="flex flex-col">
+									<label
+										htmlFor="incomeSource"
+										className="mb-2 text-right font-semibold text-gray-700"
+									>
+										جهة الدخل
+									</label>
+									<input
+										type="text"
+										id="incomeSource"
+										value={formData.incomeSource}
+										onChange={(e) =>
+											setFormData((prev) => ({
+												...prev,
+												incomeSource: e.target.value,
+											}))
+										}
+										className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+									/>
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 

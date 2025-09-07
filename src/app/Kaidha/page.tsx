@@ -41,12 +41,18 @@ export interface KaidhaFormData {
 	jobTitle: string;
 	yearsOfExperience: string;
 	grossSalary: string;
+	locationhouse: string;
+	locationwork: string;
 	workAddress: string;
+	Installments: string;
+	hasAdditionalIncome: string;
+	additionalAmount: string;
+	incomeSource: string;
 }
 
 async function postFormKaidhaAction(
 	formData: KaidhaFormData,
-): Promise<{ success: boolean }|{message: string;field: string}> {
+): Promise<{ success: boolean } | { message: string; field: string }> {
 	"use server";
 	try {
 		const newData = {
@@ -61,7 +67,9 @@ async function postFormKaidhaAction(
 			familyMembersCount: parseInt(formData.familyMembersCount) || 0,
 			idType: formData.idType,
 			personalIdNumber: formData.personalIdNumber,
-			idExpirationDate: formData.idExpirationDate ? new Date(formData.idExpirationDate) : null,
+			idExpirationDate: formData.idExpirationDate
+				? new Date(formData.idExpirationDate)
+				: null,
 			phoneNumber: formData.phoneNumber,
 			whatsappNumber: formData.whatsappNumber,
 			email: formData.email,
@@ -76,11 +84,23 @@ async function postFormKaidhaAction(
 			yearsOfExperience: parseInt(formData.yearsOfExperience) || 0,
 			grossSalary: formData.grossSalary,
 			workAddress: formData.workAddress,
+			locationhouse: formData.locationhouse,
+			locationwork: formData.locationwork,
+			hasAdditionalIncome: formData.hasAdditionalIncome,
+			Installments: formData.Installments,
+			additionalAmount: formData.additionalAmount,
+			incomeSource: formData.incomeSource,
 		};
 		try {
-			const existingData = await db.select().from(TB_KaidhaUsers).where(eq(TB_KaidhaUsers.personalIdNumber, formData.personalIdNumber));
-			if(existingData.length){
-				return { message: "الرقم القومي موجود بالفعل", field: "personalIdNumber" };
+			const existingData = await db
+				.select()
+				.from(TB_KaidhaUsers)
+				.where(eq(TB_KaidhaUsers.personalIdNumber, formData.personalIdNumber));
+			if (existingData.length) {
+				return {
+					message: "الرقم القومي موجود بالفعل",
+					field: "personalIdNumber",
+				};
 			}
 		} catch (error) {
 			console.log("error: " + error);
