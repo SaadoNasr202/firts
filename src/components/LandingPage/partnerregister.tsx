@@ -1,11 +1,21 @@
 "use client";
 
 import { PartnerFormData } from "@/app/partner/page";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
+// إعدادات الخريطة
+const containerStyle = {
+	width: "100%",
+	height: "400px",
+};
 
+const center = {
+	lat: 24.7136, // افتراضياً: الرياض
+	lng: 46.6753,
+};
 // مكون الإشعارات
 const Notification = ({
 	message,
@@ -85,7 +95,7 @@ export default function StoreForm({
 }: {
 	postFormPartnerAction: (
 		formData: PartnerFormData,
-	) => Promise<{ success: boolean }|{message: string;field: string}>;
+	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
 	const [formData, setFormData] = useState<{
 		storeName: string;
@@ -94,12 +104,11 @@ export default function StoreForm({
 		city: string;
 		branchCount: string;
 		phoneNumber: string;
-		englishStoreName: string;
 		personalIdNumber: string;
-		detailedAddress: string;
 		idImage: string;
 		Municipallicense: string;
 		Storefrontimage: string;
+		location: string;
 		agreed: boolean;
 	}>({
 		storeName: "",
@@ -108,13 +117,15 @@ export default function StoreForm({
 		city: "",
 		branchCount: "",
 		phoneNumber: "",
-		englishStoreName: "",
 		personalIdNumber: "",
-		detailedAddress: "",
 		idImage: "",
 		Municipallicense: "",
 		Storefrontimage: "",
+		location: "",
 		agreed: false,
+	});
+	const { isLoaded } = useLoadScript({
+		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
 	});
 
 	// State for notifications
@@ -133,11 +144,10 @@ export default function StoreForm({
 			"city",
 			"branchCount",
 			"phoneNumber",
-			"englishStoreName",
 			"personalIdNumber",
 			"idImage",
 			"Storefrontimage",
-			"detailedAddress",
+			"location",
 		];
 
 		for (const field of requiredFields) {
@@ -238,12 +248,11 @@ export default function StoreForm({
 			city: "",
 			branchCount: "",
 			phoneNumber: "",
-			englishStoreName: "",
 			personalIdNumber: "",
-			detailedAddress: "",
 			idImage: "",
 			Municipallicense: "",
 			Storefrontimage: "",
+			location: "",
 			agreed: false,
 		});
 	};
@@ -389,7 +398,7 @@ export default function StoreForm({
 				</div>
 
 				{/* Personal ID Number */}
-				<div className="flex flex-col">
+				<div className="justify-strat flex flex-col">
 					<label
 						htmlFor="personalIdNumber"
 						className="mb-2 text-right font-semibold text-gray-700"
@@ -402,26 +411,6 @@ export default function StoreForm({
 						name="personalIdNumber"
 						placeholder="EX:1234567890"
 						value={formData.personalIdNumber}
-						onChange={handleChange}
-						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
-						required
-					/>
-				</div>
-
-				{/* English Store Name */}
-				<div className="flex flex-col">
-					<label
-						htmlFor="englishStoreName"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						اسم المتجر بالإنجليزية
-					</label>
-					<input
-						type="text"
-						id="englishStoreName"
-						name="englishStoreName"
-						placeholder="moon market"
-						value={formData.englishStoreName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
@@ -497,7 +486,6 @@ export default function StoreForm({
 									type: "success",
 									isVisible: true,
 								});
-								
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -510,24 +498,38 @@ export default function StoreForm({
 					/>
 				</div>
 			</div>
-			{/* Detailed Address */}
 			<div className="mt-6 flex flex-col">
-				<label
-					htmlFor="detailedAddress"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					العنوان التفصيلي
+				<label className="mb-2 text-right font-semibold text-gray-700">
+					موقع المتجر على الخريطة
 				</label>
-				<textarea
-					id="detailedAddress"
-					name="detailedAddress"
-					rows={3}
-					placeholder="جدة، شارع 500 تفرع 2"
-					value={formData.detailedAddress}
-					onChange={handleChange as any}
-					className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
-					required
-				></textarea>
+				{isLoaded ? (
+					<GoogleMap
+						mapContainerStyle={containerStyle}
+						center={center}
+						zoom={10}
+						onClick={(e) => {
+							if (e.latLng) {
+								const lat = e.latLng.lat().toString();
+								const lng = e.latLng.lng().toString();
+								setFormData((prev) => ({
+									...prev,
+									location: JSON.stringify({ lat, lng }), // ✅ JSON string
+								}));
+							}
+						}}
+					>
+						{formData.location && formData.location && (
+							<Marker
+								position={{
+									lat: parseFloat(formData.location.split(",")[0]),
+									lng: parseFloat(formData.location.split(",")[1]),
+								}}
+							/>
+						)}
+					</GoogleMap>
+				) : (
+					<p>جاري تحميل الخريطة...</p>
+				)}
 			</div>
 
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
