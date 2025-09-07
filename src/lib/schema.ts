@@ -73,7 +73,7 @@ export const TB_Partner = pgTable("KaidhaStore", {
     Storefrontimage:text("Storefrontimage"),
     agreed: boolean("agreed").default(false),
 });
-
+    
 
 export const TB_DeliveryDrivers = pgTable("DeliveryDriver", {
     id: text("id").primaryKey(),
