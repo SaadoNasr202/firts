@@ -52,6 +52,13 @@ const posts = [
 		imageUrl: "https://via.placeholder.com/400x250.png?text=Post+Image+3",
 		link: "#",
 	},
+	{
+		id: 4,
+		title: "أفضل الممارسات لتحسين تجربة العملاء",
+		excerpt: "قدم تجربة لا تُنسى لعملائك وحوّلهم إلى سفراء لعلامتك التجارية...",
+		imageUrl: "https://via.placeholder.com/400x250.png?text=Post+Image+3",
+		link: "#",
+	},
 ];
 
 export default function ShillaLanding(): JSX.Element {
