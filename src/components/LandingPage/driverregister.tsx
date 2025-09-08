@@ -305,7 +305,8 @@ export default function DeliveryAgentForm({
 						required
 					>
 						<option value="">-- اختر --</option>
-						<option value="freelancer">مستقل</option>
+						<option value="موظف">مستقل</option>
+						<option value="موظف">موظف</option>
 					</select>
 				</div>
 				<div className="flex flex-col">
@@ -378,6 +379,24 @@ export default function DeliveryAgentForm({
 				</div>
 				<div className="flex flex-col">
 					<label
+						htmlFor="personalIdNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						رقم الهوية الشخصية / الإقامة
+					</label>
+					<input
+						type="text"
+						id="personalIdNumber"
+						name="personalIdNumber"
+						placeholder="EX:1234567890"
+						value={formData.personalIdNumber}
+						onChange={handleChange}
+						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						required
+					/>
+				</div>
+				<div className="flex flex-col">
+					<label
 						htmlFor="idType"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
@@ -395,24 +414,6 @@ export default function DeliveryAgentForm({
 						<option value="هوية ">بطاقة هوية وطنية</option>
 						<option value="إقامة">إقامة</option>
 					</select>
-				</div>
-				<div className="flex flex-col">
-					<label
-						htmlFor="personalIdNumber"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						رقم الهوية الشخصية / الإقامة
-					</label>
-					<input
-						type="text"
-						id="personalIdNumber"
-						name="personalIdNumber"
-						placeholder="EX:1234567890"
-						value={formData.personalIdNumber}
-						onChange={handleChange}
-						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-						required
-					/>
 				</div>
 			</div>
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">

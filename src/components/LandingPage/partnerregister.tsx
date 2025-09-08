@@ -1,8 +1,13 @@
 "use client";
 
 import { PartnerFormData } from "@/app/partner/page";
-import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-import React, { useState } from "react";
+import {
+	Autocomplete,
+	GoogleMap,
+	Marker,
+	useLoadScript,
+} from "@react-google-maps/api";
+import React, { useRef, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
@@ -119,7 +124,22 @@ export default function StoreForm({
 	});
 	const { isLoaded } = useLoadScript({
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+		libraries: ["places"],
 	});
+	const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+	const handlePlaceChanged = () => {
+		const place = autocompleteRef.current?.getPlace();
+		if (place?.geometry?.location) {
+			const lat = place.geometry.location.lat();
+			const lng = place.geometry.location.lng();
+
+			setFormData((prev) => ({
+				...prev,
+				location: `${lat},${lng}`,
+			}));
+		}
+	};
 
 	// State for notifications
 	const [notification, setNotification] = useState({
@@ -495,7 +515,22 @@ export default function StoreForm({
 				<label className="mb-2 text-right font-semibold text-gray-700">
 					موقع المتجر على الخريطة
 				</label>
+
 				<div className="relative h-[400px] w-full">
+					{isLoaded && (
+						<div className="absolute top-2 left-1/2 z-50 w-[300px] -translate-x-1/2">
+							<Autocomplete
+								onLoad={(ac) => (autocompleteRef.current = ac)}
+								onPlaceChanged={handlePlaceChanged}
+							>
+								<input
+									type="text"
+									placeholder="ابحث عن موقع..."
+									className="w-full rounded-lg border bg-amber-50 px-4 py-2 shadow focus:outline-none"
+								/>
+							</Autocomplete>
+						</div>
+					)}
 					{isLoaded ? (
 						<>
 							<GoogleMap
