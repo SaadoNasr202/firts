@@ -1,10 +1,15 @@
 "use client";
 
 import { PartnerFormData } from "@/app/partner/page";
+import ApprovalIcon from "@mui/icons-material/Approval";
+import CommuteIcon from "@mui/icons-material/Commute";
+import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
+import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
+import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import StoreForm from "./partnerregister";
 import ImagePartnerSlider from "./SliderPartner";
-
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
@@ -82,12 +87,8 @@ export default function PartnerPage({
 									window.location.href = "/PointOfSale";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4 text-green-600">
+									<ApprovalIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									حدود متجرك الآن حدود المملكة
@@ -105,12 +106,8 @@ export default function PartnerPage({
 									window.location.href = "/AddToMoney";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4 text-green-600">
+									<PriceCheckIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									ضاعف أرباحك وزد مبيعاتك
@@ -129,12 +126,8 @@ export default function PartnerPage({
 									window.location.href = "/ShippingPage";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4 text-green-600">
+									<CommuteIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									وداعاً لقلق الشحن
@@ -153,12 +146,8 @@ export default function PartnerPage({
 									window.location.href = "/SaleStatisticsPage";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4 text-green-600">
+									<StackedBarChartIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									إحصائيات البيع مع
@@ -176,12 +165,8 @@ export default function PartnerPage({
 									window.location.href = "/CreativityWrokePage";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4 text-green-600">
+									<EmojiObjectsIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									إبداع في عملك
@@ -199,12 +184,8 @@ export default function PartnerPage({
 									window.location.href = "/ManagmentOperationPage";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4 text-green-600">
+									<ManageHistoryIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									إدارة عملياتك بفعالية
