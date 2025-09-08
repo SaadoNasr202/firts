@@ -7,7 +7,9 @@ import ImagePartnerSlider from "./SliderPartner";
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
-	postFormPartnerAction: (formData: PartnerFormData) => Promise<{ success: boolean } |{message: string;field: string}>;
+	postFormPartnerAction: (
+		formData: PartnerFormData,
+	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
 	return (
 		<div>
@@ -28,7 +30,7 @@ export default function PartnerPage({
 					</div>
 
 					<div className="">
-						<StoreForm postFormPartnerAction={postFormPartnerAction}/>
+						<StoreForm postFormPartnerAction={postFormPartnerAction} />
 					</div>
 				</section>
 
@@ -40,19 +42,14 @@ export default function PartnerPage({
 							<span className="text-[#31A342]">شلة</span>
 						</h2>
 					</div>
-					<div className="container mx-auto border-2 border-[#31A342] px-4 md:px-12">
-						<div className="mb-4 flex justify-end">
-							<img
-								src="shellalogo.png"
-								alt="شلّة لوجو"
-								className="h-10 w-24 object-contain"
-							/>
-						</div>
-
+					<div
+						className="container mx-auto border-2 border-[#31A342] px-4 md:px-12"
+						dir="rtl"
+					>
 						{/* Container for the benefits grid */}
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 							{/* Benefit 4: رسوم مخفضة */}
-							<div className="flex flex-col items-center p-4 text-center">
+							{/* <div className="flex flex-col items-center p-4 text-center">
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
 									<img
 										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
@@ -61,10 +58,34 @@ export default function PartnerPage({
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									رسوم مخفضة
+									فرصة استثنائية لشركاء شلة
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									سوف يتم تحصيل رسوم مخفضة على كل طلب من التطبيق
+									انطلق بأعمالك نحو القمة مع باقة نمو متكاملة بقيمة 5400
+									ريال، مجانًا بالكامل!
+								</p>
+							</div> */}
+
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/BenefitPage";
+								}}
+							>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
+									<img
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
+										className="h-16 w-16"
+									/>
+								</div>
+								<h3 className="mt-4 text-xl font-bold text-gray-800">
+									فرصة استثنائية لشركاء شلة
+								</h3>
+								<p className="mt-2 text-sm text-gray-600">
+									انطلق بأعمالك نحو القمة مع باقة نمو متكاملة بقيمة 5400
+									ريال، مجانًا بالكامل!
 								</p>
 							</div>
 
@@ -82,23 +103,6 @@ export default function PartnerPage({
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
 									ستتمكن من توصيل منتجاتك إلى جميع أنحاء المملكة
-								</p>
-							</div>
-
-							{/* Benefit 2: خدمة الدفع المباشر */}
-							<div className="flex flex-col items-center p-4 text-center">
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=$"
-										alt="Direct Payment Icon"
-										className="h-16 w-16"
-									/>
-								</div>
-								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									خدمة الدفع المباشر
-								</h3>
-								<p className="mt-2 text-sm text-gray-600">
-									ستحصل على ثمن الطلب مباشرة عند تسليمه لمندوب التوصيل
 								</p>
 							</div>
 

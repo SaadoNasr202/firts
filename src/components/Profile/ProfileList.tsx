@@ -11,6 +11,8 @@ import RefundPolicy from "../Condetion/RefundPolicy";
 import Favorites from "../HomePage/Favorites";
 import MyStats from "../HomePage/MyStats";
 import KaidhaWallet from "./KaidhaWallet";
+import MyPoints from "./MyPoints";
+import MyVouchers from "./MyVouchers";
 import MyWallet from "./MyWallet";
 import NewAddress from "./NewAddress";
 import ProfileDetails from "./ProfileDetails";
@@ -53,6 +55,10 @@ export default function ProfileList() {
 				return <HelpAndSupport />;
 			case "سياسة الاسترداد":
 				return <RefundPolicy />;
+			case "نقاطي":
+				return <MyPoints />;
+			case "قسائمي":
+				return <MyVouchers />;
 			default:
 				return <OtherPage title="المحتوى غير موجود" />;
 		}

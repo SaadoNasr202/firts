@@ -95,11 +95,11 @@ export default function LandingPage() {
 							</div>
 
 							{/* صورة التطبيق (يسار بالـRTL) - تم إضافة فئة `translate-y-` */}
-							<div className="transform self-end justify-self-center  sm:translate-y-30">
+							<div className="transform self-end justify-self-center sm:translate-y-30">
 								<img
 									src="imagemobile.png"
 									alt="تطبيق شلة"
-									className="h-auto max-w-full -translate-y-[-25px]   md:translate-y-[-70px] lg:translate-y-[-70px]"
+									className="h-auto max-w-full -translate-y-[-25px] md:translate-y-[-70px] lg:translate-y-[-70px]"
 								/>
 							</div>
 						</div>
@@ -109,7 +109,7 @@ export default function LandingPage() {
 					<section className="space-y-6 bg-[#EAF6EC]">
 						<div className="rounded-xl p-10 shadow-lg">
 							<div className="grid items-center gap-5 md:grid-cols-2">
-								<div className="gap-6 text-center">
+								<div className="gap-7 text-center">
 									<h3 className="mb-2 text-4xl font-semibold text-[#34A853] md:text-5xl">
 										مع قيدها
 									</h3>
@@ -119,6 +119,7 @@ export default function LandingPage() {
 									<p className="mt-4 text-sm text-gray-600 md:text-base">
 										شوف كم ناقصك في بيتك مقاضي وإحنا نعطيك على الراتب!
 									</p>
+
 									<a
 										href="/Kaidha"
 										className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2D943C] px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
@@ -127,7 +128,7 @@ export default function LandingPage() {
 									</a>
 									<a
 										href="https://www.qaydha.com/"
-										className="mt-10 inline-flex items-center justify-center rounded-full bg-[#2D943C] px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
+										className="mt-10 inline-flex items-center justify-center rounded-full bg-[#2D943C] p-3.5 px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
 									>
 										معرفة المزيد 
 									</a>
@@ -135,7 +136,7 @@ export default function LandingPage() {
 								<img
 									src="date.png"
 									alt="تقويم"
-									className="h-auto w-full transition-transform duration-300 hover:scale-105"
+									className="h-auto w-full transition-transform duration-300"
 								/>
 							</div>
 						</div>
