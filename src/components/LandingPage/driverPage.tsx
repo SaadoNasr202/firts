@@ -1,3 +1,4 @@
+"use client";
 import { FormData } from "@/app/driver/page";
 import DeliveryAgentForm from "./driverregister";
 import ImageDriverSlider from "./SliderDriver";
@@ -7,14 +8,14 @@ export default function DriverPage({
 }: {
 	postFormDeliveryDriverAction: (
 		formData: FormData,
-	) => Promise<{ success: boolean }|{message: string;field: string}>;
+	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
 	return (
 		<main>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
 				{/* قسم صورة الخلفية */}
 				<section className="relative mb-8 overflow-hidden">
-							<ImageDriverSlider />
+					<ImageDriverSlider />
 				</section>
 
 				{/* قسم الفورم */}
@@ -37,7 +38,13 @@ export default function DriverPage({
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-8 lg:flex-row">
 							{/* البطاقة الأولى */}
-							<div className="w-full max-w-[550px] overflow-hidden rounded-lg bg-[#EDEDED] shadow-lg lg:w-1/2">
+							<div
+								className="w-full max-w-[550px] cursor-pointer overflow-hidden rounded-lg bg-[#EDEDED] shadow-lg lg:w-1/2"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/ManagmentOperationPage";
+								}}
+							>
 								<div className="relative aspect-[550/300] w-full">
 									<img
 										src="driver1.jpg"
@@ -57,7 +64,13 @@ export default function DriverPage({
 							</div>
 
 							{/* البطاقة الثانية */}
-							<div className="w-full max-w-[550px] overflow-hidden rounded-lg bg-[#EDEDED] shadow-lg lg:w-1/2">
+							<div
+								className="w-full max-w-[550px] cursor-pointer overflow-hidden rounded-lg bg-[#EDEDED] shadow-lg lg:w-1/2"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/ManagmentOperationPage";
+								}}
+							>
 								<div className="relative aspect-[550/300] w-full">
 									<img
 										src="driver2.jpg"

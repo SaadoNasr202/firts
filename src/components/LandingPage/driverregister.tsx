@@ -246,30 +246,13 @@ export default function DeliveryAgentForm({
 			onSubmit={handleSubmit}
 			method="POST"
 			className="h-full w-full p-4 md:p-8"
+			dir="rtl"
 		>
 			<h2 className="mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
 				معلومات عامل التوصيل
 			</h2>
 
 			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
-				<div className="flex flex-col">
-					<label
-						htmlFor="lastName"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						اسم العائلة
-					</label>
-					<input
-						type="text"
-						id="lastName"
-						name="lastName"
-						placeholder="خلف"
-						value={formData.lastName}
-						onChange={handleChange}
-						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
-						required
-					/>
-				</div>
 				<div className="flex flex-col">
 					<label
 						htmlFor="firstName"
@@ -283,6 +266,25 @@ export default function DeliveryAgentForm({
 						name="firstName"
 						placeholder="أحمد"
 						value={formData.firstName}
+						autoFocus
+						onChange={handleChange}
+						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+						required
+					/>
+				</div>
+				<div className="flex flex-col">
+					<label
+						htmlFor="lastName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						اسم العائلة
+					</label>
+					<input
+						type="text"
+						id="lastName"
+						name="lastName"
+						placeholder="خلف"
+						value={formData.lastName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
@@ -332,7 +334,7 @@ export default function DeliveryAgentForm({
 						inputProps={{
 							name: "email",
 							required: true,
-							autoFocus: true,
+
 							className:
 								"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
 						}}
@@ -416,7 +418,7 @@ export default function DeliveryAgentForm({
 					</select>
 				</div>
 			</div>
-			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
+			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-end">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>صورة الهوية /الإقامة </label>
 					<UploadButton
@@ -523,7 +525,7 @@ export default function DeliveryAgentForm({
 					/>
 				</div>
 			</div>
-			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
+			<div className="mt-8 flex items-center justify-start gap-2 space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
 					الموافقة على جميع{" "}
 					<a
@@ -543,7 +545,7 @@ export default function DeliveryAgentForm({
 					required
 				/>
 			</div>
-			<div className="mt-8 flex flex-col-reverse justify-start gap-4 sm:flex-row">
+			<div className="mt-8 flex flex-col-reverse justify-end gap-4 sm:flex-row">
 				<button
 					onClick={handleSubmit} // 👈 تم تغيير هذا
 					type="submit" // 👈 هذا صحيح
