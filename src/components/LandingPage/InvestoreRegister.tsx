@@ -2,7 +2,7 @@
 "use client";
 
 import { InvestoreFormData } from "@/app/invstore/page";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -107,8 +107,107 @@ export default function InvestoreForm({
 	const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isContractGenerated, setIsContractGenerated] = useState(false);
-	const [isNafathLoading, setNafathLoading] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	// تحميل زر نفاذ
+	const [isNafathLoading, setIsNafathLoading] = useState(false);
+
+	// request id من initiate
+	const [nafathRequestId, setNafathRequestId] = useState<string | null>(null);
+
+	// الرقم العشوائي من نفاذ
+	const [nafathRandom, setNafathRandom] = useState<string | null>(null);
+
+	// التحكم بالـ polling
+	const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(
+		null,
+	);
+	useEffect(() => {
+		return () => {
+			if (pollingInterval) clearInterval(pollingInterval);
+		};
+	}, [pollingInterval]);
+
+	const handleNafathInitiate = async () => {
+		try {
+			setIsNafathLoading(true);
+
+			const response = await fetch("/api/proxy/nafath/initiate", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ national_id: formData.national_id }),
+			});
+
+			if (!response.ok) throw new Error("فشل الاتصال بخدمة نفاذ");
+
+			const data = await response.json();
+
+			if (data.status === "sent" && data.external_response?.[0]) {
+				const random = data.external_response[0].random;
+				setNafathRequestId(data.request_id);
+				setNafathRandom(random);
+
+				setNotification({
+					message: `تم إرسال طلب التوثيق. الرجاء اختيار الرقم ${random} على تطبيق نفاذ بجوالك.`,
+					type: "success",
+					isVisible: true,
+				});
+
+				// بدء الـ polling
+				startPolling(data.request_id);
+			} else {
+				throw new Error("لم يتم إرجاع بيانات صحيحة من نفاذ");
+			}
+		} catch (error: any) {
+			setNotification({
+				message: error.message || "حدث خطأ أثناء بدء التوثيق عبر نفاذ",
+				type: "error",
+				isVisible: true,
+			});
+		} finally {
+			setIsNafathLoading(false);
+		}
+	};
+	const startPolling = (requestId: string) => {
+		if (pollingInterval) clearInterval(pollingInterval);
+
+		const interval = setInterval(async () => {
+			try {
+				const responseState = await fetch("/api/proxy/nafath/checkStatus", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ request_id: nafathRequestId }),
+				});
+
+				if (!responseState.ok) throw new Error("فشل التحقق من حالة التوثيق");
+
+				const data = await responseState.json();
+
+				if (data.status === "approved") {
+					clearInterval(interval);
+					setPollingInterval(null);
+
+					setNotification({
+						message: "✅ تم التوثيق بنجاح عبر نفاذ",
+						type: "success",
+						isVisible: true,
+					});
+				} else if (data.status === "rejected") {
+					clearInterval(interval);
+					setPollingInterval(null);
+
+					setNotification({
+						message: "❌ تم رفض التوثيق عبر نفاذ",
+						type: "error",
+						isVisible: true,
+					});
+				}
+			} catch (error) {
+				console.error("خطأ أثناء polling:", error);
+			}
+		}, 5000); // كل 5 ثواني
+
+		setPollingInterval(interval);
+	};
 
 	// State for notifications
 	const [notification, setNotification] = useState({
@@ -180,42 +279,6 @@ export default function InvestoreForm({
 	const handleEdit = () => {
 		setIsOpen(false);
 		setIsContractGenerated(false);
-	};
-
-	const handleNafathAuth = async () => {
-		setNafathLoading(true);
-		try {
-			// Replace with your Nafath API call
-			const response = await fetch(
-				"https://shellafood.com/api/v1/investor/auth",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/pdf",
-					},
-					body: JSON.stringify(formData),
-				},
-			);
-
-			if (response.ok) {
-				setNotification({
-					message: "تم إرسال العقد للتوثيق عبر نفاذ بنجاح!",
-					type: "success",
-					isVisible: true,
-				});
-			} else {
-				throw new Error("فشل التوثيق عبر نفاذ");
-			}
-		} catch (error) {
-			setNotification({
-				message: "حدث خطأ أثناء التوثيق عبر نفاذ",
-				type: "error",
-				isVisible: true,
-			});
-			console.error("Nafath Auth Error:", error);
-		} finally {
-			setNafathLoading(false);
-		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -593,11 +656,11 @@ export default function InvestoreForm({
 									تعديل البيانات
 								</button>
 								<button
-									onClick={handleNafathAuth}
+									onClick={handleNafathInitiate}
 									className="w-full rounded-lg bg-[#31A342] px-8 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-[#288435] focus:outline-none sm:w-auto"
 									disabled={isNafathLoading}
 								>
-									{isNafathLoading ? "جارٍ التوثيق..." : "التوثيق عبر نفاذ"}
+									{isNafathLoading ? "جارٍ الإرسال..." : "التوثيق عبر نفاذ"}
 								</button>
 							</div>
 						)}
