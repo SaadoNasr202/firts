@@ -118,7 +118,7 @@ export default function PoinOfSale() {
 						transition={{ duration: 0.6 }}
 						className="text-4xl leading-tight font-extrabold md:text-5xl"
 					>
-						حدود متجرك الآن...{" "}
+						حدود متجرك الآن{" "}
 						<span className="bg-gradient-to-r from-green-500 to-lime-500 bg-clip-text text-transparent">
 							حدود المملكة!
 						</span>

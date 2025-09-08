@@ -48,22 +48,7 @@ export default function PartnerPage({
 						{/* Container for the benefits grid */}
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 							{/* Benefit 4: رسوم مخفضة */}
-							{/* <div className="flex flex-col items-center p-4 text-center">
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
-								</div>
-								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									فرصة استثنائية لشركاء شلة
-								</h3>
-								<p className="mt-2 text-sm text-gray-600">
-									انطلق بأعمالك نحو القمة مع باقة نمو متكاملة بقيمة 5400
-									ريال، مجانًا بالكامل!
-								</p>
-							</div> */}
+						
 
 							<div
 								className="flex cursor-pointer flex-col items-center p-4 text-center"
