@@ -58,7 +58,7 @@ export default function PartnerPage({
 								}}
 							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4">
-									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-green-100 to-lime-100 text-green-600">
+									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r text-green-600">
 										{/* تم استدعاء الأيقونة بشكل صحيح هنا */}
 										<TrackChangesIcon style={{ fontSize: "80px" }} />
 									</div>
