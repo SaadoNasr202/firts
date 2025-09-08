@@ -7,7 +7,6 @@ import {
 	Globe,
 	Phone,
 	PlayCircle,
-	ShoppingCart,
 	Zap,
 } from "lucide-react";
 import React, { useState } from "react";
@@ -60,7 +59,7 @@ const posts = [
 	},
 ];
 
-export default function ShillaLanding(): JSX.Element {
+export default function AddMoney() {
 	const [email, setEmail] = useState("");
 	const [submitted, setSubmitted] = useState(false);
 
@@ -86,7 +85,6 @@ export default function ShillaLanding(): JSX.Element {
 			<header className="sticky top-0 z-50 mx-auto flex max-w-7xl items-center justify-between border-b border-slate-200 bg-white/60 px-6 py-6 backdrop-blur">
 				<div className="flex items-center gap-3">
 					<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r text-white shadow-lg">
-						{/* Shilla Logo Placeholder - Ensure it's green-500 consistent */}
 						<img
 							src="/shellalogo.png"
 							alt="شعار شلة"
@@ -105,7 +103,7 @@ export default function ShillaLanding(): JSX.Element {
 					<a className="cursor-pointer hover:text-green-700">الدعم</a>
 					<a className="cursor-pointer hover:text-green-700">تواصل معنا</a>
 					<button className="rounded-lg bg-gradient-to-r from-green-500 via-lime-500 to-emerald-500 px-4 py-2 text-white shadow transition hover:scale-105">
-						تفعيل الباقة المجانية
+						اشترك الآن
 					</button>
 				</nav>
 			</header>
@@ -119,9 +117,9 @@ export default function ShillaLanding(): JSX.Element {
 						transition={{ duration: 0.6 }}
 						className="text-4xl leading-tight font-extrabold md:text-5xl"
 					>
-						فرصة استثنائية لشركاء{" "}
+						ضاعف أرباحك وزد{" "}
 						<span className="bg-gradient-to-r from-green-500 to-lime-500 bg-clip-text text-transparent">
-							شلة
+							مبيعاتك
 						</span>
 					</motion.h2>
 
@@ -131,9 +129,8 @@ export default function ShillaLanding(): JSX.Element {
 						transition={{ delay: 0.2 }}
 						className="mt-6 max-w-xl text-lg text-slate-700"
 					>
-						باقة نمو متكاملة بقيمة{" "}
-						<span className="font-semibold">5400 ريال</span> — مجانًا لمدة 90
-						يومًا. حضور رقمي، تجهيزات POS، ودعم تسويقي لزيادة المبيعات.
+						مو بس تطبيق… بل منظومة نجاح متكاملة! مع شلة، منتجك يوصل لآلاف
+						العملاء في كل مدينة وقرية بالمملكة.
 					</motion.p>
 
 					<div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -142,7 +139,7 @@ export default function ShillaLanding(): JSX.Element {
 							className="inline-flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-green-500 via-lime-500 to-emerald-500 px-6 py-3 font-medium text-white shadow-lg"
 							href="#form"
 						>
-							فعّل باقتك المجانية <Zap size={18} />
+							اشترك الآن <Zap size={18} />
 						</motion.a>
 						<a className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-600 hover:text-green-700">
 							<Globe size={16} /> تعرف أكثر
@@ -152,24 +149,24 @@ export default function ShillaLanding(): JSX.Element {
 					{/* Key bullets */}
 					<div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<FeatureCard
-							icon={<ShoppingCart />}
-							title="موقع إلكتروني"
-							desc="واجهة أنيقة لعرض منتجاتك"
+							icon={<CheckCircle />}
+							title="تدفق مستمر من المبيعات"
+							desc="عملاء جدد باستمرار"
 						/>
 						<FeatureCard
 							icon={<Zap />}
-							title="حملات تسويقية"
-							desc="إعلانات تجذب العملاء المحتملين"
+							title="أرباح أعلى"
+							desc="هوامش ربح أكبر ورسوم منخفضة"
+						/>
+						<FeatureCard
+							icon={<Globe />}
+							title="وصول أوسع"
+							desc="منتجك يوصل كل مدينة وكل بيت"
 						/>
 						<FeatureCard
 							icon={<Phone />}
-							title="انضمام لتطبيق شلة"
-							desc="وصول مباشر لآلاف المستخدمين"
-						/>
-						<FeatureCard
-							icon={<CheckCircle />}
-							title="POS ولوحات"
-							desc="تجهيز متكامل داخل متجرك"
+							title="إدارة سهلة"
+							desc="تحكم كامل عبر تطبيق بسيط"
 						/>
 					</div>
 				</section>
@@ -183,33 +180,33 @@ export default function ShillaLanding(): JSX.Element {
 						className="relative rounded-2xl border border-slate-100 bg-white p-8 shadow-2xl"
 					>
 						<div className="absolute -top-4 -left-4 rounded-full bg-gradient-to-r from-green-500 to-lime-500 px-3 py-1 text-xs text-white shadow">
-							مجانًا 90 يوم
+							جديد
 						</div>
 						<div className="flex items-start justify-between">
 							<div>
-								<div className="text-xs text-slate-500">الباقة المجانية</div>
+								<div className="text-xs text-slate-500">انضم إلينا</div>
 								<h3 className="mt-1 text-xl font-semibold">
-									90 يومًا — قيمة 5400 ريال
+									انضم إلى عالم متاجر شلة اليوم!
 								</h3>
 								<p className="mt-2 text-sm text-slate-600">
-									ابدأ الحضور الرقمي الكامل وتعرّف على قوة شلة.
+									الآلاف من العملاء بانتظارك 🔥
 								</p>
 							</div>
-							<div className="font-bold text-green-600">0 ريال</div>
+							<div className="font-bold text-green-600"></div>
 						</div>
 
 						<ul className="mt-5 space-y-3 text-sm text-slate-700">
 							<li className="flex items-center gap-3">
-								<CheckCircle size={16} className="text-green-600" /> موقع
-								إلكتروني خاص
+								<CheckCircle size={16} className="text-green-600" /> مبيعات أكثر
+								بشكل مستمر
 							</li>
 							<li className="flex items-center gap-3">
-								<CheckCircle size={16} className="text-green-600" /> نظام نقاط
-								بيع (POS)
+								<CheckCircle size={16} className="text-green-600" /> أرباح أعلى
+								وهوامش ربح أكبر
 							</li>
 							<li className="flex items-center gap-3">
-								<CheckCircle size={16} className="text-green-600" /> حملات على
-								السوشيال
+								<CheckCircle size={16} className="text-green-600" /> وصول
+								وانتشار في كل المملكة
 							</li>
 						</ul>
 
@@ -230,7 +227,7 @@ export default function ShillaLanding(): JSX.Element {
 									type="submit"
 									className="rounded-lg bg-gradient-to-r from-green-500 to-lime-500 px-5 py-2 font-medium text-white shadow transition hover:scale-105"
 								>
-									سجل الآن
+									ابدأ رحلتك الآن
 								</button>
 							</div>
 							{submitted && (
@@ -241,7 +238,7 @@ export default function ShillaLanding(): JSX.Element {
 						</form>
 
 						<div className="mt-4 text-xs text-slate-400">
-							* بدون أي رسوم أو التزامات بعد انتهاء 90 يوم.
+							* تواصل معنا للمزيد من التفاصيل.
 						</div>
 					</motion.div>
 				</aside>

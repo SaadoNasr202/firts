@@ -3,7 +3,6 @@
 import { PartnerFormData } from "@/app/partner/page";
 import StoreForm from "./partnerregister";
 import ImagePartnerSlider from "./SliderPartner";
-
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
@@ -90,107 +89,144 @@ export default function PartnerPage({
 							</div>
 
 							{/* Benefit 3: توسيع نقاط البيع */}
-							<div className="flex flex-col items-center p-4 text-center">
+
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/PointOfSale";
+								}}
+							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
 									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=👥"
-										alt="Expand Sales Points Icon"
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
 										className="h-16 w-16"
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									توسيع نقاط البيع
+									حدود متجرك الآن حدود المملكة
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									ستتمكن من توصيل منتجاتك إلى جميع أنحاء المملكة
+									انطلق بمنتجاتك إلى كل مدينة وقرية
 								</p>
 							</div>
 
 							{/* Benefit 1: أرباح أعلى وطلبات أكثر */}
-							<div className="flex flex-col items-center p-4 text-center">
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/AddToMoney";
+								}}
+							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									{/* أيقونة الأرباح، يمكن استخدام SVG أو أيقونة من مكتبة */}
 									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=%"
-										alt="Higher Profits Icon"
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
 										className="h-16 w-16"
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									أرباح أعلى وطلبات أكثر
+									ضاعف أرباحك وزد مبيعاتك
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									ستحصل على عدد طلبات أكثر من خلال اشتراكك بمتاجر شلة
+									انضم إلى عالم متاجر{" "}
+									<span className="text-green-500">شلة</span> اليوم!
 								</p>
 							</div>
 
 							{/* Benefit 8: لا قلق بعد اليوم */}
-							<div className="flex flex-col items-center p-4 text-center">
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/ShippingPage";
+								}}
+							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
 									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=😊"
-										alt="No Worries Icon"
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
 										className="h-16 w-16"
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									لا قلق بعد اليوم
+									وداعاً لقلق الشحن
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									ابق في أمنة مع عملائك. منذ الآن جميع الطلبات ستصل لعملائها
-									بأسرع وقت
+									مرحباً بعصر جديد من الثقة والسرعة الفائقة مع تطبيق
+									<span className="text-green-500"> شلة </span>
 								</p>
 							</div>
 
 							{/* Benefit 7: إحصائيات البيع */}
-							<div className="flex flex-col items-center p-4 text-center">
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/SaleStatisticsPage";
+								}}
+							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
 									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=📊"
-										alt="Sales Statistics Icon"
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
 										className="h-16 w-16"
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									إحصائيات البيع
+									إحصائيات البيع مع
+									<span className="text-green-500"> شلة</span>
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									يمكنك رؤية الإحصائيات والبيانات اليومية والشهرية لتلقي على
-									نتائج مبيعاتك
+									بوصلتك الدقيقة نحو قرارات أذكى وأرباح أعلى
 								</p>
 							</div>
 
 							{/* Benefit 6: أبدع في عملك */}
-							<div className="flex flex-col items-center p-4 text-center">
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									window.location.href = "/CreativityWrokePage";
+								}}
+							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
 									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=🛠️"
-										alt="Creativity Icon"
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
 										className="h-16 w-16"
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									أبدع في عملك
+									إبداع في عملك
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									يمكنك إدارة كل شئ من التطبيق
+									يمكنك إدارة كل شئ من التطبيق لعملائك
 								</p>
 							</div>
 
 							{/* Benefit 5: خاصية التنبيه بالطلبات الجديدة */}
-							<div className="flex flex-col items-center p-4 text-center">
+							<div
+								className="flex cursor-pointer flex-col items-center p-4 text-center"
+								onClick={() => {
+									// لاحقًا ضع رابط الصفحة هنا
+									window.location.href = "/ManagmentOperationPage";
+								}}
+							>
 								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
 									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=🔔"
-										alt="New Order Notifications Icon"
+										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
+										alt="Reduced Fees Icon"
 										className="h-16 w-16"
 									/>
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									خاصية التنبيه بالطلبات الجديدة
+									إدارة عملياتك بفعالية
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									خاصية التنبيهات عند توفر طلبات جديدة للتنبيه بوجود طلب جديد
+									خاصية التنبيه الفوري بالطلبات الجديدة في تطبيق{" "}
+									<span className="text-green-500">شلة</span> للتجار ​
 								</p>
 							</div>
 						</div>
