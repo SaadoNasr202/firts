@@ -1,8 +1,10 @@
 "use client";
 
 import { PartnerFormData } from "@/app/partner/page";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import StoreForm from "./partnerregister";
 import ImagePartnerSlider from "./SliderPartner";
+
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
@@ -48,8 +50,6 @@ export default function PartnerPage({
 						{/* Container for the benefits grid */}
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 							{/* Benefit 4: رسوم مخفضة */}
-						
-
 							<div
 								className="flex cursor-pointer flex-col items-center p-4 text-center"
 								onClick={() => {
@@ -57,19 +57,19 @@ export default function PartnerPage({
 									window.location.href = "/BenefitPage";
 								}}
 							>
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 p-4">
-									<img
-										src="https://placehold.co/96x96/31a342/ffffff?text=💵"
-										alt="Reduced Fees Icon"
-										className="h-16 w-16"
-									/>
+								<div className="flex h-24 w-24 items-center justify-center rounded-full p-4">
+									<div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-green-100 to-lime-100 text-green-600">
+										{/* تم استدعاء الأيقونة بشكل صحيح هنا */}
+										<TrackChangesIcon style={{ fontSize: "80px" }} />
+									</div>
 								</div>
+
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
 									فرصة استثنائية لشركاء شلة
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									انطلق بأعمالك نحو القمة مع باقة نمو متكاملة بقيمة 5400
-									ريال، مجانًا بالكامل!
+									انطلق بأعمالك نحو القمة مع باقة نمو متكاملة بقيمة 5400 ريال،
+									مجانًا بالكامل!
 								</p>
 							</div>
 
