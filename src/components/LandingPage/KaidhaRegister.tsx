@@ -380,6 +380,7 @@ export default function KaidhaRegister({
 							placeholder=""
 							value={formData.firstName}
 							onChange={handleChange}
+							autoFocus
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						/>
 					</div>
@@ -568,7 +569,7 @@ export default function KaidhaRegister({
 							inputProps={{
 								name: "phoneNumber",
 								required: true,
-								autoFocus: true,
+
 								className:
 									"rounded-lg border border-gray-300 p-3 text-right  focus:outline-none",
 							}}
@@ -602,7 +603,7 @@ export default function KaidhaRegister({
 							inputProps={{
 								name: "phoneNumber",
 								required: true,
-								autoFocus: true,
+
 								className:
 									"rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none",
 							}}

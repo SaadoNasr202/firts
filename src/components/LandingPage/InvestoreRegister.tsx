@@ -348,6 +348,7 @@ export default function InvestoreForm({
 							placeholder="الاسم الأول"
 							value={formData.first_name}
 							onChange={handleChange}
+							autoFocus
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
 							required
 						/>
@@ -397,7 +398,7 @@ export default function InvestoreForm({
 						>
 							اسم الجد
 						</label>
-						<input
+						<input 
 							type="text"
 							id="grandfather_name"
 							name="grandfather_name"
@@ -485,7 +486,7 @@ export default function InvestoreForm({
 								inputProps={{
 									name: "phone",
 									required: true,
-									autoFocus: true,
+
 									className:
 										"rounded-lg border border-gray-300 p-3 text-right  focus:ring-green-500 focus:outline-none",
 								}}

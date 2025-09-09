@@ -312,6 +312,7 @@ export default function StoreForm({
 						placeholder="أدخل اسم متجرك"
 						value={formData.storeName}
 						onChange={handleChange}
+						autoFocus
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					/>
@@ -383,7 +384,7 @@ export default function StoreForm({
 						inputProps={{
 							name: "phoneNumber",
 							required: true,
-							autoFocus: true,
+
 							className:
 								"rounded-lg border border-gray-300 p-3 text-right  focus:ring-green-500 focus:outline-none",
 						}}
