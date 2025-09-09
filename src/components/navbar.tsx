@@ -19,15 +19,12 @@ export default function Navbar() {
 
 			{/* شعار شلة - تم تعديل الحجم ليكون متجاوبًا */}
 			<Image
-				onClick={() => {
-					window.location.href = "/";
-				}}
 				src="/shellalogo.png"
 				alt="logo"
 				width={0}
 				height={0}
 				sizes="100vw"
-				className="w-32 object-contain sm:w-44 lg:w-52"
+				className="w-32 object-contain sm:w-44 lg:w-52 cursor-pointer"
 			/>
 		</nav>
 	);
