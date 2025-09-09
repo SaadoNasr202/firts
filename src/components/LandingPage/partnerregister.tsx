@@ -10,7 +10,7 @@ import {
 import React, { useRef, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { UploadButton } from "../uploadthing";
+import ClientUploadButton from "../ui/ClientUploadButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const defaultCenter = { lat: 24.7136, lng: 46.6753 };
@@ -434,8 +434,8 @@ export default function StoreForm({
 			</div>
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-							<label>{t('partnerForm.idImage')}</label>
-					<UploadButton
+					<label>{t('partnerForm.idImage')}</label>
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -461,8 +461,8 @@ export default function StoreForm({
 				</div>
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-							<label>{t('partnerForm.municipalLicense')}</label>
-					<UploadButton
+					<label>{t('partnerForm.municipalLicense')}</label>
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -487,8 +487,8 @@ export default function StoreForm({
 					/>
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-							<label>{t('partnerForm.storefrontImage')}</label>
-					<UploadButton
+					<label>{t('partnerForm.storefrontImage')}</label>
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);

@@ -2,7 +2,7 @@
 
 import { WorkerFormData } from "@/app/worker/page";
 import { useState } from "react";
-import { UploadButton } from "../uploadthing";
+import ClientUploadButton from "../ui/ClientUploadButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // مكون الإشعارات
@@ -414,7 +414,7 @@ placeholder={t('workerForm.placeholder.email')}
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('workerForm.idImage')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -422,11 +422,11 @@ placeholder={t('workerForm.placeholder.email')}
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
-											setNotification({
-												message: t('workerForm.idUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('workerForm.idUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -441,7 +441,7 @@ placeholder={t('workerForm.placeholder.email')}
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('workerForm.driverLicense')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -449,11 +449,11 @@ placeholder={t('workerForm.placeholder.email')}
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idDriver: url }));
-											setNotification({
-												message: t('workerForm.licenseUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('workerForm.licenseUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -467,7 +467,7 @@ placeholder={t('workerForm.placeholder.email')}
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('workerForm.vehicleRegistration')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -475,11 +475,11 @@ placeholder={t('workerForm.placeholder.email')}
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idVichle: url }));
-											setNotification({
-												message: t('workerForm.registrationUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('workerForm.registrationUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -493,7 +493,7 @@ placeholder={t('workerForm.placeholder.email')}
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('workerForm.personalPhoto')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -501,11 +501,11 @@ placeholder={t('workerForm.placeholder.email')}
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, Picture: url }));
-											setNotification({
-												message: t('workerForm.photoUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('workerForm.photoUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {

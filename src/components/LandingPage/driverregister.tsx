@@ -4,7 +4,7 @@ import { FormData } from "@/app/driver/page";
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { UploadButton } from "../uploadthing";
+import ClientUploadButton from "../ui/ClientUploadButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // مكون الإشعارات
@@ -423,7 +423,7 @@ export default function DeliveryAgentForm({
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-end">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('driverForm.idImage')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -431,11 +431,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
-											setNotification({
-												message: t('driverForm.idUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('driverForm.idUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -450,7 +450,7 @@ export default function DeliveryAgentForm({
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('driverForm.driverLicense')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -458,11 +458,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idVichle: url }));
-											setNotification({
-												message: t('driverForm.licenseUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('driverForm.licenseUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -476,7 +476,7 @@ export default function DeliveryAgentForm({
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('driverForm.vehicleRegistration')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -484,11 +484,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idDriver: url }));
-											setNotification({
-												message: t('driverForm.registrationUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('driverForm.registrationUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -502,7 +502,7 @@ export default function DeliveryAgentForm({
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
 					<label>{t('driverForm.personalPhoto')}</label>
-					<UploadButton
+					<ClientUploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -510,11 +510,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, Picture: url }));
-											setNotification({
-												message: t('driverForm.photoUploadSuccess'),
-												type: 'success',
-												isVisible: true,
-											});
+								setNotification({
+									message: t('driverForm.photoUploadSuccess'),
+									type: 'success',
+									isVisible: true,
+								});
 							}
 						}}
 						onUploadError={(error: Error) => {
