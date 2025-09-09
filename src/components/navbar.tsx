@@ -17,13 +17,13 @@ export default function Navbar() {
 				setIsDropdownOpen(false);
 			}
 		};
-		
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
+
 	return (
 		<nav className="flex w-full flex-row items-center justify-between border-b bg-white px-6 py-2 shadow-sm">
 			{/* قسم اللغة */}
@@ -89,12 +89,15 @@ export default function Navbar() {
 
 			{/* شعار شلة - تم تعديل الحجم ليكون متجاوبًا */}
 			<Image
+				onClick={() => {
+					window.location.href = "/";
+				}}
 				src="/shellalogo.png"
 				alt="logo"
 				width={0}
 				height={0}
 				sizes="100vw"
-				className="w-32 object-contain sm:w-44 lg:w-52"
+				className="w-32 object-contain sm:w-44 lg:w-52 cursor-pointer"
 			/>
 		</nav>
 	);
