@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // مكون الإشعارات
 const Notification = ({
@@ -87,6 +88,7 @@ export default function DeliveryAgentForm({
 		formData: FormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
+	const { t } = useLanguage();
 	const [formData, setFormData] = useState<{
 		firstName: string;
 		lastName: string;
@@ -156,17 +158,17 @@ export default function DeliveryAgentForm({
 				!formData[field as keyof typeof formData] ||
 				(formData[field as keyof typeof formData] as string).trim() === ""
 			) {
-				return {
-					isValid: false,
-					message: `يرجى ملء جميع الحقول المطلوبة`,
-				};
+			return {
+				isValid: false,
+				message: t('driverForm.fillAllFields'),
+			};
 			}
 		}
 
 		if (!formData.agreed) {
 			return {
 				isValid: false,
-				message: `يرجى الموافقة على الشروط والأحكام`,
+				message: t('driverForm.agreeToTerms'),
 			};
 		}
 
@@ -186,7 +188,7 @@ export default function DeliveryAgentForm({
 		}
 		if (formData.personalIdNumber.length > 10) {
 			setNotification({
-				message: "الرقم القومي اكبر من 10 خانات",
+				message: t('driverForm.idTooLong'),
 				type: "error",
 				isVisible: true,
 			});
@@ -195,7 +197,7 @@ export default function DeliveryAgentForm({
 				const result = await postFormDeliveryDriverAction(formData);
 				if ("success" in result && result.success) {
 					setNotification({
-						message: "تم تسجيل البيانات بنجاح!",
+						message: t('driverForm.success'),
 						type: "success",
 						isVisible: true,
 					});
@@ -208,14 +210,14 @@ export default function DeliveryAgentForm({
 					});
 				} else {
 					setNotification({
-						message: "حدث خطأ اثناء الستجيل",
+						message: t('driverForm.error'),
 						type: "error",
 						isVisible: true,
 					});
 				}
 			} catch (error) {
 				setNotification({
-					message: "حدث خطأ أثناء تسجيل البيانات",
+					message: t('driverForm.submitError'),
 					type: "error",
 					isVisible: true,
 				});
@@ -249,7 +251,7 @@ export default function DeliveryAgentForm({
 			dir="rtl"
 		>
 			<h2 className="mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
-				معلومات عامل التوصيل
+				{t('driverForm.driverInfo')}
 			</h2>
 
 			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
@@ -258,13 +260,13 @@ export default function DeliveryAgentForm({
 						htmlFor="firstName"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						الاسم الأول
+						{t('driverForm.firstName')}
 					</label>
 					<input
 						type="text"
 						id="firstName"
 						name="firstName"
-						placeholder="أحمد"
+						placeholder={t('driverForm.placeholder.firstName')}
 						value={formData.firstName}
 						autoFocus
 						onChange={handleChange}
@@ -277,13 +279,13 @@ export default function DeliveryAgentForm({
 						htmlFor="lastName"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						اسم العائلة
+						{t('driverForm.lastName')}
 					</label>
 					<input
 						type="text"
 						id="lastName"
 						name="lastName"
-						placeholder="خلف"
+						placeholder={t('driverForm.placeholder.lastName')}
 						value={formData.lastName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -296,7 +298,7 @@ export default function DeliveryAgentForm({
 						htmlFor="deliveryType"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						نوع مندوب التوصيل
+						{t('driverForm.deliveryType')}
 					</label>
 					<select
 						id="deliveryType"
@@ -306,9 +308,9 @@ export default function DeliveryAgentForm({
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					>
-						<option value="">-- اختر --</option>
-						<option value="موظف">مستقل</option>
-						<option value="موظف">موظف</option>
+						<option value="">{t('driverForm.placeholder.choose')}</option>
+						<option value="موظف">{t('driverForm.option.freelance')}</option>
+						<option value="موظف">{t('driverForm.option.employee')}</option>
 					</select>
 				</div>
 				<div className="flex flex-col">
@@ -316,7 +318,7 @@ export default function DeliveryAgentForm({
 						htmlFor="email"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						رقم الموبايل
+						{t('driverForm.phoneNumber')}
 					</label>
 					<PhoneInput
 						country={"sa"}
@@ -345,13 +347,13 @@ export default function DeliveryAgentForm({
 						htmlFor="region"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						المنطقة
+						{t('driverForm.region')}
 					</label>
 					<input
 						type="text"
 						id="region"
 						name="region"
-						placeholder="جدة"
+						placeholder={t('driverForm.placeholder.region')}
 						value={formData.region}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -363,7 +365,7 @@ export default function DeliveryAgentForm({
 						htmlFor="vehicleType"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						نوع المركبة
+						{t('driverForm.vehicleType')}
 					</label>
 					<select
 						id="vehicleType"
@@ -373,10 +375,10 @@ export default function DeliveryAgentForm({
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					>
-						<option value="">-- اختر --</option>
-						<option value="bike">دراجة نارية</option>
-						<option value="car">سيارة</option>
-						<option value="bicycle">دراجة هوائية</option>
+						<option value="">{t('driverForm.placeholder.choose')}</option>
+						<option value="bike">{t('driverForm.option.motorcycle')}</option>
+						<option value="car">{t('driverForm.option.car')}</option>
+						<option value="bicycle">{t('driverForm.option.bicycle')}</option>
 					</select>
 				</div>
 				<div className="flex flex-col">
@@ -384,13 +386,13 @@ export default function DeliveryAgentForm({
 						htmlFor="personalIdNumber"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						رقم الهوية الشخصية / الإقامة
+						{t('driverForm.personalId')}
 					</label>
 					<input
 						type="text"
 						id="personalIdNumber"
 						name="personalIdNumber"
-						placeholder="EX:1234567890"
+						placeholder={t('driverForm.placeholder.idExample')}
 						value={formData.personalIdNumber}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -402,7 +404,7 @@ export default function DeliveryAgentForm({
 						htmlFor="idType"
 						className="mb-2 text-right font-semibold text-gray-700"
 					>
-						نوع الهوية
+						{t('driverForm.idType')}
 					</label>
 					<select
 						id="idType"
@@ -412,15 +414,15 @@ export default function DeliveryAgentForm({
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					>
-						<option value="">-- اختر --</option>
-						<option value="هوية ">بطاقة هوية وطنية</option>
-						<option value="إقامة">إقامة</option>
+						<option value="">{t('driverForm.placeholder.choose')}</option>
+						<option value="هوية ">{t('driverForm.option.nationalId')}</option>
+						<option value="إقامة">{t('driverForm.option.residence')}</option>
 					</select>
 				</div>
 			</div>
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-end">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>صورة الهوية /الإقامة </label>
+					<label>{t('driverForm.idImage')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -429,11 +431,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
-								setNotification({
-									message: "تم رفع صورة الهوية الشخصية بنجاح",
-									type: "success",
-									isVisible: true,
-								});
+											setNotification({
+												message: t('driverForm.idUploadSuccess'),
+												type: 'success',
+												isVisible: true,
+											});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -447,7 +449,7 @@ export default function DeliveryAgentForm({
 				</div>
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label> رخصة القيادة</label>
+					<label>{t('driverForm.driverLicense')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -456,11 +458,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idVichle: url }));
-								setNotification({
-									message: "تم رفع صورة الرخصة بنجاح",
-									type: "success",
-									isVisible: true,
-								});
+											setNotification({
+												message: t('driverForm.licenseUploadSuccess'),
+												type: 'success',
+												isVisible: true,
+											});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -473,7 +475,7 @@ export default function DeliveryAgentForm({
 					/>
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>استمارة المركبة </label>
+					<label>{t('driverForm.vehicleRegistration')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -482,11 +484,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, idDriver: url }));
-								setNotification({
-									message: "تم رفع صورة الاستمارة بنجاح",
-									type: "success",
-									isVisible: true,
-								});
+											setNotification({
+												message: t('driverForm.registrationUploadSuccess'),
+												type: 'success',
+												isVisible: true,
+											});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -499,7 +501,7 @@ export default function DeliveryAgentForm({
 					/>
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>صورة شخصية</label>
+					<label>{t('driverForm.personalPhoto')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -508,11 +510,11 @@ export default function DeliveryAgentForm({
 							const url = (first as any)?.serverData?.url || first?.url;
 							if (url) {
 								setFormData((prev) => ({ ...prev, Picture: url }));
-								setNotification({
-									message: "تم رفع الصورة الشخصية بنجاح",
-									type: "success",
-									isVisible: true,
-								});
+											setNotification({
+												message: t('driverForm.photoUploadSuccess'),
+												type: 'success',
+												isVisible: true,
+											});
 							}
 						}}
 						onUploadError={(error: Error) => {
@@ -526,15 +528,15 @@ export default function DeliveryAgentForm({
 				</div>
 			</div>
 			<div className="mt-8 flex items-center justify-start gap-2 space-x-2 space-x-reverse">
-				<label htmlFor="agreed" className="text-sm text-gray-600">
-					الموافقة على جميع{" "}
-					<a
-						href="/CondtionAterms"
-						className="font-medium text-green-600 hover:underline"
-					>
-						الشروط والأحكام
-					</a>
-				</label>
+					<label htmlFor="agreed" className="text-sm text-gray-600">
+						{t('driverForm.agreeTerms')}{" "}
+						<a
+							href="/CondtionAterms"
+							className="font-medium text-green-600 hover:underline"
+						>
+							{t('driverForm.termsAndConditions')}
+						</a>
+					</label>
 				<input
 					type="checkbox"
 					id="agreed"
@@ -551,13 +553,13 @@ export default function DeliveryAgentForm({
 					type="submit" // 👈 هذا صحيح
 					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 				>
-					إرسال
+						{t('driverForm.submit')}
 				</button>
 				<button
 					type="button"
 					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
 				>
-					إعادة ضبط
+{t('driverForm.reset')}
 				</button>
 			</div>
 			<Notification

@@ -1,7 +1,9 @@
 "use client";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Shellafooter() {
+	const { t } = useLanguage();
 	return (
 		<div
 			className={`font-tajawal w-full flex-col bg-[#FFFFFF] text-gray-800`}
@@ -20,36 +22,34 @@ export default function Shellafooter() {
 								/>
 							</div>
 							<p className="leading-relaxed text-gray-600 md:text-sm">
-								شلة منشأة سعودية مرخصة من قبل وزارة التجارة لممارسة النشاط
-								التسويقي للغير وبيع التجزئة والجملة للأفراد والمنشآت بسجل تجاري
-								رقم 1009128112 برأس مال 50 مليون ريال سعودي.
+								{t('footer.companyDescription')}
 							</p>
 						</div>
 
 						{/* Quick Links Section */}
 						<div className="w-1/2 md:w-auto">
 							<h4 className="mb-4 text-base font-semibold md:text-lg">
-								الشركة
+								{t('footer.company')}
 							</h4>
 							<ul className="space-y-2 text-sm text-gray-600 md:text-base">
 								<li>
 									<a href="#" className="hover:text-amber-500">
-										عن شلة
+										{t('footer.about')}
 									</a>
 								</li>
 								<li>
 									<a href="#" className="hover:text-amber-500">
-										الوظائف
+										{t('footer.jobs')}
 									</a>
 								</li>
 								<li>
 									<a href="#" className="hover:text-amber-500">
-										أسئلة وأجوبة
+										{t('footer.faq')}
 									</a>
 								</li>
 								<li>
 									<a href="#" className="hover:text-amber-500">
-										الشريعة الإسلامية
+										{t('footer.islamicLaw')}
 									</a>
 								</li>
 							</ul>
@@ -58,22 +58,22 @@ export default function Shellafooter() {
 						{/* Legal Section */}
 						<div className="w-1/2 md:w-auto">
 							<h4 className="mb-4 text-base font-semibold md:text-lg">
-								القانونية
+								{t('footer.legal')}
 							</h4>
 							<ul className="space-y-2 text-sm text-gray-600 md:text-base">
 								<li>
 									<a href="/KaidhaTerms" className="hover:text-amber-500">
-										شروط قيدها
+										{t('footer.qaydhaTerms')}
 									</a>
 								</li>
 								<li>
 									<a href="/PrivacyPolicy" className="hover:text-amber-500">
-										سياسة الخصوصية
+										{t('footer.privacyPolicy')}
 									</a>
 								</li>
 								<li>
 									<a href="/CondtionAterms" className="hover:text-amber-500">
-										الشروط والأحكام
+										{t('footer.termsAndConditions')}
 									</a>
 								</li>
 							</ul>
@@ -82,27 +82,27 @@ export default function Shellafooter() {
 						{/* Application Section */}
 						<div className="w-1/2 md:w-auto">
 							<h4 className="mb-4 text-base font-semibold md:text-lg">
-								التطبيق
+								{t('footer.application')}
 							</h4>
 							<ul className="space-y-2 text-sm text-gray-600 md:text-base">
 								<li>
 									<a href="/driver" className="hover:text-amber-500">
-										انضم كمندوب توصيل
+										{t('footer.joinAsDriver')}
 									</a>
 								</li>
 								<li>
 									<a href="/partner" className="hover:text-amber-500">
-										انضم كتاجر{" "}
+										{t('footer.joinAsPartner')}
 									</a>
 								</li>
 								<li>
 									<a href="/worker" className="hover:text-amber-500">
-										انضم كمقدم  خدمة
+										{t('footer.joinAsWorker')}
 									</a>
 								</li>
 								<li>
 									<a href="/invstore" className="hover:text-amber-500">
-										انضم كمستثمر
+										{t('footer.joinAsInvestor')}
 									</a>
 								</li>
 							</ul>
@@ -111,22 +111,22 @@ export default function Shellafooter() {
 						{/* Customer Service Section */}
 						<div className="w-1/2 md:w-auto">
 							<h4 className="mb-4 text-base font-semibold md:text-lg">
-								خدمة العملاء
+								{t('footer.customerService')}
 							</h4>
 							<ul className="space-y-2 text-sm text-gray-600 md:text-base">
 								<li>
 									<a href="#" className="hover:text-amber-500">
-										إقرارات العملاء
+										{t('footer.customerTestimonials')}
 									</a>
 								</li>
 								<li>
 									<a href="#" className="hover:text-amber-500">
-										تواصل معنا
+										{t('footer.contactUs')}
 									</a>
 								</li>
 								<li>
 									<a href="./profile" className="hover:text-amber-500">
-										Profile
+										{t('footer.profile')}
 									</a>
 								</li>
 							</ul>
@@ -136,7 +136,7 @@ export default function Shellafooter() {
 					{/* Social and Copyright Section */}
 					<div className="mt-8 flex flex-col items-center justify-between space-y-4 pt-8 md:flex-row md:space-y-0">
 						<p className="text-center text-xs text-gray-500 md:text-start md:text-sm">
-							© 2024 Shellaksa
+							{t('footer.copyright')}
 						</p>
 						<div className="flex space-x-4 space-x-reverse">
 							{/* Social Media Icons */}

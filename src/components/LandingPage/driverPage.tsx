@@ -2,6 +2,7 @@
 import { FormData } from "@/app/driver/page";
 import DeliveryAgentForm from "./driverregister";
 import ImageDriverSlider from "./SliderDriver";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DriverPage({
 	postFormDeliveryDriverAction,
@@ -10,6 +11,7 @@ export default function DriverPage({
 		formData: FormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
+	const { t } = useLanguage();
 	return (
 		<main>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
@@ -21,7 +23,7 @@ export default function DriverPage({
 				{/* قسم الفورم */}
 				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
 					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						الانضمام كعامل توصيل
+						{t('driver.title')}
 					</div>
 					<div className="opacity-100">
 						<DeliveryAgentForm
@@ -34,7 +36,7 @@ export default function DriverPage({
 				<section className="mb-8 bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
-							فوائد الانضمام كعامل توصيل في شلة
+							{t('driver.benefits')} {t('company.name')}
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-8 lg:flex-row">
 							{/* البطاقة 2 */}
@@ -54,11 +56,10 @@ export default function DriverPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										استمتع برسوم خدمة منخفضة
+										{t('driver.card1.title')}
 									</h3>
 									<p className="text-gray-600">
-										سوف تحصل على عائد طويل الأجل لطالما بقيت من المستثمرين معنا
-										في شلة
+										{t('driver.card1.description')}
 									</p>
 								</div>
 							</div>
@@ -80,11 +81,10 @@ export default function DriverPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										متصل في أي وقت
+										{t('driver.card2.title')}
 									</h3>
 									<p className="text-gray-600">
-										التمتع بحرية العمل في الأوقات الملائمة لك كما سوف تتمكن من
-										عملك ومسؤولياتك الأخرى
+										{t('driver.card2.description')}
 									</p>
 								</div>
 							</div>
