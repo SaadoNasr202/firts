@@ -37,12 +37,12 @@ export default function DriverPage({
 							فوائد الانضمام كعامل توصيل في شلة
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-8 lg:flex-row">
-							{/* البطاقة الأولى */}
+							{/* البطاقة 2 */}
 							<div
 								className="w-full max-w-[550px] cursor-pointer overflow-hidden rounded-lg bg-[#EDEDED] shadow-lg lg:w-1/2"
 								onClick={() => {
 									// لاحقًا ضع رابط الصفحة هنا
-									window.location.href = "/ManagmentOperationPage";
+									window.location.href = "/CardDeleviry2";
 								}}
 							>
 								<div className="relative aspect-[550/300] w-full">
@@ -63,12 +63,12 @@ export default function DriverPage({
 								</div>
 							</div>
 
-							{/* البطاقة الثانية */}
+							{/* البطاقة 1 */}
 							<div
 								className="w-full max-w-[550px] cursor-pointer overflow-hidden rounded-lg bg-[#EDEDED] shadow-lg lg:w-1/2"
 								onClick={() => {
 									// لاحقًا ضع رابط الصفحة هنا
-									window.location.href = "/ManagmentOperationPage";
+									window.location.href = "/CardDeleviry1";
 								}}
 							>
 								<div className="relative aspect-[550/300] w-full">
