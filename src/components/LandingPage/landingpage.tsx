@@ -35,7 +35,7 @@ export default function LandingPage() {
 										أكثر من 60,000 مطعم ومتجر
 									</p>
 									<a
-										href="/HomePage"
+										href="/"
 										className="inline-flex items-center justify-center rounded-lg bg-[#FA9D2B] px-6 py-3 text-base text-white shadow-xl transition-all duration-300 hover:bg-[#D48925] focus:ring-4 focus:ring-[#FA9D2B]/50 focus:outline-none sm:px-8 sm:py-4 sm:text-lg"
 									>
 										تصفّح الآن
