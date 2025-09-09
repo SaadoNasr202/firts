@@ -8,6 +8,7 @@ import ContractModal from "./ContractModal";
 import InvestoreForm from "./InvestoreRegister";
 import VideoSlider from "./VideoSlider";
 import dynamic from "next/dynamic";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 
 export default function InvestorePage({
@@ -16,6 +17,7 @@ export default function InvestorePage({
 	postInvestoreAction: (formData: InvestoreFormData) => Promise<{ success: boolean; message?:string }>;
 }) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const { t, language } = useLanguage();
 
 	const handleOpenModal = () => {
 		setIsModalOpen(true);
@@ -37,7 +39,7 @@ export default function InvestorePage({
 				<section className="mb-6 sm:mb-8 rounded-xl bg-[#FFFFFF] p-3 shadow-md sm:p-6 md:p-5">
 					<div className="p-4 text-center font-['Readex_Pro'] text-2xl leading-none font-semibold tracking-normal sm:p-10 sm:text-[39px]">
 						<p>
-							الإنضمام كمستثمر في{" "}
+							{t('investor.title')}{" "}
 							<span className="text-[#31A342]">شلة</span>{" "}
 						</p>
 					</div>
@@ -48,7 +50,7 @@ export default function InvestorePage({
 							onClick={handleOpenModal}
 							className="flex w-full max-w-sm items-center justify-center rounded-lg border border-[#31A342] bg-white px-6 py-3 font-semibold text-[#31A342] shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-green-400 focus:outline-none sm:px-10 sm:w-auto"
 						>
-								تحميل مسودة العقد
+							{t('investor.downloadContract')}
 						</button>
 					</div>
 
@@ -61,14 +63,13 @@ export default function InvestorePage({
 				<section className="mb-6 bg-[#FFFFFF] p-3 md:mb-8 md:p-12">
 					<div className="container mx-auto px-2 md:px-12">
 						<h2 className="mb-8 text-center font-['Readex_Pro'] text-2xl font-semibold text-gray-800 md:mb-12 md:text-4xl lg:text-[39px]">
-							فوائد الدخول باستثمار تجاري
+							{t('investor.benefits')}
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-4">
 							{/* Item 1 */}
 							<div className="relative flex w-full flex-col items-center justify-between gap-4 rounded-lg border-2 border-green-500 p-4 sm:flex-row sm:gap-0 sm:py-4">
 								<p className="w-full text-center font-['Readex_Pro'] text-sm text-gray-700 sm:w-5/12 sm:text-right sm:text-base md:text-lg">
-									يساعد الاستثمار في الأعمال على ضمان نجاح الشركة على المدى
-									الطويل.
+									{t('investor.benefit1')}
 								</p>
 								<div className="mx-4 flex flex-col items-center">
 									<div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-purple-500 to-indigo-600 text-lg font-bold text-white shadow-lg sm:h-16 sm:w-16 sm:text-xl md:h-20 md:w-20 md:text-2xl">
@@ -89,15 +90,14 @@ export default function InvestorePage({
 									<div className="h-8 w-0.5 bg-gray-300 sm:h-12 lg:hidden"></div>
 								</div>
 								<p className="w-full text-center font-['Readex_Pro'] text-sm text-gray-700 sm:w-5/12 sm:text-left sm:text-base md:text-lg">
-									الاستثمار التجاري يساعد على خلق فرص العمل.
+									{t('investor.benefit2')}
 								</p>
 							</div>
 
 							{/* Item 3 */}
 							<div className="relative flex w-full flex-col items-center justify-between gap-4 rounded-lg border-2 border-green-500 p-4 sm:flex-row sm:gap-0 sm:py-4">
 								<p className="w-full text-center font-['Readex_Pro'] text-sm text-gray-700 sm:w-5/12 sm:text-right sm:text-base md:text-lg">
-									يمكن أن يساعد الاستثمار في الشركات الناشئة على تعزيز النمو
-									الاقتصادي.
+									{t('investor.benefit3')}
 								</p>
 								<div className="mx-4 flex flex-col items-center">
 									<div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-green-400 to-lime-500 text-lg font-bold text-white shadow-lg sm:h-16 sm:w-16 sm:text-xl md:h-20 md:w-20 md:text-2xl">
@@ -118,14 +118,14 @@ export default function InvestorePage({
 									<div className="h-8 w-0.5 bg-gray-300 sm:h-12 lg:hidden"></div>
 								</div>
 								<p className="w-full text-center font-['Readex_Pro'] text-sm text-gray-700 sm:w-5/12 sm:text-left sm:text-base md:text-lg">
-									يمكن أن يؤدي الاستثمار في الشركات الناشئة إلى الابتكار.
+									{t('investor.benefit4')}
 								</p>
 							</div>
 
 							{/* Item 5 */}
 							<div className="relative flex w-full flex-col items-center justify-between gap-4 rounded-lg border-2 border-green-500 p-4 sm:flex-row sm:gap-0 sm:py-4">
 								<p className="w-full text-center font-['Readex_Pro'] text-sm text-gray-700 sm:w-5/12 sm:text-right sm:text-base md:text-lg">
-									يمكن أن يساعد الاستثمار التجاري في جذب الموظفين الموهوبين.
+									{t('investor.benefit5')}
 								</p>
 								<div className="mx-4 flex flex-col items-center">
 									<div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-pink-400 to-red-500 text-lg font-bold text-white shadow-lg sm:h-16 sm:w-16 sm:text-xl md:h-20 md:w-20 md:text-2xl">
@@ -152,11 +152,10 @@ export default function InvestorePage({
 							</div>
 							<div className="p-4 text-right sm:p-6">
 								<h3 className="mb-2 text-lg font-semibold text-green-600 sm:text-xl">
-									تحقيق عائد طويل الاجل خلال الاستثمار
+									{t('investor.card1.title')}
 								</h3>
 								<p className="text-sm text-gray-600 sm:text-base">
-									سوف تحصل على عائد طويل الاجل لطالما بقيت من المستثمرين معنا في
-									شلة
+									{t('investor.card1.description')}
 								</p>
 							</div>
 						</div>
@@ -172,11 +171,10 @@ export default function InvestorePage({
 							</div>
 							<div className="p-4 text-right sm:p-6">
 								<h3 className="mb-2 text-lg font-semibold text-green-600 sm:text-xl">
-									ارباح سنوية مدروسة{" "}
+									{t('investor.card2.title')}
 								</h3>
 								<p className="text-sm text-gray-600 sm:text-base">
-									قم بزيادة راس مالك عن طريق الاستثمار في شركتنا واحصل على مبالغ
-									سنوية مجزية
+									{t('investor.card2.description')}
 								</p>
 							</div>
 						</div>

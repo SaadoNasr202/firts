@@ -10,6 +10,7 @@ import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import StoreForm from "./partnerregister";
 import ImagePartnerSlider from "./SliderPartner";
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
@@ -17,6 +18,7 @@ export default function PartnerPage({
 		formData: PartnerFormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
+	const { t } = useLanguage();
 	return (
 		<div>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
@@ -28,10 +30,9 @@ export default function PartnerPage({
 				{/* قسم الفورم */}
 				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
 					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						<p>الإنضمام كشريك تاجر </p>
+						<p>{t('partner.title')}</p>
 						<p className="font-['Readex_Pro' ] p-2.5 text-[16px] text-[#8C8C8C]">
-							إنضم الينا وزد مبيعاتك مع تحقيق اكبر استفادة من خدماتنا
-							المميزة{" "}
+							{t('partner.subtitle')}
 						</p>
 					</div>
 
@@ -44,8 +45,8 @@ export default function PartnerPage({
 				<section className="rounded-lg bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
-							فوائد الانضمام كشريك تاجر في{" "}
-							<span className="text-[#31A342]">شلة</span>
+							{t('partner.benefits')}{" "}
+							<span className="text-[#31A342]">{t('company.name')}</span>
 						</h2>
 					</div>
 					<div
@@ -70,11 +71,10 @@ export default function PartnerPage({
 								</div>
 
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									فرصة استثنائية لشركاء شلة
+									{t('partner.benefit1.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									انطلق بأعمالك نحو القمة مع باقة نمو متكاملة بقيمة 5400 ريال،
-									مجانًا بالكامل!
+									{t('partner.benefit1.description')}
 								</p>
 							</div>
 
@@ -91,10 +91,10 @@ export default function PartnerPage({
 									<ApprovalIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									حدود متجرك الآن حدود المملكة
+									{t('partner.benefit2.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									انطلق بمنتجاتك إلى كل مدينة وقرية
+									{t('partner.benefit2.description')}
 								</p>
 							</div>
 
@@ -110,11 +110,10 @@ export default function PartnerPage({
 									<PriceCheckIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									ضاعف أرباحك وزد مبيعاتك
+									{t('partner.benefit3.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									انضم إلى عالم متاجر{" "}
-									<span className="text-green-500">شلة</span> اليوم!
+									{t('partner.benefit3.description')}
 								</p>
 							</div>
 
@@ -130,11 +129,10 @@ export default function PartnerPage({
 									<CommuteIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									وداعاً لقلق الشحن
+									{t('partner.benefit4.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									مرحباً بعصر جديد من الثقة والسرعة الفائقة مع تطبيق
-									<span className="text-green-500"> شلة </span>
+									{t('partner.benefit4.description')}
 								</p>
 							</div>
 
@@ -150,11 +148,10 @@ export default function PartnerPage({
 									<StackedBarChartIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									إحصائيات البيع مع
-									<span className="text-green-500"> شلة</span>
+									{t('partner.benefit5.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									بوصلتك الدقيقة نحو قرارات أذكى وأرباح أعلى
+									{t('partner.benefit5.description')}
 								</p>
 							</div>
 
@@ -169,10 +166,10 @@ export default function PartnerPage({
 									<EmojiObjectsIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									إبداع في عملك
+									{t('partner.benefit6.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									يمكنك إدارة كل شئ من التطبيق لعملائك
+									{t('partner.benefit6.description')}
 								</p>
 							</div>
 
@@ -188,22 +185,21 @@ export default function PartnerPage({
 									<ManageHistoryIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									إدارة عملياتك بفعالية
+									{t('partner.benefit7.title')}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									خاصية التنبيه الفوري بالطلبات الجديدة في تطبيق{" "}
-									<span className="text-green-500">شلة</span> للتجار ​
+									{t('partner.benefit7.description')}
 								</p>
 							</div>
 						</div>
 					</div>
 				</section>
 				<section className="rtl mx-auto max-w-lg rounded-lg bg-gray-100 p-10 text-center shadow-lg">
-					<h2 className="mb-2 text-3xl font-bold">إشترك في قائمتنا البريدية</h2>
+					<h2 className="mb-2 text-3xl font-bold">{t('partner.newsletter.title')}</h2>
 					<p className="mb-6 text-gray-600">
-						هل ترغب في تلقي اخر الاخبار والمعلومات عن تطبيق شلة
+						{t('partner.newsletter.description')}
 						<br />
-						ادخل بريدك الالكتروني هنا لنصل إليك
+						{t('partner.newsletter.subscribe')}
 					</p>
 					<div className="flex gap-2">
 						<input
@@ -212,7 +208,7 @@ export default function PartnerPage({
 							className="flex-grow rounded-md border border-gray-300 p-3 text-right"
 						/>
 						<button className="rounded-md bg-green-500 px-6 py-3 font-bold text-white transition-colors hover:bg-green-600">
-							إشتراك
+							{t('partner.newsletter.button')}
 						</button>
 					</div>
 				</section>

@@ -10,6 +10,7 @@ import {
 import React, { useRef, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // استيراد التنسيقات
+import { useLanguage } from "@/contexts/LanguageContext";
 const defaultCenter = { lat: 24.7136, lng: 46.6753 };
 
 const Notification = ({
@@ -92,6 +93,7 @@ export default function KaidhaRegister({
 		formData: KaidhaFormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
+	const { t } = useLanguage();
 	const [hasAdditionalIncome, setHasAdditionalIncome] = useState("no"); // نعم / لا
 
 	const { isLoaded } = useLoadScript({
@@ -188,7 +190,7 @@ export default function KaidhaRegister({
 			) {
 				return {
 					isValid: false,
-					message: `يرجى ملء جميع الحقول المطلوبة`,
+					message: t('kaidhaForm.fillAllFields'),
 				};
 			}
 		}
@@ -212,19 +214,19 @@ export default function KaidhaRegister({
 			formData.personalIdNumber.length > 10
 		) {
 			setNotification({
-				message: "تاريخ الميلاد يجب أن يكون قبل 2005-12-31",
-				type: "error",
+				message: t('kaidhaForm.birthDateError'),
+				type: 'error',
 				isVisible: true,
 			});
 		} else {
 			try {
 				const result = await postFormKaidhaAction(formData);
 				if ("success" in result && result.success) {
-					setNotification({
-						message: "تم تسجيل البيانات بنجاح!",
-						type: "success",
-						isVisible: true,
-					});
+				setNotification({
+					message: t('kaidhaForm.success'),
+					type: 'success',
+					isVisible: true,
+				});
 					// إعادة تعيين النموذج بعد النجاح
 					setTimeout(() => {
 						handleReset();
@@ -236,16 +238,16 @@ export default function KaidhaRegister({
 						isVisible: true,
 					});
 				} else {
-					setNotification({
-						message: "حدث خطأ أثناء تسجيل البيانات",
-						type: "error",
-						isVisible: true,
-					});
+			setNotification({
+				message: t('kaidhaForm.error'),
+				type: 'error',
+				isVisible: true,
+			});
 				}
 			} catch (error) {
 				setNotification({
-					message: "حدث خطأ أثناء تسجيل البيانات",
-					type: "error",
+					message: t('kaidhaForm.error'),
+					type: 'error',
 					isVisible: true,
 				});
 			}
@@ -346,7 +348,7 @@ export default function KaidhaRegister({
 				className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 				required={required}
 			>
-				<option value="">-- اختر --</option>
+				<option value="">{t('kaidhaForm.placeholder.choose')}</option>
 				{options.map((option) => (
 					<option key={option.value} value={option.value}>
 						{option.label}
@@ -362,17 +364,17 @@ export default function KaidhaRegister({
 			<form onSubmit={handleSubmit}>
 				{/* Main Form Title Section based on the image */}
 				<h2 className="mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
-					المعلومات الشخصية
+					{t('kaidhaForm.personalInfo')}
 				</h2>
 				<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
 					{/* First Row of Inputs */}
 					<div className="flex flex-col">
-						<label
-							htmlFor="firstName"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							الاسم الأول
-						</label>
+					<label
+						htmlFor="firstName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.firstName')}
+					</label>
 						<input
 							type="text"
 							id="firstName"
@@ -385,12 +387,12 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="lastName"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							اسم العائلة
-						</label>
+					<label
+						htmlFor="lastName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.lastName')}
+					</label>
 						<input
 							type="text"
 							id="lastName"
@@ -402,12 +404,12 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="fatherName"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							اسم الأب
-						</label>
+					<label
+						htmlFor="fatherName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.fatherName')}
+					</label>
 						<input
 							type="text"
 							id="fatherName"
@@ -419,12 +421,12 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="grandFatherName"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							اسم الجد
-						</label>
+					<label
+						htmlFor="grandFatherName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.grandFatherName')}
+					</label>
 						<input
 							type="text"
 							id="grandFatherName"
@@ -436,12 +438,12 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="birthDate"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							تاريخ الميلاد
-						</label>
+					<label
+						htmlFor="birthDate"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.birthDate')}
+					</label>
 						<input
 							type="date"
 							id="birthDate"
@@ -454,17 +456,17 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="nationality"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							الجنسية
-						</label>
+					<label
+						htmlFor="nationality"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.nationality')}
+					</label>
 						<input
 							type="text"
 							id="nationality"
 							name="nationality"
-							placeholder="سعودي"
+							placeholder={t('kaidhaForm.placeholder.nationality')}
 							value={formData.nationality}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -473,17 +475,17 @@ export default function KaidhaRegister({
 
 					{/* Second Row of Inputs */}
 					<SelectField
-						label="الحالة الاجتماعية"
+						label={t('kaidhaForm.socialStatus')}
 						name="socialStatus"
 						options={[
-							{ value: "single", label: "أعزب" },
-							{ value: "married", label: "متزوج" },
+							{ value: "single", label: t('kaidhaForm.option.single') },
+							{ value: "married", label: t('kaidhaForm.option.married') },
 						]}
 						value={formData.socialStatus}
 						onChange={handleChange}
 					/>
 					<SelectField
-						label="عدد أفراد الأسرة"
+						label={t('kaidhaForm.familyMembersCount')}
 						name="familyMembersCount"
 						options={[
 							{ value: "1", label: "1" },
@@ -501,39 +503,39 @@ export default function KaidhaRegister({
 						onChange={handleChange}
 					/>
 					<SelectField
-						label="نوع الهوية"
+						label={t('kaidhaForm.idType')}
 						name="idType"
 						options={[
-							{ value: "nationalId", label: "بطاقة هوية وطنية" },
-							{ value: "passport", label: "جواز سفر" },
+							{ value: "nationalId", label: t('kaidhaForm.option.nationalId') },
+							{ value: "passport", label: t('kaidhaForm.option.passport') },
 						]}
 						value={formData.idType}
 						onChange={handleChange}
 					/>
 					<div className="flex flex-col">
-						<label
-							htmlFor="personalIdNumber"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							رقم الهوية
-						</label>
+					<label
+						htmlFor="personalIdNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.personalIdNumber')}
+					</label>
 						<input
 							type="text"
 							id="personalIdNumber"
 							name="personalIdNumber"
-							placeholder="001447888554"
+							placeholder={t('kaidhaForm.placeholder.idNumber')}
 							value={formData.personalIdNumber}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="idExpirationDate"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							تاريخ الانتهاء
-						</label>
+					<label
+						htmlFor="idExpirationDate"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.idExpirationDate')}
+					</label>
 						<input
 							type="date"
 							id="idExpirationDate"
@@ -545,12 +547,12 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="phoneNumber"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							رقم الجوال
-						</label>
+					<label
+						htmlFor="phoneNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.phoneNumber')}
+					</label>
 						<PhoneInput
 							country={"sa"}
 							value={formData.phoneNumber}
@@ -578,12 +580,12 @@ export default function KaidhaRegister({
 
 					{/* Third Row of Inputs */}
 					<div className="flex flex-col">
-						<label
-							htmlFor="whatsappNumber"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							رقم الواتساب
-						</label>
+					<label
+						htmlFor="whatsappNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.whatsappNumber')}
+					</label>
 
 						<PhoneInput
 							country={"sa"}
@@ -610,38 +612,38 @@ export default function KaidhaRegister({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="email"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							بريد إلكتروني
-						</label>
+					<label
+						htmlFor="email"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.email')}
+					</label>
 						<input
 							type="email"
 							id="email"
 							name="email"
-							placeholder="example@example.com"
+							placeholder={t('kaidhaForm.placeholder.email')}
 							value={formData.email}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						/>
 					</div>
 					<SelectField
-						label="نوع المنزل"
+						label={t('kaidhaForm.homeType')}
 						name="homeType"
 						options={[
-							{ value: "villa", label: "فيلا" },
-							{ value: "apartment", label: "شقة" },
+							{ value: "villa", label: t('kaidhaForm.option.villa') },
+							{ value: "apartment", label: t('kaidhaForm.option.apartment') },
 						]}
 						value={formData.homeType}
 						onChange={handleChange}
 					/>
 					<SelectField
-						label="طبيعة المنزل"
+						label={t('kaidhaForm.homeNature')}
 						name="homeNature"
 						options={[
-							{ value: "rent", label: "إيجار" },
-							{ value: "ownership", label: "تملك" },
+							{ value: "rent", label: t('kaidhaForm.option.rent') },
+							{ value: "ownership", label: t('kaidhaForm.option.ownership') },
 						]}
 						value={formData.homeNature}
 						onChange={handleChange}
@@ -649,51 +651,51 @@ export default function KaidhaRegister({
 
 					{/* Fourth Row of Inputs */}
 					<div className="flex flex-col">
-						<label
-							htmlFor="city"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							المدينة
-						</label>
+					<label
+						htmlFor="city"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.city')}
+					</label>
 						<input
 							type="text"
 							id="city"
 							name="city"
-							placeholder="الرياض"
+							placeholder={t('kaidhaForm.placeholder.city')}
 							value={formData.city}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="neighborhood"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							الحي
-						</label>
+					<label
+						htmlFor="neighborhood"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.neighborhood')}
+					</label>
 						<input
 							type="text"
 							id="neighborhood"
 							name="neighborhood"
-							placeholder="حي الغروب"
+							placeholder={t('kaidhaForm.placeholder.neighborhood')}
 							value={formData.neighborhood}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="addressDetails"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							العنوان التفصيلي للمنزل
-						</label>
+					<label
+						htmlFor="addressDetails"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t('kaidhaForm.addressDetails')}
+					</label>
 						<input
 							type="text"
 							id="addressDetails"
 							name="addressDetails"
-							placeholder="جدة، شارع 500 تفرع 2"
+placeholder={t('kaidhaForm.placeholder.address')}
 							value={formData.addressDetails}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -703,7 +705,7 @@ export default function KaidhaRegister({
 
 				{/* Map Location Section */}
 				<h2 className="mt-8 mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
-					تحديد موقع السكن على الخريطة
+					{t('kaidhaForm.homeLocation')}
 				</h2>
 				<div
 					className="flex items-center justify-center rounded-lg border border-gray-300 p-4 text-center text-gray-500"
@@ -718,7 +720,7 @@ export default function KaidhaRegister({
 								>
 									<input
 										type="text"
-										placeholder="ابحث عن موقع..."
+										placeholder={t('kaidhaForm.searchLocation')}
 										className="w-full rounded-lg border bg-amber-50 px-4 py-2 shadow focus:outline-none"
 									/>
 								</Autocomplete>
@@ -775,25 +777,25 @@ export default function KaidhaRegister({
 															locationhouse: `${position.lat},${position.lng}`,
 														}));
 													},
-													() => alert("فشل في تحديد موقعك 😢"),
+													() => alert(t('kaidhaForm.locationError')),
 												);
-											} else alert("المتصفح لا يدعم تحديد الموقع");
+											} else alert(t('kaidhaForm.locationNotSupported'));
 										}}
 										className="rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition hover:bg-gray-200"
 									>
-										📍 موقعي
+{t('kaidhaForm.myLocation')}
 									</button>
 								</div>
 							</>
 						) : (
-							<p>جاري تحميل الخريطة...</p>
+							<p>{t('kaidhaForm.loadingMap')}</p>
 						)}
 					</div>
 				</div>
 
 				{/* Job Information Section */}
 				<h2 className="mt-8 mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
-					معلومات العمل
+					{t('kaidhaForm.workInfo')}
 				</h2>
 				<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
 					<div className="flex flex-col">
@@ -801,7 +803,7 @@ export default function KaidhaRegister({
 							htmlFor="companyName"
 							className="mb-2 text-right font-semibold text-gray-700"
 						>
-							اسم الشركة
+							{t('kaidhaForm.companyName')}
 						</label>
 						<input
 							type="text"
@@ -818,7 +820,7 @@ export default function KaidhaRegister({
 							htmlFor="jobTitle"
 							className="mb-2 text-right font-semibold text-gray-700"
 						>
-							المسمى الوظيفي
+							{t('kaidhaForm.jobTitle')}
 						</label>
 						<input
 							type="text"
@@ -835,7 +837,7 @@ export default function KaidhaRegister({
 							htmlFor="yearsOfExperience"
 							className="mb-2 text-right font-semibold text-gray-700"
 						>
-							عدد سنين العمل
+							{t('kaidhaForm.yearsOfExperience')}
 						</label>
 						<input
 							type="text"
@@ -852,7 +854,7 @@ export default function KaidhaRegister({
 							htmlFor="grossSalary"
 							className="mb-2 text-right font-semibold text-gray-700"
 						>
-							إجمالي الراتب
+							{t('kaidhaForm.grossSalary')}
 						</label>
 						<input
 							type="text"
@@ -869,13 +871,13 @@ export default function KaidhaRegister({
 							htmlFor="workAddress"
 							className="mb-2 text-right font-semibold text-gray-700"
 						>
-							العنوان التفصيلي للعمل
+							{t('kaidhaForm.workAddress')}
 						</label>
 						<input
 							type="text"
 							id="workAddress"
 							name="workAddress"
-							placeholder="جدة، شارع 500 تفرع 2"
+placeholder={t('kaidhaForm.placeholder.address')}
 							value={formData.workAddress}
 							onChange={handleChange}
 							className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -887,7 +889,7 @@ export default function KaidhaRegister({
 
 				{/* Map Location Section */}
 				<h2 className="mt-8 mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
-					تحديد موقع العمل على الخريطة
+					{t('kaidhaForm.workLocation')}
 				</h2>
 				<div
 					className="flex items-center justify-center rounded-lg border border-gray-300 p-4 text-center text-gray-500"
@@ -902,7 +904,7 @@ export default function KaidhaRegister({
 								>
 									<input
 										type="text"
-										placeholder="ابحث عن موقع..."
+										placeholder={t('kaidhaForm.searchLocation')}
 										className="w-full rounded-lg border bg-amber-50 px-4 py-2 shadow focus:outline-none"
 									/>
 								</Autocomplete>
@@ -959,18 +961,18 @@ export default function KaidhaRegister({
 															locationwork: `${position.lat},${position.lng}`,
 														}));
 													},
-													() => alert("فشل في تحديد موقعك 😢"),
+													() => alert(t('kaidhaForm.locationError')),
 												);
-											} else alert("المتصفح لا يدعم تحديد الموقع");
+											} else alert(t('kaidhaForm.locationNotSupported'));
 										}}
 										className="rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition hover:bg-gray-200"
 									>
-										📍 موقعي
+{t('kaidhaForm.myLocation')}
 									</button>
 								</div>
 							</>
 						) : (
-							<p>جاري تحميل الخريطة...</p>
+							<p>{t('kaidhaForm.loadingMap')}</p>
 						)}
 					</div>
 				</div>
@@ -980,11 +982,11 @@ export default function KaidhaRegister({
 					<div className="col-span-1 flex flex-col items-start gap-2 pt-5 md:col-span-2 lg:col-span-4">
 						<div className="text-left text-xl font-semibold text-gray-700">
 							<SelectField
-								label=" هل لديك أقساط"
+								label={t('kaidhaForm.installments')}
 								name="Installments"
 								options={[
-									{ value: "نعم", label: "نعم" },
-									{ value: "لا", label: "لا" },
+									{ value: "نعم", label: t('kaidhaForm.option.yes') },
+									{ value: "لا", label: t('kaidhaForm.option.no') },
 								]}
 								value={formData.Installments}
 								onChange={handleChange}
@@ -995,7 +997,7 @@ export default function KaidhaRegister({
 					{/* Second row of additional income */}
 					<div className="col-span-1 flex flex-col items-start gap-2 pt-5 md:col-span-2 lg:col-span-4">
 						<div className="text-left text-xl font-semibold text-gray-700">
-							مصادر دخل إضافية
+							{t('kaidhaForm.additionalIncome')}
 						</div>
 
 						{/* اختيار نعم / لا */}
@@ -1013,7 +1015,7 @@ export default function KaidhaRegister({
 										}))
 									}
 								/>
-								نعم
+{t('kaidhaForm.option.yes')}
 							</label>
 							<label className="flex items-center gap-2">
 								<input
@@ -1028,7 +1030,7 @@ export default function KaidhaRegister({
 										}))
 									}
 								/>
-								لا
+{t('kaidhaForm.option.no')}
 							</label>
 						</div>
 
@@ -1039,7 +1041,7 @@ export default function KaidhaRegister({
 										htmlFor="additionalAmount"
 										className="mb-2 text-right font-semibold text-gray-700"
 									>
-										المبلغ
+										{t('kaidhaForm.additionalAmount')}
 									</label>
 									<input
 										type="text"
@@ -1060,7 +1062,7 @@ export default function KaidhaRegister({
 										htmlFor="incomeSource"
 										className="mb-2 text-right font-semibold text-gray-700"
 									>
-										جهة الدخل
+										{t('kaidhaForm.incomeSource')}
 									</label>
 									<input
 										type="text"
@@ -1087,14 +1089,14 @@ export default function KaidhaRegister({
 						type="submit"
 						className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 					>
-						إرسال
+						{t('kaidhaForm.submit')}
 					</button>
 					<button
 						type="button"
 						onClick={handleReset}
 						className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
 					>
-						إعادة ضبط
+						{t('kaidhaForm.reset')}
 					</button>
 				</div>
 			</form>

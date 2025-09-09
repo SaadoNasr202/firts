@@ -11,6 +11,7 @@ import React, { useRef, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { UploadButton } from "../uploadthing";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const defaultCenter = { lat: 24.7136, lng: 46.6753 };
 
@@ -95,6 +96,7 @@ export default function StoreForm({
 		formData: PartnerFormData,
 	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
+	const { t } = useLanguage();
 	const [formData, setFormData] = useState<{
 		storeName: string;
 		storeClassification: string;
@@ -170,7 +172,7 @@ export default function StoreForm({
 			) {
 				return {
 					isValid: false,
-					message: `يرجى ملء جميع الحقول المطلوبة`,
+					message: t('partnerForm.fillAllFields'),
 				};
 			}
 		}
@@ -178,7 +180,7 @@ export default function StoreForm({
 		if (!formData.agreed) {
 			return {
 				isValid: false,
-				message: `يرجى الموافقة على الشروط والأحكام`,
+				message: t('partnerForm.agreeToTerms'),
 			};
 		}
 
@@ -199,7 +201,7 @@ export default function StoreForm({
 
 		if (formData.personalIdNumber.length > 10) {
 			setNotification({
-				message: "الرقم القومي اكبر من 10 خانات",
+				message: t('partnerForm.idTooLong'),
 				type: "error",
 				isVisible: true,
 			});
@@ -208,7 +210,7 @@ export default function StoreForm({
 				const result = await postFormPartnerAction(formData);
 				if ("success" in result && result.success) {
 					setNotification({
-						message: "تم تسجيل البيانات بنجاح!",
+						message: t('partnerForm.success'),
 						type: "success",
 						isVisible: true,
 					});
@@ -221,14 +223,14 @@ export default function StoreForm({
 					});
 				} else {
 					setNotification({
-						message: "حدث خطأ اثناء الستجيل",
+						message: t('partnerForm.error'),
 						type: "error",
 						isVisible: true,
 					});
 				}
 			} catch (error) {
 				setNotification({
-					message: "حدث خطأ أثناء تسجيل البيانات",
+					message: t('partnerForm.submitError'),
 					type: "error",
 					isVisible: true,
 				});
@@ -273,23 +275,23 @@ export default function StoreForm({
 	return (
 		<form onSubmit={handleSubmit} className="w-full">
 			<h2 className="mb-8 text-right text-2xl font-bold text-green-600">
-				معلومات المتجر
+				{t('partnerForm.storeInfo')}
 			</h2>
 
 			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
 				{/* Store Classification */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="storeClassification"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						تصنيف المتجر
-					</label>
-					<input
-						type="text"
-						id="storeClassification"
-						name="storeClassification"
-						placeholder="سوبر ماركت"
+						<label
+							htmlFor="storeClassification"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.storeClassification')}
+						</label>
+						<input
+							type="text"
+							id="storeClassification"
+							name="storeClassification"
+							placeholder={t('partnerForm.placeholder.supermarket')}
 						value={formData.storeClassification}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -299,17 +301,17 @@ export default function StoreForm({
 
 				{/* Store Name */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="storeName"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						اسم المتجر
-					</label>
-					<input
-						type="text"
-						id="storeName"
-						name="storeName"
-						placeholder="أدخل اسم متجرك"
+						<label
+							htmlFor="storeName"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.storeName')}
+						</label>
+						<input
+							type="text"
+							id="storeName"
+							name="storeName"
+							placeholder={t('partnerForm.placeholder.storeName')}
 						value={formData.storeName}
 						onChange={handleChange}
 						autoFocus
@@ -320,17 +322,17 @@ export default function StoreForm({
 
 				{/* City */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="city"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						المدينة
-					</label>
-					<input
-						type="text"
-						id="city"
-						name="city"
-						placeholder="السعودية"
+						<label
+							htmlFor="city"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.city')}
+						</label>
+						<input
+							type="text"
+							id="city"
+							name="city"
+							placeholder={t('partnerForm.placeholder.saudi')}
 						value={formData.city}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -340,17 +342,17 @@ export default function StoreForm({
 
 				{/* What your store offers */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="whatYourStoreOffers"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						ماذا يقدمه متجرك؟
-					</label>
-					<input
-						type="text"
-						id="whatYourStoreOffers"
-						name="whatYourStoreOffers"
-						placeholder="ماهي الخدمات التي تقدمها في حال لم تجد تصنيف للمتجر"
+						<label
+							htmlFor="whatYourStoreOffers"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.whatOffers')}
+						</label>
+						<input
+							type="text"
+							id="whatYourStoreOffers"
+							name="whatYourStoreOffers"
+							placeholder={t('partnerForm.placeholder.services')}
 						value={formData.whatYourStoreOffers}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -360,12 +362,12 @@ export default function StoreForm({
 
 				{/* Phone Number */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="phoneNumber"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						رقم الجوال
-					</label>
+						<label
+							htmlFor="phoneNumber"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.phoneNumber')}
+						</label>
 					<PhoneInput
 						country={"sa"}
 						value={formData.phoneNumber}
@@ -393,17 +395,17 @@ export default function StoreForm({
 
 				{/* Branch Count */}
 				<div className="flex flex-col">
-					<label
-						htmlFor="branchCount"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						عدد فروع متجرك
-					</label>
+						<label
+							htmlFor="branchCount"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.branchCount')}
+						</label>
 					<input
 						type="text"
 						id="branchCount"
 						name="branchCount"
-						placeholder="3"
+						placeholder={t('partnerForm.placeholder.branches')}
 						value={formData.branchCount}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -413,17 +415,17 @@ export default function StoreForm({
 
 				{/* Personal ID Number */}
 				<div className="justify-strat flex flex-col">
-					<label
-						htmlFor="personalIdNumber"
-						className="mb-2 text-right font-semibold text-gray-700"
-					>
-						رقم الهوية الشخصية / الإقامة
-					</label>
+						<label
+							htmlFor="personalIdNumber"
+							className="mb-2 text-right font-semibold text-gray-700"
+						>
+							{t('partnerForm.personalId')}
+						</label>
 					<input
 						type="text"
 						id="personalIdNumber"
 						name="personalIdNumber"
-						placeholder="EX:1234567890"
+						placeholder={t('partnerForm.placeholder.idExample')}
 						value={formData.personalIdNumber}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -433,7 +435,7 @@ export default function StoreForm({
 			</div>
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>صورة الهوية /الإقامة </label>
+							<label>{t('partnerForm.idImage')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -443,7 +445,7 @@ export default function StoreForm({
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
 								setNotification({
-									message: "تم رفع صورة الهوية الشخصية بنجاح",
+									message: t('partnerForm.idUploadSuccess'),
 									type: "success",
 									isVisible: true,
 								});
@@ -460,7 +462,7 @@ export default function StoreForm({
 				</div>
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label> رخصة البلدية (ان وجدت)</label>
+							<label>{t('partnerForm.municipalLicense')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -470,7 +472,7 @@ export default function StoreForm({
 							if (url) {
 								setFormData((prev) => ({ ...prev, Municipallicense: url }));
 								setNotification({
-									message: "تم رفع صورة الرخصة بنجاح",
+									message: t('partnerForm.licenseUploadSuccess'),
 									type: "success",
 									isVisible: true,
 								});
@@ -486,7 +488,7 @@ export default function StoreForm({
 					/>
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label> صورة واجهة المحل /الشعار </label>
+							<label>{t('partnerForm.storefrontImage')}</label>
 					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
@@ -496,7 +498,7 @@ export default function StoreForm({
 							if (url) {
 								setFormData((prev) => ({ ...prev, Storefrontimage: url }));
 								setNotification({
-									message: "تم رفع صورة المتجر/اللوجو بنجاح",
+									message: t('partnerForm.storeUploadSuccess'),
 									type: "success",
 									isVisible: true,
 								});
@@ -514,7 +516,7 @@ export default function StoreForm({
 			</div>
 			<div className="mt-6 flex flex-col">
 				<label className="mb-2 text-right font-semibold text-gray-700">
-					موقع المتجر على الخريطة
+					{t('partnerForm.location')}
 				</label>
 
 				<div className="relative h-[400px] w-full">
@@ -526,7 +528,7 @@ export default function StoreForm({
 							>
 								<input
 									type="text"
-									placeholder="ابحث عن موقع..."
+									placeholder={t('partnerForm.searchLocation')}
 									className="w-full rounded-lg border bg-amber-50 px-4 py-2 shadow focus:outline-none"
 								/>
 							</Autocomplete>
@@ -581,29 +583,29 @@ export default function StoreForm({
 													location: `${position.lat},${position.lng}`,
 												}));
 											},
-											() => alert("فشل في تحديد موقعك 😢"),
+											() => alert(t('partnerForm.locationError')),
 										);
-									} else alert("المتصفح لا يدعم تحديد الموقع");
+									} else alert(t('partnerForm.locationNotSupported'));
 								}}
 								className="hover: absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition"
 							>
-								📍 موقعي
+								{t('partnerForm.myLocation')}
 							</button>
 						</>
 					) : (
-						<p>جاري تحميل الخريطة...</p>
+						<p>{t('partnerForm.loadingMap')}</p>
 					)}
 				</div>
 			</div>
 
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
-					الموافقة على جميع{" "}
+					{t('partnerForm.agreeTerms')}{" "}
 					<a
 						href="/CondtionAterms"
 						className="font-medium text-green-600 hover:underline"
 					>
-						الشروط والأحكام
+						{t('partnerForm.termsAndConditions')}
 					</a>
 				</label>
 				<input
@@ -624,14 +626,14 @@ export default function StoreForm({
 					type="submit"
 					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 				>
-					إرسال
+					{t('partnerForm.submit')}
 				</button>
 				<button
 					type="button"
 					onClick={handleReset}
 					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
 				>
-					إعادة ضبط
+					{t('partnerForm.reset')}
 				</button>
 			</div>
 

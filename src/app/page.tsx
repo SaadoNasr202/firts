@@ -6,6 +6,8 @@ export default function Home() {
   return (
     <div>
       <Navbar />
+
+          
       <LandingPage />
       <Shellafooter />
     </div>

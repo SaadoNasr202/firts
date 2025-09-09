@@ -5,6 +5,7 @@ import { InvestoreFormData } from "@/app/invstore/page";
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // مكون الإشعارات
 const Notification = ({
@@ -87,6 +88,7 @@ export default function InvestoreForm({
 		formData: InvestoreFormData,
 	) => Promise<{ success: boolean; message?: string }>;
 }) {
+	const { t, language } = useLanguage();
 	const [formData, setFormData] = useState({
 		first_name: "",
 		father_name: "",
@@ -147,7 +149,7 @@ export default function InvestoreForm({
 				setNafathRandom(random);
 
 				setNotification({
-					message: `تم إرسال طلب التوثيق. الرجاء اختيار الرقم ${random} على تطبيق نفاذ بجوالك.`,
+					message: `${t('form.nafathSent')} ${random} ${t('form.nafathOnApp')}`,
 					type: "success",
 					isVisible: true,
 				});
@@ -159,7 +161,7 @@ export default function InvestoreForm({
 			}
 		} catch (error: any) {
 			setNotification({
-				message: error.message || "حدث خطأ أثناء بدء التوثيق عبر نفاذ",
+				message: error.message || t('form.nafathError'),
 				type: "error",
 				isVisible: true,
 			});
@@ -187,7 +189,7 @@ export default function InvestoreForm({
 					setPollingInterval(null);
 
 					setNotification({
-						message: "✅ تم التوثيق بنجاح عبر نفاذ",
+						message: t('form.nafathSuccess'),
 						type: "success",
 						isVisible: true,
 					});
@@ -196,7 +198,7 @@ export default function InvestoreForm({
 					setPollingInterval(null);
 
 					setNotification({
-						message: "❌ تم رفض التوثيق عبر نفاذ",
+						message: t('form.nafathRejected'),
 						type: "error",
 						isVisible: true,
 					});
@@ -261,7 +263,7 @@ export default function InvestoreForm({
 			) {
 				return {
 					isValid: false,
-					message: `يرجى ملء جميع الحقول المطلوبة`,
+					message: t('form.fillAllFields'),
 				};
 			}
 		}
@@ -269,7 +271,7 @@ export default function InvestoreForm({
 		if (!formData.agreed) {
 			return {
 				isValid: false,
-				message: `يرجى الموافقة على الشروط والأحكام`,
+				message: t('form.agreeToTerms'),
 			};
 		}
 
@@ -314,7 +316,7 @@ export default function InvestoreForm({
 		} catch (error: any) {
 			console.error(error);
 			setNotification({
-				message: error.message || "حدث خطأ أثناء إنشاء العقد",
+				message: error.message || t('form.contractError'),
 				type: "error",
 				isVisible: true,
 			});
@@ -339,13 +341,13 @@ export default function InvestoreForm({
 							htmlFor="first_name"
 							className="block text-sm font-semibold text-gray-700"
 						>
-							الاسم الأول
+							{t('form.firstName')}
 						</label>
 						<input
 							type="text"
 							id="first_name"
 							name="first_name"
-							placeholder="الاسم الأول"
+							placeholder={t('form.firstName')}
 							value={formData.first_name}
 							onChange={handleChange}
 							autoFocus
@@ -354,17 +356,17 @@ export default function InvestoreForm({
 						/>
 					</div>
 					<div className="space-y-2">
-						<label
-							htmlFor="father_name"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							اسم الأب
-						</label>
-						<input
-							type="text"
-							id="father_name"
-							name="father_name"
-							placeholder="اسم الأب"
+							<label
+								htmlFor="father_name"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.fatherName')}
+							</label>
+							<input
+								type="text"
+								id="father_name"
+								name="father_name"
+								placeholder={t('form.fatherName')}
 							value={formData.father_name}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -374,17 +376,17 @@ export default function InvestoreForm({
 
 					{/* الصف الثاني */}
 					<div className="space-y-2">
-						<label
-							htmlFor="family_name"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							اسم العائلة
-						</label>
-						<input
-							type="text"
-							id="family_name"
-							name="family_name"
-							placeholder="اسم العائلة"
+							<label
+								htmlFor="family_name"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.familyName')}
+							</label>
+							<input
+								type="text"
+								id="family_name"
+								name="family_name"
+								placeholder={t('form.familyName')}
 							value={formData.family_name}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -398,7 +400,7 @@ export default function InvestoreForm({
 						>
 							اسم الجد
 						</label>
-						<input 
+						<input
 							type="text"
 							id="grandfather_name"
 							name="grandfather_name"
@@ -412,12 +414,12 @@ export default function InvestoreForm({
 
 					{/* الصف الثالث */}
 					<div className="space-y-2">
-						<label
-							htmlFor="birth_date"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							تاريخ الميلاد
-						</label>
+							<label
+								htmlFor="birth_date"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.birthDate')}
+							</label>
 						<input
 							type="date"
 							id="birth_date"
@@ -429,17 +431,17 @@ export default function InvestoreForm({
 						/>
 					</div>
 					<div className="space-y-2">
-						<label
-							htmlFor="national_id"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							رقم الهوية
-						</label>
-						<input
-							type="text"
-							id="national_id"
-							name="national_id"
-							placeholder="رقم الهوية"
+							<label
+								htmlFor="national_id"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.nationalId')}
+							</label>
+							<input
+								type="text"
+								id="national_id"
+								name="national_id"
+								placeholder={t('form.nationalId')}
 							value={formData.national_id}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -449,12 +451,12 @@ export default function InvestoreForm({
 
 					{/* الصف الرابع */}
 					<div className="space-y-2">
-						<label
-							htmlFor="email"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							البريد الإلكتروني
-						</label>
+							<label
+								htmlFor="email"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.email')}
+							</label>
 						<input
 							type="email"
 							id="email"
@@ -467,9 +469,9 @@ export default function InvestoreForm({
 						/>
 					</div>
 					<div className="space-y-2">
-						<label className="mb-2 text-right font-semibold text-gray-700">
-							رقم الهاتف
-						</label>
+							<label className="mb-2 text-right font-semibold text-gray-700">
+								{t('form.phone')}
+							</label>
 						<div className="relative">
 							<PhoneInput
 								country={"sa"}
@@ -496,17 +498,17 @@ export default function InvestoreForm({
 
 					{/* الصف الخامس */}
 					<div className="space-y-2">
-						<label
-							htmlFor="national_address_email"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							البريد الإلكتروني حسب العنوان الوطني
-						</label>
-						<input
-							type="email"
-							id="national_address_email"
-							name="national_address_email"
-							placeholder="البريد الإلكتروني حسب العنوان الوطني"
+							<label
+								htmlFor="national_address_email"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.nationalAddressEmail')}
+							</label>
+							<input
+								type="email"
+								id="national_address_email"
+								name="national_address_email"
+								placeholder={t('form.nationalAddressEmail')}
 							value={formData.national_address_email}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -514,17 +516,17 @@ export default function InvestoreForm({
 						/>
 					</div>
 					<div className="space-y-2">
-						<label
-							htmlFor="region"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							المنطقة
-						</label>
-						<input
-							type="text"
-							id="region"
-							name="region"
-							placeholder="المنطقة"
+							<label
+								htmlFor="region"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.region')}
+							</label>
+							<input
+								type="text"
+								id="region"
+								name="region"
+								placeholder={t('form.region')}
 							value={formData.region}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -534,17 +536,17 @@ export default function InvestoreForm({
 
 					{/* الصف السادس */}
 					<div className="space-y-2">
-						<label
-							htmlFor="iban"
-							className="block text-sm font-semibold text-gray-700"
-						>
-							رقم الآيبان
-						</label>
-						<input
-							type="text"
-							id="iban"
-							name="iban"
-							placeholder="رقم الآيبان"
+							<label
+								htmlFor="iban"
+								className="block text-sm font-semibold text-gray-700"
+							>
+								{t('form.iban')}
+							</label>
+							<input
+								type="text"
+								id="iban"
+								name="iban"
+								placeholder={t('form.iban')}
 							value={formData.iban}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -556,13 +558,13 @@ export default function InvestoreForm({
 							htmlFor="bank_name"
 							className="block text-sm font-semibold text-gray-700"
 						>
-							اسم البنك
+							{t('form.bankName')}
 						</label>
 						<input
 							type="text"
 							id="bank_name"
 							name="bank_name"
-							placeholder="اسم البنك"
+							placeholder={t('form.bankName')}
 							value={formData.bank_name}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -576,13 +578,13 @@ export default function InvestoreForm({
 							htmlFor="amount"
 							className="block text-sm font-semibold text-gray-700"
 						>
-							المبلغ المراد استثماره
+							{t('form.amount')}
 						</label>
 						<input
 							type="number"
 							id="amount"
 							name="amount"
-							placeholder="المبلغ المراد استثماره"
+							placeholder={t('form.amount')}
 							value={formData.amount}
 							onChange={handleChange}
 							className="w-full rounded-md border border-gray-300 p-2.5 shadow-sm focus:border-green-500 focus:ring-green-500"
@@ -593,12 +595,12 @@ export default function InvestoreForm({
 				{/* الموافقة */}
 				<div className="mt-8 flex items-center justify-start space-x-2 space-x-reverse">
 					<label htmlFor="agreed" className="text-sm text-gray-600">
-						الموافقة على جميع{" "}
+						{t('form.agreeTerms')}{" "}
 						<a
 							href="/CondtionAterms"
 							className="font-medium text-green-600 hover:underline"
 						>
-							الشروط والأحكام
+							{t('form.termsAndConditions')}
 						</a>
 					</label>
 					<input
@@ -620,7 +622,7 @@ export default function InvestoreForm({
 						style={{ border: "2px solid #31A342" }}
 						disabled={isLoading}
 					>
-						{isLoading ? "جاري إنشاء العقد..." : "عرض العقد"}
+						{isLoading ? t('form.creatingContract') : t('form.showContract')}
 					</button>
 				</div>
 			</form>
@@ -633,7 +635,7 @@ export default function InvestoreForm({
 							onClick={() => setIsOpen(false)}
 							className="absolute top-2 left-2 rounded-md bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-300"
 						>
-							✕ إغلاق
+							✕ {t('form.close')}
 						</button>
 
 						{pdfUrl ? (
@@ -643,7 +645,7 @@ export default function InvestoreForm({
 							></iframe>
 						) : (
 							<div className="flex h-[600px] w-full items-center justify-center rounded-md border bg-gray-100 font-semibold text-gray-700">
-								جاري تحميل العقد...
+								{t('form.loadingContract')}
 							</div>
 						)}
 
@@ -654,14 +656,14 @@ export default function InvestoreForm({
 									className="w-full rounded-lg bg-white px-8 py-3 font-semibold text-[#31A342] shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:outline-none sm:w-auto"
 									style={{ border: "2px solid #31A342" }}
 								>
-									تعديل البيانات
+									{t('form.editData')}
 								</button>
 								<button
 									onClick={handleNafathInitiate}
 									className="w-full rounded-lg bg-[#31A342] px-8 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-[#288435] focus:outline-none sm:w-auto"
 									disabled={isNafathLoading}
 								>
-									{isNafathLoading ? "جارٍ الإرسال..." : "التوثيق عبر نفاذ"}
+									{isNafathLoading ? t('form.sending') : t('form.nafathAuth')}
 								</button>
 							</div>
 						)}

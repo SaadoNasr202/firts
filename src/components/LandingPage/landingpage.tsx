@@ -1,7 +1,9 @@
 "use client";
 import { BriefcaseBusiness, Store, Truck, UsersRound } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LandingPage() {
+	const { t } = useLanguage();
 	return (
 		<div
 			// Use a consistent background color and modern font
@@ -28,17 +30,16 @@ export default function LandingPage() {
 							<div className="font-['Readex Pro'] absolute inset-0 flex items-center justify-center p-6 text-center">
 								<div className="space-y-4">
 									<h1 className="text-3xl leading-tight font-bold text-white sm:text-2xl md:text-[49px]">
-										مع <span className="text-[#31A342]">شلة</span> كل احتياجاتك
-										بضغطة زر
+										{t('landing.hero.title').replace('شلة', t('company.name'))}
 									</h1>
 									<p className="text-xl font-semibold text-white sm:text-xl md:text-[39px]">
-										أكثر من 60,000 مطعم ومتجر
+										{t('landing.hero.subtitle')}
 									</p>
 									<a
 										href="/"
 										className="inline-flex items-center justify-center rounded-lg bg-[#FA9D2B] px-6 py-3 text-base text-white shadow-xl transition-all duration-300 hover:bg-[#D48925] focus:ring-4 focus:ring-[#FA9D2B]/50 focus:outline-none sm:px-8 sm:py-4 sm:text-lg"
 									>
-										تصفّح الآن
+										{t('landing.hero.browseButton')}
 									</a>
 								</div>
 							</div>
@@ -52,10 +53,10 @@ export default function LandingPage() {
 							<div className="flex flex-col items-center gap-6 text-center lg:items-end lg:text-right">
 								<div className="flex flex-col">
 									<h2 className="text-2xl font-semibold text-gray-900 md:text-4xl lg:text-5xl">
-										<span className="text-[#1C4234]">تطبيق الجوال</span>
+										<span className="text-[#1C4234]">{t('landing.mobileApp.title')}</span>
 									</h2>
 									<p className="mt-2 text-base text-gray-700 md:text-lg">
-										حمّل تطبيق شلة على جوالك واطلب بضغطة زر
+										{t('landing.mobileApp.subtitle')}
 									</p>
 								</div>
 
@@ -111,26 +112,26 @@ export default function LandingPage() {
 							<div className="grid items-center gap-5 md:grid-cols-2">
 								<div className="gap-7 text-center">
 									<h3 className="mb-2 text-4xl font-semibold text-[#34A853] md:text-5xl">
-										مع قيدها
+										{t('landing.qaydha.title')}
 									</h3>
 									<p className="text-2xl text-gray-700 md:text-3xl">
-										لا تحسب كم باقي على الراتب
+										{t('landing.qaydha.subtitle')}
 									</p>
 									<p className="mt-4 text-sm text-gray-600 md:text-base">
-										شوف كم ناقصك في بيتك مقاضي وإحنا نعطيك على الراتب!
+										{t('landing.qaydha.description')}
 									</p>
 
 									<a
 										href="/Kaidha"
 										className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2D943C] px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
 									>
-										سجّل الآن
+										{t('landing.qaydha.registerButton')}
 									</a>
 									<a
 										href="https://www.qaydha.com/"
 										className="mt-10 inline-flex items-center justify-center rounded-full bg-[#2D943C] p-3.5 px-8 py-3 text-[#FFFFFF] shadow-xl transition-all duration-300 hover:bg-gray-100"
 									>
-										معرفة المزيد 
+										{t('landing.qaydha.learnMoreButton')}
 									</a>
 								</div>
 								<img
@@ -149,12 +150,12 @@ export default function LandingPage() {
 									window.location.href = "/partner";
 								}}
 							>
-								<Tile
-									variant="default"
-									title="سجّل مطعمك أو متجرك"
-									desc="وسّع نشاطك بالوصول إلى عملاء أكثر معنا."
-									Icon={Store}
-								/>
+							<Tile
+								variant='default'
+								title={t('landing.tiles.partner.title')}
+								desc={t('landing.tiles.partner.desc')}
+								Icon={Store}
+							/>
 							</button>
 							<button
 								className="cursor-pointer"
@@ -162,12 +163,12 @@ export default function LandingPage() {
 									window.location.href = "/driver";
 								}}
 							>
-								<Tile
-									variant="alt"
-									title="سجّل كمندوب توصيل"
-									desc="كن مندوب توصيل واكسب دخلًا إضافيًا معنا، سجّل الآن!"
-									Icon={Truck}
-								/>
+							<Tile
+								variant='alt'
+								title={t('landing.tiles.driver.title')}
+								desc={t('landing.tiles.driver.desc')}
+								Icon={Truck}
+							/>
 							</button>
 						</div>
 
@@ -179,12 +180,12 @@ export default function LandingPage() {
 									window.location.href = "/invstore";
 								}}
 							>
-								<Tile
-									variant="alt"
-									title="سجّل الآن كمستثمر في شلة"
-									desc="قُم بالاستثمار في شركتنا وتعرّف على مزايا الاستثمار."
-									Icon={UsersRound}
-								/>
+							<Tile
+								variant='alt'
+								title={t('landing.tiles.investor.title')}
+								desc={t('landing.tiles.investor.desc')}
+								Icon={UsersRound}
+							/>
 							</button>
 							<button
 								className="cursor-pointer"
@@ -192,12 +193,12 @@ export default function LandingPage() {
 									window.location.href = "/worker";
 								}}
 							>
-								<Tile
-									variant="default"
-									title="سجّل كمقدّم خدمة"
-									desc="سجّل حسب مهنتك معنا واكسب دخلًا إضافيًا."
-									Icon={BriefcaseBusiness}
-								/>
+							<Tile
+								variant='default'
+								title={t('landing.tiles.worker.title')}
+								desc={t('landing.tiles.worker.desc')}
+								Icon={BriefcaseBusiness}
+							/>
 							</button>
 						</div>
 					</section>
@@ -221,6 +222,7 @@ function Tile({
 	variant?: "alt" | "default";
 	Icon?: React.ComponentType<any>;
 }) {
+	const { t } = useLanguage();
 	const isAlt = variant === "alt";
 	return (
 		<article
@@ -242,7 +244,7 @@ function Tile({
 					<div className="inline-flex items-center gap-2">
 						<span className="h-3 w-3 rounded-full bg-amber-500" />
 						<span className="text-sm font-semibold text-amber-600">
-							سجّل الآن
+							{t('landing.tiles.registerNow')}
 						</span>
 					</div>
 				</div>

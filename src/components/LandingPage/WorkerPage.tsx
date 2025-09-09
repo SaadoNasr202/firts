@@ -3,6 +3,7 @@
 import { WorkerFormData } from "@/app/worker/page";
 import ImageWorkerSlider from "./SliderWorker";
 import WorkerRegister from "./WorkerRegister";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function WorkerPage({
 	postFormWorkerAction,
@@ -11,6 +12,7 @@ export default function WorkerPage({
 		formData: WorkerFormData,
 	) => Promise<{ success: boolean }|{message: string;field: string}>;
 }) {
+	const { t } = useLanguage();
 	return (
 		<main>
 			<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
@@ -22,7 +24,7 @@ export default function WorkerPage({
 				{/* قسم الفورم */}
 				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
 					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						الانضمام كمقدم خدمة
+						{t('worker.title')}
 					</div>
 					<div className="opacity-100">
 						<WorkerRegister postFormWorkerAction={postFormWorkerAction} />
@@ -33,8 +35,8 @@ export default function WorkerPage({
 				<section className="mb-8 bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
-							فوائد الانضمام كمقدم خدمة في{" "}
-							<span className="text-[#31A342]">شلة</span>
+							{t('worker.benefits')}{" "}
+							<span className="text-[#31A342]">{t('company.name')}</span>
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-8 lg:flex-row">
 							{/* البطاقة الأولى */}
@@ -48,11 +50,10 @@ export default function WorkerPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										استمتع برسوم خدمة تنافسية
+										{t('worker.card1.title')}
 									</h3>
 									<p className="text-gray-600">
-										استمتع برسوم خدمة تنافسية عند استلام كل طلب واختر الطلبات
-										القريبة منك
+										{t('worker.card1.description')}
 									</p>
 								</div>
 							</div>
@@ -68,11 +69,10 @@ export default function WorkerPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										متصل في أي وقت
+										{t('worker.card2.title')}
 									</h3>
 									<p className="text-gray-600">
-										التمتع بحرية العمل في الأوقات الملائمة لك كما سوف تتمكن من
-										عملك ومسؤولياتك الأخرى
+										{t('worker.card2.description')}
 									</p>
 								</div>
 							</div>
