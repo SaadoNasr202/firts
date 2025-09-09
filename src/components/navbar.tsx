@@ -17,6 +17,7 @@ export default function Navbar() {
 				setIsDropdownOpen(false);
 			}
 		};
+		
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => {
