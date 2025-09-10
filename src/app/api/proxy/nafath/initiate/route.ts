@@ -4,7 +4,7 @@ export async function POST(req: NextRequest) {
 	try {
 		const body = await req.json();
 		console.log("Proxy request body:", body);
-
+			
 		const response = await fetch(
 			"https://shellafood.com/api/v1/investor/nafath/initiate",
 			{

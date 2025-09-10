@@ -3,9 +3,9 @@ import Navbar from "@/components/navbar";
 import Shellafooter from "@/components/shellafooter";
 import { db } from "@/lib/db";
 import { TB_DeliveryDrivers } from "@/lib/schema";
-import { nanoid } from "nanoid";
 import { eq } from "drizzle-orm";
-		
+import { nanoid } from "nanoid";
+
 export default function driver() {
 	return (
 		<div className={`font-tajawal w-full bg-[#F0F2F5] text-gray-800`} dir="">
@@ -26,15 +26,15 @@ export interface FormData {
 	email: string;
 	region: string;
 	idImage: string;
-	idDriver:string;
-	idVichle:string;
-	Picture:string;
+	idDriver: string;
+	idVichle: string;
+	Picture: string;
 	agreed: boolean;
 }
 
 async function postFormDeliveryDriverAction(
 	formData: FormData,
-): Promise<{ success: boolean }|{message: string;field: string}> {
+): Promise<{ success: boolean } | { message: string; field: string }> {
 	"use server";
 	try {
 		const newData = {
@@ -48,16 +48,24 @@ async function postFormDeliveryDriverAction(
 			email: formData.email,
 			region: formData.region,
 			idImage: formData.idImage,
-			idDriver:formData.idDriver,
-			Picture:formData.Picture,
-			idVichle:formData.idVichle,
+			idDriver: formData.idDriver,
+			Picture: formData.Picture,
+			idVichle: formData.idVichle,
 			agreed: formData.agreed,
 		};
 
-try {
-			const existingData = await db.select().from(TB_DeliveryDrivers).where(eq(TB_DeliveryDrivers.personalIdNumber, formData.personalIdNumber));
-			if(existingData.length){
-				return { message: "الرقم القومي موجود بالفعل", field: "personalIdNumber" };
+		try {
+			const existingData = await db
+				.select()
+				.from(TB_DeliveryDrivers)
+				.where(
+					eq(TB_DeliveryDrivers.personalIdNumber, formData.personalIdNumber),
+				);
+			if (existingData.length) {
+				return {
+					message: "الرقم القومي موجود بالفعل",
+					field: "personalIdNumber",
+				};
 			}
 		} catch (error) {
 			console.log("error: " + error);
