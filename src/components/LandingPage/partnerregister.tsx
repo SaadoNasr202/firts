@@ -1,6 +1,7 @@
 "use client";
 
 import { PartnerFormData } from "@/app/partner/page";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
 	Autocomplete,
 	GoogleMap,
@@ -10,8 +11,7 @@ import {
 import React, { useRef, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import ClientUploadButton from "../ui/ClientUploadButton";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { UploadButton } from "../uploadthing";
 
 const defaultCenter = { lat: 24.7136, lng: 46.6753 };
 
@@ -172,7 +172,7 @@ export default function StoreForm({
 			) {
 				return {
 					isValid: false,
-					message: t('partnerForm.fillAllFields'),
+					message: t("partnerForm.fillAllFields"),
 				};
 			}
 		}
@@ -180,7 +180,7 @@ export default function StoreForm({
 		if (!formData.agreed) {
 			return {
 				isValid: false,
-				message: t('partnerForm.agreeToTerms'),
+				message: t("partnerForm.agreeToTerms"),
 			};
 		}
 
@@ -201,7 +201,7 @@ export default function StoreForm({
 
 		if (formData.personalIdNumber.length > 10) {
 			setNotification({
-				message: t('partnerForm.idTooLong'),
+				message: t("partnerForm.idTooLong"),
 				type: "error",
 				isVisible: true,
 			});
@@ -210,7 +210,7 @@ export default function StoreForm({
 				const result = await postFormPartnerAction(formData);
 				if ("success" in result && result.success) {
 					setNotification({
-						message: t('partnerForm.success'),
+						message: t("partnerForm.success"),
 						type: "success",
 						isVisible: true,
 					});
@@ -223,14 +223,14 @@ export default function StoreForm({
 					});
 				} else {
 					setNotification({
-						message: t('partnerForm.error'),
+						message: t("partnerForm.error"),
 						type: "error",
 						isVisible: true,
 					});
 				}
 			} catch (error) {
 				setNotification({
-					message: t('partnerForm.submitError'),
+					message: t("partnerForm.submitError"),
 					type: "error",
 					isVisible: true,
 				});
@@ -275,23 +275,23 @@ export default function StoreForm({
 	return (
 		<form onSubmit={handleSubmit} className="w-full">
 			<h2 className="mb-8 text-right text-2xl font-bold text-green-600">
-				{t('partnerForm.storeInfo')}
+				{t("partnerForm.storeInfo")}
 			</h2>
 
 			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
 				{/* Store Classification */}
 				<div className="flex flex-col">
-						<label
-							htmlFor="storeClassification"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.storeClassification')}
-						</label>
-						<input
-							type="text"
-							id="storeClassification"
-							name="storeClassification"
-							placeholder={t('partnerForm.placeholder.supermarket')}
+					<label
+						htmlFor="storeClassification"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.storeClassification")}
+					</label>
+					<input
+						type="text"
+						id="storeClassification"
+						name="storeClassification"
+						placeholder={t("partnerForm.placeholder.supermarket")}
 						value={formData.storeClassification}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -301,17 +301,17 @@ export default function StoreForm({
 
 				{/* Store Name */}
 				<div className="flex flex-col">
-						<label
-							htmlFor="storeName"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.storeName')}
-						</label>
-						<input
-							type="text"
-							id="storeName"
-							name="storeName"
-							placeholder={t('partnerForm.placeholder.storeName')}
+					<label
+						htmlFor="storeName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.storeName")}
+					</label>
+					<input
+						type="text"
+						id="storeName"
+						name="storeName"
+						placeholder={t("partnerForm.placeholder.storeName")}
 						value={formData.storeName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -321,17 +321,17 @@ export default function StoreForm({
 
 				{/* City */}
 				<div className="flex flex-col">
-						<label
-							htmlFor="city"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.city')}
-						</label>
-						<input
-							type="text"
-							id="city"
-							name="city"
-							placeholder={t('partnerForm.placeholder.saudi')}
+					<label
+						htmlFor="city"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.city")}
+					</label>
+					<input
+						type="text"
+						id="city"
+						name="city"
+						placeholder={t("partnerForm.placeholder.saudi")}
 						value={formData.city}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -341,17 +341,17 @@ export default function StoreForm({
 
 				{/* What your store offers */}
 				<div className="flex flex-col">
-						<label
-							htmlFor="whatYourStoreOffers"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.whatOffers')}
-						</label>
-						<input
-							type="text"
-							id="whatYourStoreOffers"
-							name="whatYourStoreOffers"
-							placeholder={t('partnerForm.placeholder.services')}
+					<label
+						htmlFor="whatYourStoreOffers"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.whatOffers")}
+					</label>
+					<input
+						type="text"
+						id="whatYourStoreOffers"
+						name="whatYourStoreOffers"
+						placeholder={t("partnerForm.placeholder.services")}
 						value={formData.whatYourStoreOffers}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -361,12 +361,12 @@ export default function StoreForm({
 
 				{/* Phone Number */}
 				<div className="flex flex-col">
-						<label
-							htmlFor="phoneNumber"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.phoneNumber')}
-						</label>
+					<label
+						htmlFor="phoneNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.phoneNumber")}
+					</label>
 					<PhoneInput
 						country={"sa"}
 						value={formData.phoneNumber}
@@ -394,17 +394,17 @@ export default function StoreForm({
 
 				{/* Branch Count */}
 				<div className="flex flex-col">
-						<label
-							htmlFor="branchCount"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.branchCount')}
-						</label>
+					<label
+						htmlFor="branchCount"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.branchCount")}
+					</label>
 					<input
 						type="text"
 						id="branchCount"
 						name="branchCount"
-						placeholder={t('partnerForm.placeholder.branches')}
+						placeholder={t("partnerForm.placeholder.branches")}
 						value={formData.branchCount}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -414,17 +414,17 @@ export default function StoreForm({
 
 				{/* Personal ID Number */}
 				<div className="justify-strat flex flex-col">
-						<label
-							htmlFor="personalIdNumber"
-							className="mb-2 text-right font-semibold text-gray-700"
-						>
-							{t('partnerForm.personalId')}
-						</label>
+					<label
+						htmlFor="personalIdNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("partnerForm.personalId")}
+					</label>
 					<input
 						type="text"
 						id="personalIdNumber"
 						name="personalIdNumber"
-						placeholder={t('partnerForm.placeholder.idExample')}
+						placeholder={t("partnerForm.placeholder.idExample")}
 						value={formData.personalIdNumber}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -434,8 +434,8 @@ export default function StoreForm({
 			</div>
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('partnerForm.idImage')}</label>
-					<ClientUploadButton
+					<label>{t("partnerForm.idImage")}</label>
+					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -444,7 +444,7 @@ export default function StoreForm({
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
 								setNotification({
-									message: t('partnerForm.idUploadSuccess'),
+									message: t("partnerForm.idUploadSuccess"),
 									type: "success",
 									isVisible: true,
 								});
@@ -461,8 +461,8 @@ export default function StoreForm({
 				</div>
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('partnerForm.municipalLicense')}</label>
-					<ClientUploadButton
+					<label>{t("partnerForm.municipalLicense")}</label>
+					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -471,7 +471,7 @@ export default function StoreForm({
 							if (url) {
 								setFormData((prev) => ({ ...prev, Municipallicense: url }));
 								setNotification({
-									message: t('partnerForm.licenseUploadSuccess'),
+									message: t("partnerForm.licenseUploadSuccess"),
 									type: "success",
 									isVisible: true,
 								});
@@ -487,8 +487,8 @@ export default function StoreForm({
 					/>
 				</div>
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('partnerForm.storefrontImage')}</label>
-					<ClientUploadButton
+					<label>{t("partnerForm.storefrontImage")}</label>
+					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -497,7 +497,7 @@ export default function StoreForm({
 							if (url) {
 								setFormData((prev) => ({ ...prev, Storefrontimage: url }));
 								setNotification({
-									message: t('partnerForm.storeUploadSuccess'),
+									message: t("partnerForm.storeUploadSuccess"),
 									type: "success",
 									isVisible: true,
 								});
@@ -515,7 +515,7 @@ export default function StoreForm({
 			</div>
 			<div className="mt-6 flex flex-col">
 				<label className="mb-2 text-right font-semibold text-gray-700">
-					{t('partnerForm.location')}
+					{t("partnerForm.location")}
 				</label>
 
 				<div className="relative h-[400px] w-full">
@@ -527,7 +527,7 @@ export default function StoreForm({
 							>
 								<input
 									type="text"
-									placeholder={t('partnerForm.searchLocation')}
+									placeholder={t("partnerForm.searchLocation")}
 									className="w-full rounded-lg border bg-amber-50 px-4 py-2 shadow focus:outline-none"
 								/>
 							</Autocomplete>
@@ -582,29 +582,29 @@ export default function StoreForm({
 													location: `${position.lat},${position.lng}`,
 												}));
 											},
-											() => alert(t('partnerForm.locationError')),
+											() => alert(t("partnerForm.locationError")),
 										);
-									} else alert(t('partnerForm.locationNotSupported'));
+									} else alert(t("partnerForm.locationNotSupported"));
 								}}
 								className="hover: absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition"
 							>
-								{t('partnerForm.myLocation')}
+								{t("partnerForm.myLocation")}
 							</button>
 						</>
 					) : (
-						<p>{t('partnerForm.loadingMap')}</p>
+						<p>{t("partnerForm.loadingMap")}</p>
 					)}
 				</div>
 			</div>
 
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
 				<label htmlFor="agreed" className="text-sm text-gray-600">
-					{t('partnerForm.agreeTerms')}{" "}
+					{t("partnerForm.agreeTerms")}{" "}
 					<a
 						href="/CondtionAterms"
 						className="font-medium text-green-600 hover:underline"
 					>
-						{t('partnerForm.termsAndConditions')}
+						{t("partnerForm.termsAndConditions")}
 					</a>
 				</label>
 				<input
@@ -625,14 +625,14 @@ export default function StoreForm({
 					type="submit"
 					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 				>
-					{t('partnerForm.submit')}
+					{t("partnerForm.submit")}
 				</button>
 				<button
 					type="button"
 					onClick={handleReset}
 					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
 				>
-					{t('partnerForm.reset')}
+					{t("partnerForm.reset")}
 				</button>
 			</div>
 

@@ -156,9 +156,12 @@ const translations = {
 		"driver.card1.title": "استمتع برسوم خدمة منخفضة",
 		"driver.card1.description":
 			"سوف تحصل على عائد طويل الأجل لطالما بقيت من المستثمرين معنا في شلة",
+		"driver.card1.more": "معرفة المزيد",
+
 		"driver.card2.title": "متصل في أي وقت",
 		"driver.card2.description":
 			"التمتع بحرية العمل في الأوقات الملائمة لك كما سوف تتمكن من عملك ومسؤولياتك الأخرى",
+		"driver.card2.more": "معرفة المزيد",
 
 		// Driver Form
 		"driverForm.driverInfo": "معلومات عامل التوصيل",
@@ -514,9 +517,11 @@ const translations = {
 		"driver.card1.title": "Enjoy low service fees",
 		"driver.card1.description":
 			"You will get a long-term return as long as you remain an investor with us in Shalla",
+		"driver.card1.more": "for more",
 		"driver.card2.title": "Connected anytime",
 		"driver.card2.description":
 			"Enjoy the freedom to work at times that suit you and you will be able to manage your work and other responsibilities",
+		"driver.card2.more": "for more",
 
 		// Driver Form
 		"driverForm.driverInfo": "Delivery agent information",

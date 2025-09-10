@@ -63,7 +63,7 @@ export default function DriverPage({
 									</p>
 								</div>
 								<div className="p-3 text-end text-xl text-green-600">
-									معرفة المزيد{" "}
+									{t("driver.card1.more")}
 								</div>
 							</div>
 
@@ -91,7 +91,7 @@ export default function DriverPage({
 									</p>
 								</div>
 								<div className="p-3 text-end text-xl text-green-600">
-									معرفة المزيد{" "}
+									{t("driver.card2.more")}
 								</div>
 							</div>
 						</div>

@@ -1,9 +1,9 @@
 "use client";
 
 import { WorkerFormData } from "@/app/worker/page";
-import { useState } from "react";
-import ClientUploadButton from "../ui/ClientUploadButton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
+import { UploadButton } from "../uploadthing";
 
 // مكون الإشعارات
 const Notification = ({
@@ -100,8 +100,6 @@ export default function WorkerRegister({
 		email: string;
 		region: string;
 		idImage: string;
-		idDriver: string;
-		idVichle: string;
 		Picture: string;
 		agreed: boolean;
 	}>({
@@ -114,8 +112,6 @@ export default function WorkerRegister({
 		email: "",
 		region: "",
 		idImage: "",
-		idDriver: "",
-		idVichle: "",
 		Picture: "",
 		agreed: false,
 	});
@@ -149,7 +145,7 @@ export default function WorkerRegister({
 			) {
 				return {
 					isValid: false,
-					message: t('workerForm.fillAllFields'),
+					message: t("workerForm.fillAllFields"),
 				};
 			}
 		}
@@ -157,7 +153,7 @@ export default function WorkerRegister({
 		if (!formData.agreed) {
 			return {
 				isValid: false,
-				message: t('workerForm.agreeToTerms'),
+				message: t("workerForm.agreeToTerms"),
 			};
 		}
 
@@ -178,19 +174,19 @@ export default function WorkerRegister({
 
 		if (formData.personalIdNumber.length > 10) {
 			setNotification({
-				message: t('workerForm.idTooLong'),
-				type: 'error',
+				message: t("workerForm.idTooLong"),
+				type: "error",
 				isVisible: true,
 			});
 		} else {
 			try {
 				const result = await postFormWorkerAction(formData);
 				if ("success" in result && result.success) {
-				setNotification({
-					message: t('workerForm.success'),
-					type: 'success',
-					isVisible: true,
-				});
+					setNotification({
+						message: t("workerForm.success"),
+						type: "success",
+						isVisible: true,
+					});
 					handleReset();
 				} else if ("message" in result && result.message) {
 					setNotification({
@@ -199,15 +195,15 @@ export default function WorkerRegister({
 						isVisible: true,
 					});
 				} else {
-				setNotification({
-					message: t('workerForm.error'),
-					type: 'error',
-					isVisible: true,
-				});
+					setNotification({
+						message: t("workerForm.error"),
+						type: "error",
+						isVisible: true,
+					});
 				}
 			} catch (error) {
 				setNotification({
-					message: t('workerForm.submitError'),
+					message: t("workerForm.submitError"),
 					type: "error",
 					isVisible: true,
 				});
@@ -241,8 +237,6 @@ export default function WorkerRegister({
 			email: "",
 			region: "",
 			idImage: "",
-			idDriver: "",
-			idVichle: "",
 			Picture: "",
 			agreed: false,
 		});
@@ -252,22 +246,22 @@ export default function WorkerRegister({
 		<form onSubmit={handleSubmit} className="h-full w-full p-4 md:p-8">
 			{/* تم إضافة هذا السطر */}
 			<h2 className="mb-6 border-b-2 border-green-500 pb-2 text-right text-2xl font-bold text-green-600">
-				{t('workerForm.workerInfo')}
+				{t("workerForm.workerInfo")}
 			</h2>
 
 			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
 				<div className="flex flex-col">
-				<label
-					htmlFor="lastName"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.lastName')}
-				</label>
+					<label
+						htmlFor="lastName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.lastName")}
+					</label>
 					<input
 						type="text"
 						id="lastName"
 						name="lastName"
-						placeholder={t('workerForm.placeholder.lastName')}
+						placeholder={t("workerForm.placeholder.lastName")}
 						value={formData.lastName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -275,17 +269,17 @@ export default function WorkerRegister({
 					/>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="firstName"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.firstName')}
-				</label>
+					<label
+						htmlFor="firstName"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.firstName")}
+					</label>
 					<input
 						type="text"
 						id="firstName"
 						name="firstName"
-						placeholder={t('workerForm.placeholder.firstName')}
+						placeholder={t("workerForm.placeholder.firstName")}
 						value={formData.firstName}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -293,17 +287,17 @@ export default function WorkerRegister({
 					/>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="email"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.email')}
-				</label>
+					<label
+						htmlFor="email"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.email")}
+					</label>
 					<input
 						type="email"
 						id="email"
 						name="email"
-placeholder={t('workerForm.placeholder.email')}
+						placeholder={t("workerForm.placeholder.email")}
 						value={formData.email}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -311,12 +305,12 @@ placeholder={t('workerForm.placeholder.email')}
 					/>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="deliveryType"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.workType')}
-				</label>
+					<label
+						htmlFor="deliveryType"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.workType")}
+					</label>
 					<select
 						id="deliveryType"
 						name="deliveryType"
@@ -325,25 +319,31 @@ placeholder={t('workerForm.placeholder.email')}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					>
-						<option value="">{t('workerForm.placeholder.choose')}</option>
-						<option value="توصيل طعام">{t('workerForm.option.foodDelivery')}</option>
-						<option value="تسوق من سوبرماركت">{t('workerForm.option.supermarketShopping')}</option>
-						<option value="خدمات منزلية">{t('workerForm.option.homeServices')}</option>
-						<option value=" أخرى">{t('workerForm.option.other')}</option>
+						<option value="">{t("workerForm.placeholder.choose")}</option>
+						<option value="توصيل طعام">
+							{t("workerForm.option.foodDelivery")}
+						</option>
+						<option value="تسوق من سوبرماركت">
+							{t("workerForm.option.supermarketShopping")}
+						</option>
+						<option value="خدمات منزلية">
+							{t("workerForm.option.homeServices")}
+						</option>
+						<option value=" أخرى">{t("workerForm.option.other")}</option>
 					</select>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="region"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.region')}
-				</label>
+					<label
+						htmlFor="region"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.region")}
+					</label>
 					<input
 						type="text"
 						id="region"
 						name="region"
-						placeholder={t('workerForm.placeholder.region')}
+						placeholder={t("workerForm.placeholder.region")}
 						value={formData.region}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -351,12 +351,12 @@ placeholder={t('workerForm.placeholder.email')}
 					/>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="vehicleType"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.vehicleType')}
-				</label>
+					<label
+						htmlFor="vehicleType"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.vehicleType")}
+					</label>
 					<select
 						id="vehicleType"
 						name="vehicleType"
@@ -365,20 +365,20 @@ placeholder={t('workerForm.placeholder.email')}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					>
-						<option value="">{t('workerForm.placeholder.choose')}</option>
-						<option value="bike">{t('workerForm.option.motorcycle')}</option>
-						<option value="car">{t('workerForm.option.car')}</option>
-						<option value="bycicle">{t('workerForm.option.bicycle')}</option>
-						<option value="لابوجد">{t('workerForm.option.noVehicle')}</option>
+						<option value="">{t("workerForm.placeholder.choose")}</option>
+						<option value="bike">{t("workerForm.option.motorcycle")}</option>
+						<option value="car">{t("workerForm.option.car")}</option>
+						<option value="bycicle">{t("workerForm.option.bicycle")}</option>
+						<option value="لابوجد">{t("workerForm.option.noVehicle")}</option>
 					</select>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="idType"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.idType')}
-				</label>
+					<label
+						htmlFor="idType"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.idType")}
+					</label>
 					<select
 						id="idType"
 						name="idType"
@@ -387,23 +387,25 @@ placeholder={t('workerForm.placeholder.email')}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					>
-						<option value="">{t('workerForm.placeholder.choose')}</option>
-						<option value="passport">{t('workerForm.option.residence')}</option>
-						<option value="nationalId">{t('workerForm.option.nationalId')}</option>
+						<option value="">{t("workerForm.placeholder.choose")}</option>
+						<option value="passport">{t("workerForm.option.residence")}</option>
+						<option value="nationalId">
+							{t("workerForm.option.nationalId")}
+						</option>
 					</select>
 				</div>
 				<div className="flex flex-col">
-				<label
-					htmlFor="personalIdNumber"
-					className="mb-2 text-right font-semibold text-gray-700"
-				>
-					{t('workerForm.personalId')}
-				</label>
+					<label
+						htmlFor="personalIdNumber"
+						className="mb-2 text-right font-semibold text-gray-700"
+					>
+						{t("workerForm.personalId")}
+					</label>
 					<input
 						type="text"
 						id="personalIdNumber"
 						name="personalIdNumber"
-						placeholder={t('workerForm.placeholder.idExample')}
+						placeholder={t("workerForm.placeholder.idExample")}
 						value={formData.personalIdNumber}
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
@@ -413,8 +415,8 @@ placeholder={t('workerForm.placeholder.email')}
 			</div>
 			<div className="mt-8 flex flex-col gap-5 md:flex-row-reverse md:justify-start">
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('workerForm.idImage')}</label>
-					<ClientUploadButton
+					<label>{t("workerForm.idImage")}</label>
+					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -423,8 +425,8 @@ placeholder={t('workerForm.placeholder.email')}
 							if (url) {
 								setFormData((prev) => ({ ...prev, idImage: url }));
 								setNotification({
-									message: t('workerForm.idUploadSuccess'),
-									type: 'success',
+									message: t("workerForm.idUploadSuccess"),
+									type: "success",
 									isVisible: true,
 								});
 							}
@@ -440,60 +442,8 @@ placeholder={t('workerForm.placeholder.email')}
 				</div>
 
 				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('workerForm.driverLicense')}</label>
-					<ClientUploadButton
-						endpoint="imageUploader"
-						onClientUploadComplete={(res) => {
-							console.log("Files:", res);
-							const first = res?.[0];
-							const url = (first as any)?.serverData?.url || first?.url;
-							if (url) {
-								setFormData((prev) => ({ ...prev, idDriver: url }));
-								setNotification({
-									message: t('workerForm.licenseUploadSuccess'),
-									type: 'success',
-									isVisible: true,
-								});
-							}
-						}}
-						onUploadError={(error: Error) => {
-							setNotification({
-								message: error.message,
-								type: "error",
-								isVisible: true,
-							});
-						}}
-					/>
-				</div>
-				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('workerForm.vehicleRegistration')}</label>
-					<ClientUploadButton
-						endpoint="imageUploader"
-						onClientUploadComplete={(res) => {
-							console.log("Files:", res);
-							const first = res?.[0];
-							const url = (first as any)?.serverData?.url || first?.url;
-							if (url) {
-								setFormData((prev) => ({ ...prev, idVichle: url }));
-								setNotification({
-									message: t('workerForm.registrationUploadSuccess'),
-									type: 'success',
-									isVisible: true,
-								});
-							}
-						}}
-						onUploadError={(error: Error) => {
-							setNotification({
-								message: error.message,
-								type: "error",
-								isVisible: true,
-							});
-						}}
-					/>
-				</div>
-				<div className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-300 hover:border-green-500">
-					<label>{t('workerForm.personalPhoto')}</label>
-					<ClientUploadButton
+					<label>{t("workerForm.personalPhoto")}</label>
+					<UploadButton
 						endpoint="imageUploader"
 						onClientUploadComplete={(res) => {
 							console.log("Files:", res);
@@ -502,8 +452,8 @@ placeholder={t('workerForm.placeholder.email')}
 							if (url) {
 								setFormData((prev) => ({ ...prev, Picture: url }));
 								setNotification({
-									message: t('workerForm.photoUploadSuccess'),
-									type: 'success',
+									message: t("workerForm.photoUploadSuccess"),
+									type: "success",
 									isVisible: true,
 								});
 							}
@@ -519,15 +469,15 @@ placeholder={t('workerForm.placeholder.email')}
 				</div>
 			</div>
 			<div className="mt-8 flex items-center justify-end space-x-2 space-x-reverse">
-					<label htmlFor="agreed" className="text-sm text-gray-600">
-						{t('workerForm.agreeTerms')}{" "}
-						<a
-							href="/CondtionAterms"
-							className="font-medium text-green-600 hover:underline"
-						>
-							{t('workerForm.termsAndConditions')}
-						</a>
-					</label>
+				<label htmlFor="agreed" className="text-sm text-gray-600">
+					{t("workerForm.agreeTerms")}{" "}
+					<a
+						href="/CondtionAterms"
+						className="font-medium text-green-600 hover:underline"
+					>
+						{t("workerForm.termsAndConditions")}
+					</a>
+				</label>
 				<input
 					type="checkbox"
 					id="agreed"
@@ -544,14 +494,14 @@ placeholder={t('workerForm.placeholder.email')}
 					type="submit"
 					className="w-full rounded-lg bg-green-500 px-10 py-3 font-semibold text-white shadow-sm transition-colors duration-300 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none sm:w-auto"
 				>
-						{t('workerForm.submit')}
+					{t("workerForm.submit")}
 				</button>
 				<button
 					type="button"
 					onClick={handleReset}
 					className="w-full rounded-lg border border-gray-300 bg-white px-10 py-3 font-semibold text-gray-500 shadow-sm transition-colors duration-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none sm:w-auto"
 				>
-{t('workerForm.reset')}
+					{t("workerForm.reset")}
 				</button>
 			</div>
 			<Notification

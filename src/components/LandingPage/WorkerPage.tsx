@@ -1,16 +1,16 @@
 "use client";
 
 import { WorkerFormData } from "@/app/worker/page";
+import { useLanguage } from "@/contexts/LanguageContext";
 import ImageWorkerSlider from "./SliderWorker";
 import WorkerRegister from "./WorkerRegister";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function WorkerPage({
 	postFormWorkerAction,
 }: {
 	postFormWorkerAction: (
 		formData: WorkerFormData,
-	) => Promise<{ success: boolean }|{message: string;field: string}>;
+	) => Promise<{ success: boolean } | { message: string; field: string }>;
 }) {
 	const { t } = useLanguage();
 	return (
@@ -21,22 +21,12 @@ export default function WorkerPage({
 					<ImageWorkerSlider />
 				</section>
 
-				{/* قسم الفورم */}
-				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
-					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						{t('worker.title')}
-					</div>
-					<div className="opacity-100">
-						<WorkerRegister postFormWorkerAction={postFormWorkerAction} />
-					</div>
-				</section>
-
 				{/* قسم الفوائد */}
 				<section className="mb-8 bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
-							{t('worker.benefits')}{" "}
-							<span className="text-[#31A342]">{t('company.name')}</span>
+							{t("worker.benefits")}{" "}
+							<span className="text-[#31A342]">{t("company.name")}</span>
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-8 lg:flex-row">
 							{/* البطاقة الأولى */}
@@ -50,10 +40,10 @@ export default function WorkerPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										{t('worker.card1.title')}
+										{t("worker.card1.title")}
 									</h3>
 									<p className="text-gray-600">
-										{t('worker.card1.description')}
+										{t("worker.card1.description")}
 									</p>
 								</div>
 							</div>
@@ -69,14 +59,23 @@ export default function WorkerPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										{t('worker.card2.title')}
+										{t("worker.card2.title")}
 									</h3>
 									<p className="text-gray-600">
-										{t('worker.card2.description')}
+										{t("worker.card2.description")}
 									</p>
 								</div>
 							</div>
 						</div>
+					</div>
+				</section>
+				{/* قسم الفورم */}
+				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
+					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
+						{t("worker.title")}
+					</div>
+					<div className="opacity-100">
+						<WorkerRegister postFormWorkerAction={postFormWorkerAction} />
 					</div>
 				</section>
 			</div>
