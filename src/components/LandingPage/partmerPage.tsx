@@ -1,6 +1,7 @@
 "use client";
 
 import { PartnerFormData } from "@/app/partner/page";
+import { useLanguage } from "@/contexts/LanguageContext";
 import ApprovalIcon from "@mui/icons-material/Approval";
 import CommuteIcon from "@mui/icons-material/Commute";
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
@@ -10,7 +11,6 @@ import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import StoreForm from "./partnerregister";
 import ImagePartnerSlider from "./SliderPartner";
-import { useLanguage } from "@/contexts/LanguageContext";
 export default function PartnerPage({
 	postFormPartnerAction,
 }: {
@@ -27,26 +27,12 @@ export default function PartnerPage({
 					<ImagePartnerSlider />
 				</section>
 
-				{/* قسم الفورم */}
-				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
-					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						<p>{t('partner.title')}</p>
-						<p className="font-['Readex_Pro' ] p-2.5 text-[16px] text-[#8C8C8C]">
-							{t('partner.subtitle')}
-						</p>
-					</div>
-
-					<div className="">
-						<StoreForm postFormPartnerAction={postFormPartnerAction} />
-					</div>
-				</section>
-
 				{/* قسم الفوائد */}
 				<section className="rounded-lg bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
-							{t('partner.benefits')}{" "}
-							<span className="text-[#31A342]">{t('company.name')}</span>
+							{t("partner.benefits")}{" "}
+							<span className="text-[#31A342]">{t("company.name")}</span>
 						</h2>
 					</div>
 					<div
@@ -71,10 +57,10 @@ export default function PartnerPage({
 								</div>
 
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit1.title')}
+									{t("partner.benefit1.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit1.description')}
+									{t("partner.benefit1.description")}
 								</p>
 							</div>
 
@@ -91,10 +77,10 @@ export default function PartnerPage({
 									<ApprovalIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit2.title')}
+									{t("partner.benefit2.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit2.description')}
+									{t("partner.benefit2.description")}
 								</p>
 							</div>
 
@@ -110,10 +96,10 @@ export default function PartnerPage({
 									<PriceCheckIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit3.title')}
+									{t("partner.benefit3.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit3.description')}
+									{t("partner.benefit3.description")}
 								</p>
 							</div>
 
@@ -129,10 +115,10 @@ export default function PartnerPage({
 									<CommuteIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit4.title')}
+									{t("partner.benefit4.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit4.description')}
+									{t("partner.benefit4.description")}
 								</p>
 							</div>
 
@@ -148,10 +134,10 @@ export default function PartnerPage({
 									<StackedBarChartIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit5.title')}
+									{t("partner.benefit5.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit5.description')}
+									{t("partner.benefit5.description")}
 								</p>
 							</div>
 
@@ -166,10 +152,10 @@ export default function PartnerPage({
 									<EmojiObjectsIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit6.title')}
+									{t("partner.benefit6.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit6.description')}
+									{t("partner.benefit6.description")}
 								</p>
 							</div>
 
@@ -185,21 +171,37 @@ export default function PartnerPage({
 									<ManageHistoryIcon style={{ fontSize: 80 }} />
 								</div>
 								<h3 className="mt-4 text-xl font-bold text-gray-800">
-									{t('partner.benefit7.title')}
+									{t("partner.benefit7.title")}
 								</h3>
 								<p className="mt-2 text-sm text-gray-600">
-									{t('partner.benefit7.description')}
+									{t("partner.benefit7.description")}
 								</p>
 							</div>
 						</div>
 					</div>
 				</section>
+
+				{/* قسم الفورم */}
+				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
+					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
+						<p>{t("partner.title")}</p>
+						<p className="font-['Readex_Pro' ] p-2.5 text-[16px] text-[#8C8C8C]">
+							{t("partner.subtitle")}
+						</p>
+					</div>
+
+					<div className="">
+						<StoreForm postFormPartnerAction={postFormPartnerAction} />
+					</div>
+				</section>
 				<section className="rtl mx-auto max-w-lg rounded-lg bg-gray-100 p-10 text-center shadow-lg">
-					<h2 className="mb-2 text-3xl font-bold">{t('partner.newsletter.title')}</h2>
+					<h2 className="mb-2 text-3xl font-bold">
+						{t("partner.newsletter.title")}
+					</h2>
 					<p className="mb-6 text-gray-600">
-						{t('partner.newsletter.description')}
+						{t("partner.newsletter.description")}
 						<br />
-						{t('partner.newsletter.subscribe')}
+						{t("partner.newsletter.subscribe")}
 					</p>
 					<div className="flex gap-2">
 						<input
@@ -208,7 +210,7 @@ export default function PartnerPage({
 							className="flex-grow rounded-md border border-gray-300 p-3 text-right"
 						/>
 						<button className="rounded-md bg-green-500 px-6 py-3 font-bold text-white transition-colors hover:bg-green-600">
-							{t('partner.newsletter.button')}
+							{t("partner.newsletter.button")}
 						</button>
 					</div>
 				</section>

@@ -282,7 +282,6 @@ export default function WorkerRegister({
 						placeholder={t("workerForm.placeholder.firstName")}
 						value={formData.firstName}
 						onChange={handleChange}
-						autoFocus
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
 					/>

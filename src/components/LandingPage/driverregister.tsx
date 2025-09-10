@@ -185,9 +185,11 @@ export default function DeliveryAgentForm({
 				isVisible: true,
 			});
 			return;
-
 		}
-		if (formData.personalIdNumber.length > 10 || formData.personalIdNumber.length<10) {
+		if (
+			formData.personalIdNumber.length > 10 ||
+			formData.personalIdNumber.length < 10
+		) {
 			setNotification({
 				message: t("driverForm.idTooLong"),
 				type: "error",
@@ -269,7 +271,6 @@ export default function DeliveryAgentForm({
 						name="firstName"
 						placeholder={t("driverForm.placeholder.firstName")}
 						value={formData.firstName}
-						autoFocus
 						onChange={handleChange}
 						className="rounded-lg border border-gray-300 p-3 text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
 						required
@@ -310,7 +311,7 @@ export default function DeliveryAgentForm({
 						required
 					>
 						<option value="">{t("driverForm.placeholder.choose")}</option>
-						<option value="موظف">{t("driverForm.option.freelance")}</option>
+						<option value="حر موظف">{t("driverForm.option.freelance")}</option>
 						<option value="موظف">{t("driverForm.option.employee")}</option>
 					</select>
 				</div>

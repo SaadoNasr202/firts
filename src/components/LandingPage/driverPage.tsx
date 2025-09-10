@@ -20,18 +20,6 @@ export default function DriverPage({
 					<ImageDriverSlider />
 				</section>
 
-				{/* قسم الفورم */}
-				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
-					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						{t("driver.title")}
-					</div>
-					<div className="opacity-100">
-						<DeliveryAgentForm
-							postFormDeliveryDriverAction={postFormDeliveryDriverAction}
-						/>
-					</div>
-				</section>
-
 				{/* قسم الفوائد */}
 				<section className="mb-8 bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
@@ -95,6 +83,17 @@ export default function DriverPage({
 								</div>
 							</div>
 						</div>
+					</div>
+				</section>
+				{/* قسم الفورم */}
+				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
+					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
+						{t("driver.title")}
+					</div>
+					<div className="opacity-100">
+						<DeliveryAgentForm
+							postFormDeliveryDriverAction={postFormDeliveryDriverAction}
+						/>
 					</div>
 				</section>
 			</div>
