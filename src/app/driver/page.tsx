@@ -15,6 +15,7 @@ export default function driver() {
 		</div>
 	);
 }
+
 export interface FormData {
 	firstName: string;
 	lastName: string;
