@@ -185,8 +185,9 @@ export default function DeliveryAgentForm({
 				isVisible: true,
 			});
 			return;
+
 		}
-		if (formData.personalIdNumber.length > 10) {
+		if (formData.personalIdNumber.length > 10 || formData.personalIdNumber.length<10) {
 			setNotification({
 				message: t('driverForm.idTooLong'),
 				type: "error",

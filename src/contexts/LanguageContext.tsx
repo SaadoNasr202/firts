@@ -119,7 +119,7 @@ const translations = {
     'partnerForm.reset': 'إعادة ضبط',
     'partnerForm.fillAllFields': 'يرجى ملء جميع الحقول المطلوبة',
     'partnerForm.agreeToTerms': 'يرجى الموافقة على الشروط والأحكام',
-    'partnerForm.idTooLong': 'الرقم القومي اكبر من 10 خانات',
+    'partnerForm.idTooLong': 'او اقل من 10 الرقم القومي اكبر من 10 خانات',
     'partnerForm.success': 'تم تسجيل البيانات بنجاح!',
     'partnerForm.error': 'حدث خطأ اثناء الستجيل',
     'partnerForm.submitError': 'حدث خطأ أثناء تسجيل البيانات',
