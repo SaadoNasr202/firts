@@ -170,7 +170,7 @@ export default function CardDeleviry2({
 							>
 								{/* زر الإغلاق */}
 								<button
-									className="absolute top-3 left-3 rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+									className="absolute top-0 left-3 rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
 									onClick={() => setOpen(false)}
 								>
 									<X size={20} />
