@@ -1,8 +1,8 @@
 "use client";
 import { FormData } from "@/app/driver/page";
+import { useLanguage } from "@/contexts/LanguageContext";
 import DeliveryAgentForm from "./driverregister";
 import ImageDriverSlider from "./SliderDriver";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DriverPage({
 	postFormDeliveryDriverAction,
@@ -23,7 +23,7 @@ export default function DriverPage({
 				{/* قسم الفورم */}
 				<section className="mb-8 rounded-xl bg-[#FFFFFF] p-6 shadow-md md:p-12">
 					<div className="text-center font-['Readex_Pro'] text-[39px] leading-none font-semibold tracking-normal">
-						{t('driver.title')}
+						{t("driver.title")}
 					</div>
 					<div className="opacity-100">
 						<DeliveryAgentForm
@@ -36,7 +36,7 @@ export default function DriverPage({
 				<section className="mb-8 bg-[#FFFFFF] p-6 md:p-12">
 					<div className="container mx-auto px-4 md:px-12">
 						<h2 className="mb-12 text-center font-['Readex_Pro'] text-4xl font-semibold text-gray-800 md:text-[39px]">
-							{t('driver.benefits')} {t('company.name')}
+							{t("driver.benefits")} {t("company.name")}
 						</h2>
 						<div className="flex flex-col items-center justify-center gap-8 lg:flex-row">
 							{/* البطاقة 2 */}
@@ -56,11 +56,14 @@ export default function DriverPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										{t('driver.card1.title')}
+										{t("driver.card1.title")}
 									</h3>
 									<p className="text-gray-600">
-										{t('driver.card1.description')}
+										{t("driver.card1.description")}
 									</p>
+								</div>
+								<div className="p-3 text-end text-xl text-green-600">
+									معرفة المزيد{" "}
 								</div>
 							</div>
 
@@ -81,11 +84,14 @@ export default function DriverPage({
 								</div>
 								<div className="p-6 text-right">
 									<h3 className="mb-2 text-xl font-semibold text-green-600">
-										{t('driver.card2.title')}
+										{t("driver.card2.title")}
 									</h3>
 									<p className="text-gray-600">
-										{t('driver.card2.description')}
+										{t("driver.card2.description")}
 									</p>
+								</div>
+								<div className="p-3 text-end text-xl text-green-600">
+									معرفة المزيد{" "}
 								</div>
 							</div>
 						</div>
