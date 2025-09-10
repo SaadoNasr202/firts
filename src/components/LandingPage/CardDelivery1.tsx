@@ -1,5 +1,6 @@
 "use client";
 
+import { FormData } from "@/app/driver/page";
 import { motion } from "framer-motion";
 import {
 	ArrowRight,
@@ -10,9 +11,12 @@ import {
 	PlayCircle,
 	Scale,
 	UserCheck,
+	X,
 	Zap,
 } from "lucide-react";
 import React, { useState } from "react";
+
+import DeliveryAgentForm from "./driverregister";
 
 // Assuming you have a SlideVideo component like this:
 const SlideVideo = () => (
@@ -62,9 +66,16 @@ const posts = [
 	},
 ];
 
-export default function CardDeleviry1() {
+export default function CardDeleviry1({
+	postFormDeliveryDriverAction,
+}: {
+	postFormDeliveryDriverAction: (
+		formData: FormData,
+	) => Promise<{ success: boolean } | { message: string; field: string }>;
+}) {
 	const [email, setEmail] = useState("");
 	const [submitted, setSubmitted] = useState(false);
+	const [open, setOpen] = useState(false);
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
@@ -139,17 +150,44 @@ export default function CardDeleviry1() {
 					</motion.p>
 
 					<div className="mt-8 flex flex-col gap-4 sm:flex-row">
-						<motion.a
+						<motion.button
 							whileHover={{ scale: 1.05 }}
 							className="inline-flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-green-500 via-lime-500 to-emerald-500 px-6 py-3 font-medium text-white shadow-lg"
-							href="#form"
+							onClick={() => setOpen(true)}
 						>
-							سجّل الآن وابدأ فورًا <Zap size={18} />
-						</motion.a>
+							سجل الآن وابدأ شراكتك <Zap size={18} />
+						</motion.button>
 						<a className="inline-flex cursor-pointer items-center gap-2 text-sm text-slate-600 hover:text-green-700">
 							<Globe size={16} /> تعرف أكثر
 						</a>
 					</div>
+					{/* الـ Modal */}
+					{open && (
+						<div className="fixed inset-0 top-20 z-50 flex items-center justify-center bg-black/50 p-4">
+							<motion.div
+								initial={{ scale: 0.9, opacity: 0 }}
+								animate={{ scale: 1, opacity: 1 }}
+								exit={{ scale: 0.9, opacity: 0 }}
+								transition={{ duration: 0.3 }}
+								className="relative w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl"
+							>
+								{/* زر الإغلاق */}
+								<button
+									className="absolute top-0 left-3 rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+									onClick={() => setOpen(false)}
+								>
+									<X size={20} />
+								</button>
+
+								{/* الفورم */}
+								<div className="max-h-[80vh] overflow-y-auto">
+									<DeliveryAgentForm
+										postFormDeliveryDriverAction={postFormDeliveryDriverAction}
+									/>
+								</div>
+							</motion.div>
+						</div>
+					)}
 
 					{/* Key bullets */}
 					<div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">

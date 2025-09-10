@@ -137,8 +137,6 @@ export const TB_Worker = pgTable("Worker", {
 	email: text("email"),
 	region: text("region").notNull(),
 	idImage: text("id_image"),
-	idDriver: text("idDriver"),
-	idVichle: text("idVichle"),
 	Picture: text("Picture"),
 	agreed: boolean("agreed").default(false).notNull(),
 });
