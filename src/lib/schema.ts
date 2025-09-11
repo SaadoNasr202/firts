@@ -109,21 +109,55 @@ export const TB_DeliveryDrivers = pgTable("DeliveryDriver", {
 });
 
 export const TB_Investore = pgTable("Investore", {
+	// معلومات أساسية مطلوبة
 	id: text("id").primaryKey(),
+	national_id: text("national_id").notNull().unique(),
 	first_name: text("first_name").notNull(),
 	father_name: text("father_name").notNull(),
 	family_name: text("family_name").notNull(),
-	grandfather_name: text("grandfather_name").notNull(),
-	birth_date: date("birth_date"),
-	national_id: text("national_id").notNull().unique(),
-	email: text("email"),
-	phone: text("phone").notNull(),
-	national_address_email: text("national_address_email"),
-	region: text("region").notNull(),
-	iban: text("iban").notNull(),
-	bank_name: text("bank_name").notNull(),
-	amount: numeric("amount", { precision: 10, scale: 2 }),
-	agreed: boolean("agreed").default(false).notNull(),
+	
+	// حقول التوثيق عبر نفاذ
+	nafath_request_id: text("nafath_request_id"),
+	nafath_status: text("nafath_status").default("pending"), // 'pending', 'approved', 'failed'
+	nafath_verified_at: timestamp("nafath_verified_at", {
+		withTimezone: true,
+		mode: "date",
+	}),
+	
+	// الأسماء المتحقق منها من نفاذ
+	first_name_ar: text("first_name_ar"),
+	first_name_en: text("first_name_en"),
+	middle_name_ar: text("middle_name_ar"),
+	middle_name_en: text("middle_name_en"),
+	third_name_ar: text("third_name_ar"),
+	third_name_en: text("third_name_en"),
+	last_name_ar: text("last_name_ar"),
+	last_name_en: text("last_name_en"),
+	
+	// حقول العقد والتوقيع الإلكتروني
+	contract_generated_at: timestamp("contract_generated_at", {
+		withTimezone: true,
+		mode: "date",
+	}),
+	contract_signed_at: timestamp("contract_signed_at", {
+		withTimezone: true,
+		mode: "date",
+	}),
+	signed_file_path: text("signed_file_path"),
+	
+	// حقول التوقيت
+	created_at: timestamp("created_at", {
+		withTimezone: true,
+		mode: "date",
+	})
+		.notNull()
+		.defaultNow(),
+	updated_at: timestamp("updated_at", {
+		withTimezone: true,
+		mode: "date",
+	})
+		.notNull()
+		.defaultNow(),
 });
 
 export const TB_Worker = pgTable("Worker", {
