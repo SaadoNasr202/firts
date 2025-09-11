@@ -1,8 +1,6 @@
 import {
 	boolean,
-	date,
 	integer,
-	numeric,
 	pgTable,
 	text,
 	timestamp,
@@ -115,7 +113,7 @@ export const TB_Investore = pgTable("Investore", {
 	first_name: text("first_name").notNull(),
 	father_name: text("father_name").notNull(),
 	family_name: text("family_name").notNull(),
-	
+
 	// حقول التوثيق عبر نفاذ
 	nafath_request_id: text("nafath_request_id"),
 	nafath_status: text("nafath_status").default("pending"), // 'pending', 'approved', 'failed'
@@ -123,7 +121,7 @@ export const TB_Investore = pgTable("Investore", {
 		withTimezone: true,
 		mode: "date",
 	}),
-	
+
 	// الأسماء المتحقق منها من نفاذ
 	first_name_ar: text("first_name_ar"),
 	first_name_en: text("first_name_en"),
@@ -133,7 +131,7 @@ export const TB_Investore = pgTable("Investore", {
 	third_name_en: text("third_name_en"),
 	last_name_ar: text("last_name_ar"),
 	last_name_en: text("last_name_en"),
-	
+
 	// حقول العقد والتوقيع الإلكتروني
 	contract_generated_at: timestamp("contract_generated_at", {
 		withTimezone: true,
@@ -144,7 +142,7 @@ export const TB_Investore = pgTable("Investore", {
 		mode: "date",
 	}),
 	signed_file_path: text("signed_file_path"),
-	
+
 	// حقول التوقيت
 	created_at: timestamp("created_at", {
 		withTimezone: true,
@@ -173,4 +171,17 @@ export const TB_Worker = pgTable("Worker", {
 	idImage: text("id_image"),
 	Picture: text("Picture"),
 	agreed: boolean("agreed").default(false).notNull(),
+});
+
+export const TB_shellausers = pgTable("shellausers", {
+	id: text("id").primaryKey(),
+	fullName: text("full_name").notNull(),
+	phoneNumber: text("phone_number").notNull(),
+	birthDate: timestamp("birth_date", {
+		withTimezone: true,
+		mode: "date",
+	}).notNull(),
+	email: text("email").notNull().unique(),
+	password: text("password").notNull(),
+	Adress: text("Adress").notNull(),
 });

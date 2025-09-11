@@ -1,5 +1,4 @@
-import React from 'react';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 
 export default function HelpAndSupport() {
 	return (
@@ -9,43 +8,51 @@ export default function HelpAndSupport() {
 			</h2>
 
 			{/* صورة الدعم Placeholder */}
-			<div className="flex justify-center mb-8">
+			<div className="mb-8 flex justify-center">
 				<img
 					src="helpsupport.jpg"
 					alt="Support"
-					className="w-full h-auto rounded-lg"
+					className="h-auto w-full rounded-lg"
 				/>
 			</div>
 
-			<div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+			<div className="space-y-6 rounded-lg bg-white p-6 shadow-sm">
 				{/* قسم العناوين */}
-				<div className="flex items-center flex-row-reverse justify-between pb-4 border-b border-gray-200">
-					<div className="flex items-center flex-row-reverse space-x-2">
+				<div className="flex-row- flex items-center justify-between border-b border-gray-200 pb-4">
+					<div className="flex-row- flex items-center space-x-2">
 						<FaMapMarkerAlt className="text-2xl text-green-600" />
 						<div className="flex flex-col text-right">
-							<span className="font-semibold text-lg text-gray-900">عناويننا</span>
-							<span className="text-sm text-gray-500">ksa, saudi arabia , umm al hammam</span>
+							<span className="text-lg font-semibold text-gray-900">
+								عناويننا
+							</span>
+							<span className="text-sm text-gray-500">
+								ksa, saudi arabia , umm al hammam
+							</span>
 						</div>
 					</div>
 				</div>
 
 				{/* قسم اتصل بنا */}
-				<div className="flex items-center flex-row-reverse justify-between pb-4 border-b border-gray-200">
-					<div className="flex items-center flex-row-reverse space-x-2">
+				<div className="flex-row- flex items-center justify-between border-b border-gray-200 pb-4">
+					<div className="flex-row- flex items-center space-x-2">
 						<FaPhone className="text-2xl text-green-600" />
 						<div className="flex flex-col text-right">
-							<span className="font-semibold text-lg text-gray-900">اتصل بنا</span>
+							<span className="text-lg font-semibold text-gray-900">
+								اتصل بنا
+							</span>
 							<span className="text-sm text-gray-500">+966-5999-777-25</span>
 						</div>
 					</div>
 				</div>
 
 				{/* قسم راسلنا */}
-				<div className="flex items-center flex-row-reverse justify-between">
-					<div className="flex items-center flex-row-reverse space-x-2">
+				<div className="flex-row- flex items-center justify-between">
+					<div className="flex-row- flex items-center space-x-2">
 						<FaEnvelope className="text-2xl text-green-600" />
 						<div className="flex flex-col text-right">
-							<span className="font-semibold text-lg text-gray-900">راسلنا عبر بريدنا الالكتروني</span>
+							<span className="text-lg font-semibold text-gray-900">
+								راسلنا عبر بريدنا الالكتروني
+							</span>
 							<span className="text-sm text-gray-500">shalafood@gmail.com</span>
 						</div>
 					</div>

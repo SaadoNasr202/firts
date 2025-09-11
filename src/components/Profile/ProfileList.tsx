@@ -24,7 +24,6 @@ const OtherPage = ({ title }: { title: string }) => (
 		{title}
 	</div>
 );
-
 export default function ProfileList() {
 	const [activePage, setActivePage] = useState("معلومات الحساب");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -65,10 +64,11 @@ export default function ProfileList() {
 	};
 
 	return (
-		<div className="flex min-h-screen justify-center bg-gray-100 p-4 md:p-8">
-			<div className="flex w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-lg md:flex-row-reverse">
-				{/* Hamburger Button for Mobile */}
-				<div className="flex justify-end p-4 md:hidden">
+		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+			{/* الكرت بالنص */}
+			<div className="flex w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-lg md:flex-row">
+				{/* زر الهامبرغر للموبايل */}
+				<div className="flex justify-center p-4 md:hidden">
 					<button
 						onClick={() => setIsSidebarOpen(true)}
 						className="rounded-md p-2 text-gray-700 hover:bg-gray-100"
@@ -77,22 +77,22 @@ export default function ProfileList() {
 					</button>
 				</div>
 
-				{/* Desktop Sidebar */}
-				<div className="hidden w-[420px] border-l border-gray-200 bg-gray-50 px-6 py-8 md:block">
+				{/* Sidebar Desktop (يسار) */}
+				<div className="hidden w-[420px] border-r border-gray-200 bg-gray-50 px-6 py-8 md:block">
 					<Sidebar activePage={activePage} setActivePage={setActivePage} />
 				</div>
 
-				{/* Mobile Sidebar Modal */}
+				{/* Sidebar Mobile Modal (يسار) */}
 				{isSidebarOpen && (
 					<>
 						<div
 							className="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
 							onClick={() => setIsSidebarOpen(false)}
 						></div>
-						<div className="fixed top-0 right-0 z-50 max-h-full w-3/4 transform overflow-y-auto border-l border-gray-200 bg-gray-50 px-6 py-8 transition-transform">
+						<div className="fixed top-0 left-0 z-50 max-h-full w-3/4 transform overflow-y-auto border-r border-gray-200 bg-gray-50 px-6 py-8 transition-transform">
 							<button
 								onClick={() => setIsSidebarOpen(false)}
-								className="absolute top-4 left-4 text-gray-600 hover:text-gray-900"
+								className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
 							>
 								<X size={24} />
 							</button>
@@ -107,6 +107,7 @@ export default function ProfileList() {
 					</>
 				)}
 
+				{/* المحتوى */}
 				<div className="flex-1 p-4 md:p-8">{renderContent()}</div>
 			</div>
 		</div>

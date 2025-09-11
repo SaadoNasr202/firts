@@ -77,7 +77,7 @@ export default function MyVouchers() {
 	return (
 		<div className="flex flex-col rounded-xl p-4 md:p-8">
 			{/* Tabs for Available and Expired Vouchers */}
-			<div className="mb-6 flex w-full flex-row-reverse items-center justify-start gap-4 text-right">
+			<div className="mb-6 flex w-full flex-row items-center justify-start gap-4 text-right">
 				<button
 					onClick={() => setActiveTab("available")}
 					className={`w-1/2 border-b-2 py-2 text-lg font-bold transition-colors ${
@@ -105,7 +105,7 @@ export default function MyVouchers() {
 				{vouchers.map((voucher, index) => (
 					<div
 						key={index}
-						className="relative flex flex-row-reverse items-center justify-between rounded-none border-b border-gray-200 bg-white p-4 last:border-b-0"
+						className="flex-row- relative flex items-center justify-between rounded-none border-b border-gray-200 bg-white p-4 last:border-b-0"
 					>
 						{/* Right side (green section in the image) */}
 						<div
@@ -122,9 +122,9 @@ export default function MyVouchers() {
 						</div>
 
 						{/* Left side (white section in the image) */}
-						<div className="flex w-2/3 flex-col items-end gap-2 text-right">
+						<div className="flex w-2/3 flex-col items-start gap-2 text-right">
 							{/* Details and Expiration */}
-							<div className="flex flex-col items-end gap-1">
+							<div className="flex flex-col gap-1">
 								{voucher.details.map((detail, i) => (
 									<span
 										key={i}

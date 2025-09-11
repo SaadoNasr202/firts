@@ -1,19 +1,52 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { FaChevronDown, FaUserCircle } from "react-icons/fa";
 
-interface ProfileInfo {
-	label: string;
-	value: string;
+interface UserData {
+	fullName: string;
+	phoneNumber: string;
+	birthDate: string;
+	email: string;
 }
 
-const profileInfo: ProfileInfo[] = [
-	{ label: "الاسم بالكامل", value: "نورا أحمد" },
-	{ label: "رقم الهاتف", value: "009626544884" },
-	{ label: "تاريخ الميلاد", value: "12/12/1990" },
-	{ label: "البريد الالكتروني", value: "Malini@mailito.com" },
-	{ label: "كلمة المرور", value: "********" },
-];
-
 export default function ProfileDetails() {
+	const [user, setUser] = useState<UserData | null>(null);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		async function fetchUser() {
+			try {
+				const res = await fetch("/api/user");
+				const data = await res.json();
+				setUser(data);
+			} catch (error) {
+				console.error("Failed to fetch user:", error);
+			} finally {
+				setLoading(false);
+			}
+		}
+		fetchUser();
+	}, []);
+
+	if (loading) return <div className="p-8 text-center">جارٍ التحميل...</div>;
+	if (!user)
+		return (
+			<div className="p-8 text-center text-red-500">المستخدم غير موجود</div>
+		);
+
+	// جهزنا بيانات العرض
+	const profileInfo = [
+		{ label: "الاسم بالكامل", value: user.fullName },
+		{ label: "رقم الهاتف", value: user.phoneNumber },
+		{
+			label: "تاريخ الميلاد",
+			value: new Date(user.birthDate).toLocaleDateString(),
+		},
+		{ label: "البريد الالكتروني", value: user.email },
+		{ label: "كلمة المرور", value: "********" }, // لا تعرض كلمة المرور الحقيقية
+	];
+
 	return (
 		<div className="flex flex-col">
 			<h2 className="mb-8 text-right text-2xl font-bold text-gray-800">
@@ -21,12 +54,12 @@ export default function ProfileDetails() {
 			</h2>
 			<div className="rounded-lg bg-white shadow-sm">
 				<div className="border-b border-gray-200 p-6">
-					<div className="flex flex-row-reverse items-center text-right">
+					<div className="flex flex-row items-center text-right">
 						<FaUserCircle className="mr-4 text-6xl text-gray-300" />
 						<div className="flex flex-col">
 							<span className="text-sm text-gray-500">الاسم بالكامل</span>
 							<span className="text-lg font-semibold text-gray-900">
-								نورا أحمد
+								{user.fullName}
 							</span>
 						</div>
 					</div>
@@ -35,8 +68,7 @@ export default function ProfileDetails() {
 					{profileInfo.map((item, index) => (
 						<div
 							key={index}
-							// Added flex-row-reverse to change direction
-							className="flex flex-row-reverse items-center justify-between border-b border-gray-200 pb-4"
+							className="flex flex-row items-center justify-between border-b border-gray-200 pb-4"
 						>
 							<div className="flex flex-col text-right">
 								<span className="text-sm text-gray-500">{item.label}</span>
