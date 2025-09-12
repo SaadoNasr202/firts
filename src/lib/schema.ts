@@ -6,7 +6,6 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 
-// استخدام TB_shellausers كجدول المستخدمين الرئيسي بدلاً من TB_user
 export const TB_user = pgTable("shellausers", {
 	id: text("id").primaryKey(),
 	fullName: text("full_name").notNull(),
@@ -29,8 +28,7 @@ export const TB_session = pgTable("session", {
 		withTimezone: true,
 		mode: "date",
 	}).notNull(),
-})
-
+});
 
 export const TB_KaidhaUsers = pgTable("KaidhaUser", {
 	id: text("id").primaryKey(),
@@ -183,6 +181,17 @@ export const TB_shellausers = pgTable("shellausers", {
 	Adress: text("Adress").notNull(),
 });
 
+// جدول المتاجر
+export const TB_stores = pgTable("stores", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(),
+	type: text("type").notNull(), // مطعم، بقال، سوبرماركت، صيدلية، إلخ
+	rating: text("rating"), // تقييم المتجر
+	image: text("image"), // صورة المتجر
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// المنتجات
 export const TB_products = pgTable("products", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
@@ -190,8 +199,12 @@ export const TB_products = pgTable("products", {
 	price: text("price").notNull(),
 	originalPrice: text("original_price"),
 	unit: text("unit"),
+	storeId: text("store_id")
+		.references(() => TB_stores.id) // كل منتج مرتبط بمتجر
+		.notNull(),
 });
 
+// مفضلة المنتجات (User <-> Products Many-to-Many)
 export const TB_favouriteusers = pgTable("favouriteusers", {
 	id: text("id").primaryKey(),
 	userId: text("user_id")
@@ -203,4 +216,14 @@ export const TB_favouriteusers = pgTable("favouriteusers", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-
+// مفضلة المتاجر (User <-> Stores Many-to-Many)
+export const TB_favouriteStores = pgTable("favourite_stores", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => TB_shellausers.id),
+	storeId: text("store_id")
+		.notNull()
+		.references(() => TB_stores.id),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
