@@ -13,15 +13,18 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import HelpAndSupport from "../Condetion/HelpASupport";
 
 const MobileMenu = ({
 	onClose,
 	activeTab,
 	setActiveTab,
+	openAterms,
 }: {
 	onClose: () => void;
 	activeTab: string;
 	setActiveTab: (tab: string) => void;
+	openAterms: () => void;
 }) => {
 	const handleClick = (tab: string, href: string) => {
 		setActiveTab(tab);
@@ -59,6 +62,7 @@ const MobileMenu = ({
 					<Home size={22} />
 					<span className="text-base font-bold">الرئيسية</span>
 				</button>
+
 				<button
 					onClick={() => handleClick("orders", "/orders")}
 					className={`flex items-center gap-2 ${
@@ -70,6 +74,7 @@ const MobileMenu = ({
 					<ClipboardList size={22} />
 					<span className="text-base">طلباتي</span>
 				</button>
+
 				<button
 					onClick={() => handleClick("cart", "/cart")}
 					className={`flex items-center gap-2 ${
@@ -81,6 +86,7 @@ const MobileMenu = ({
 					<ShoppingBag size={22} />
 					<span className="text-base">السلة</span>
 				</button>
+
 				<button
 					onClick={() => handleClick("login", "/profile")}
 					className={`flex items-center gap-2 ${
@@ -92,8 +98,9 @@ const MobileMenu = ({
 					<User size={22} />
 					<span className="text-base">تسجيل الدخول</span>
 				</button>
+
 				<button
-					onClick={() => handleClick("contact", "/contact")}
+					onClick={openAterms} // استدعاء المودال
 					className={`flex items-center gap-2 ${
 						activeTab === "contact"
 							? "text-green-600"
@@ -101,8 +108,9 @@ const MobileMenu = ({
 					}`}
 				>
 					<Mail size={22} />
-					<span className="text-base">اتصل بنا</span>
+					<span className="text-sm">اتصل بنا</span>
 				</button>
+
 				<button
 					onClick={() => handleClick("language", "/")}
 					className={`flex items-center gap-2 ${
@@ -122,7 +130,8 @@ const MobileMenu = ({
 export default function NavBarCondition() {
 	const pathname = usePathname();
 	const [activeTab, setActiveTab] = useState("");
-	const [showAterms, setShowAterms] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [showAterms, setShowAterms] = useState(false); // مودال اتصل بنا
 
 	useEffect(() => {
 		if (pathname.startsWith("/profile")) setActiveTab("login");
@@ -130,7 +139,6 @@ export default function NavBarCondition() {
 		else if (pathname.startsWith("/orders")) setActiveTab("orders");
 		else setActiveTab("home");
 	}, [pathname]);
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const handleClick = (tab: string, href: string) => {
 		setActiveTab(tab);
@@ -170,6 +178,7 @@ export default function NavBarCondition() {
 						<Home size={22} />
 						<span className="text-sm font-bold">الرئيسية</span>
 					</button>
+
 					<button
 						onClick={() => handleClick("orders", "/orders")}
 						className={`flex items-center gap-2 ${
@@ -181,6 +190,7 @@ export default function NavBarCondition() {
 						<ClipboardList size={22} />
 						<span className="text-sm">طلباتي</span>
 					</button>
+
 					<button
 						onClick={() => handleClick("cart", "/cart")}
 						className={`flex items-center gap-2 ${
@@ -192,6 +202,7 @@ export default function NavBarCondition() {
 						<ShoppingBag size={22} />
 						<span className="text-sm">السلة</span>
 					</button>
+
 					<button
 						onClick={() => handleClick("login", "/profile")}
 						className={`flex items-center gap-2 ${
@@ -203,6 +214,7 @@ export default function NavBarCondition() {
 						<User size={22} />
 						<span className="text-sm">تسجيل الدخول</span>
 					</button>
+
 					<button
 						onClick={() => setShowAterms(true)}
 						className={`flex items-center gap-2 ${
@@ -234,7 +246,24 @@ export default function NavBarCondition() {
 					onClose={() => setIsMenuOpen(false)}
 					activeTab={activeTab}
 					setActiveTab={setActiveTab}
+					openAterms={() => setShowAterms(true)}
 				/>
+			)}
+
+			{/* مودال اتصل بنا */}
+
+			{showAterms && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+					<div className="relative w-full max-w-lg rounded-lg bg-white p-6 md:p-8">
+						<HelpAndSupport />
+						<button
+							onClick={() => setShowAterms(false)}
+							className="absolute top-4 left-4 font-bold text-red-500"
+						>
+							اغلاق
+						</button>
+					</div>
+				</div>
 			)}
 		</>
 	);
