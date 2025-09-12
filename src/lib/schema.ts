@@ -6,22 +6,18 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 
-export const TB_user = pgTable("user", {
+// استخدام TB_shellausers كجدول المستخدمين الرئيسي بدلاً من TB_user
+export const TB_user = pgTable("shellausers", {
 	id: text("id").primaryKey(),
-	username: text("username").notNull().unique(),
+	fullName: text("full_name").notNull(),
+	phoneNumber: text("phone_number").notNull(),
+	birthDate: timestamp("birth_date", {
+		withTimezone: true,
+		mode: "date",
+	}).notNull(),
+	email: text("email").notNull().unique(),
 	password: text("password").notNull(),
-	createdTime: timestamp("created_time", {
-		withTimezone: true,
-		mode: "date",
-	})
-		.notNull()
-		.defaultNow(),
-	lastUpdateTime: timestamp("last_update_time", {
-		withTimezone: true,
-		mode: "date",
-	})
-		.notNull()
-		.defaultNow(),
+	Adress: text("Adress").notNull(),
 });
 
 export const TB_session = pgTable("session", {
@@ -33,7 +29,8 @@ export const TB_session = pgTable("session", {
 		withTimezone: true,
 		mode: "date",
 	}).notNull(),
-});
+})
+
 
 export const TB_KaidhaUsers = pgTable("KaidhaUser", {
 	id: text("id").primaryKey(),

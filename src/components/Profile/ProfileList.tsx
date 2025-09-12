@@ -2,7 +2,7 @@
 "use client";
 
 import { MenuIcon, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CondtionAterms from "../Condetion/CondtionAterms";
 import HelpAndSupport from "../Condetion/HelpASupport";
 import KaidhaTerms from "../Condetion/KaidhaTerms";
@@ -17,6 +17,7 @@ import MyWallet from "./MyWallet";
 import ProfileDetails from "./ProfileDetails";
 import SavedAddress from "./SavedAddress";
 import Sidebar from "./Sidebar";
+import { useRouter } from "next/navigation";
 
 const OtherPage = ({ title }: { title: string }) => (
 	<div className="p-8 text-center text-3xl font-bold text-gray-500">
@@ -24,6 +25,7 @@ const OtherPage = ({ title }: { title: string }) => (
 	</div>
 );
 export default function ProfileList() {
+	
 	const [activePage, setActivePage] = useState("معلومات الحساب");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -60,6 +62,36 @@ export default function ProfileList() {
 				return <OtherPage title="المحتوى غير موجود" />;
 		}
 	};
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		async function checkLoginStatus() {
+			try {
+				const response = await fetch("/api/is_logged_in");
+
+				if (!response.ok) {
+					console.error("Failed to fetch login status:", response.statusText);
+					setIsLoading(false);
+					return;
+				}
+
+				const data = await response.json();
+				if (data.isLoggedIn) {
+					// المستخدم مسجل دخول، أبقه في صفحة البروفايل
+					setIsLoading(false);
+				} else {
+					// المستخدم غير مسجل، أرسله لتسجيل الدخول
+					router.push("/login");
+				}
+			} catch (error) {
+				console.error("An error occurred while checking login status:", error);
+				setIsLoading(false);
+			}
+		}
+
+		checkLoginStatus();
+	}, [router]);
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
