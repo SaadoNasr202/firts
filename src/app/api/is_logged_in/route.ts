@@ -1,6 +1,9 @@
 import { lucia } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
+// إجبار Next.js على معاملة هذا الـ route كـ dynamic
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
 	try {
 		console.log("🔍 API: Checking login status...");

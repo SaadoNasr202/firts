@@ -4,6 +4,9 @@ import { TB_user } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+// إجبار Next.js على معاملة هذا الـ route كـ dynamic
+export const dynamic = 'force-dynamic';
+
 // GET → جلب العنوان الحالي
 export async function GET(req: NextRequest) {
 	try {
