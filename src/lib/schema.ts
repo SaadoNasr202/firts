@@ -185,3 +185,25 @@ export const TB_shellausers = pgTable("shellausers", {
 	password: text("password").notNull(),
 	Adress: text("Adress").notNull(),
 });
+
+export const TB_products = pgTable("products", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(),
+	image: text("image").notNull(),
+	price: text("price").notNull(),
+	originalPrice: text("original_price"),
+	unit: text("unit"),
+});
+
+export const TB_favouriteusers = pgTable("favouriteusers", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => TB_shellausers.id),
+	productId: text("product_id")
+		.notNull()
+		.references(() => TB_products.id),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+

@@ -14,7 +14,6 @@ import KaidhaWallet from "./KaidhaWallet";
 import MyPoints from "./MyPoints";
 import MyVouchers from "./MyVouchers";
 import MyWallet from "./MyWallet";
-import NewAddress from "./NewAddress";
 import ProfileDetails from "./ProfileDetails";
 import SavedAddress from "./SavedAddress";
 import Sidebar from "./Sidebar";
@@ -34,8 +33,7 @@ export default function ProfileList() {
 				return <ProfileDetails />;
 			case "العناوين المحفوظة":
 				return <SavedAddress setActivePage={setActivePage} />;
-			case "عنوان جديد":
-				return <NewAddress />;
+
 			case "المفضلة لديك":
 				return <Favorites />;
 			case "إحصائياتي":

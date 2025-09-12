@@ -4,18 +4,17 @@ import { useState } from "react";
 
 import KaidhaWallet from "./KaidhaWallet";
 
+import CondtionAterms from "../Condetion/CondtionAterms";
+import HelpAndSupport from "../Condetion/HelpASupport";
+import KaidhaTerms from "../Condetion/KaidhaTerms";
+import PrivacyPolicy from "../Condetion/PrivacyPolicy";
+import RefundPolicy from "../Condetion/RefundPolicy";
+import Favorites from "../HomePage/Favorites";
+import MyStats from "../HomePage/MyStats";
 import MyWallet from "./MyWallet";
-import NewAddress from "./NewAddress";
 import ProfileDetails from "./ProfileDetails";
 import SavedAddress from "./SavedAddress";
 import Sidebar from "./Sidebar";
-import Favorites from "../HomePage/Favorites";
-import MyStats from "../HomePage/MyStats";
-import PrivacyPolicy from "../Condetion/PrivacyPolicy";
-import KaidhaTerms from "../Condetion/KaidhaTerms";
-import CondtionAterms from "../Condetion/CondtionAterms";
-import HelpAndSupport from "../Condetion/HelpASupport";
-import RefundPolicy from "../Condetion/RefundPolicy";
 
 // هذا مجرد مثال لصفحة أخرى
 const OtherPage = ({ title }: { title: string }) => (
@@ -33,8 +32,7 @@ export default function ProfileDashboard() {
 				return <ProfileDetails />;
 			case "العناوين المحفوظة":
 				return <SavedAddress setActivePage={setActivePage} />;
-			case "عنوان جديد":
-				return <NewAddress />;
+
 			case "المفضلة لديك":
 				return <Favorites />;
 			case "إحصائياتي":
