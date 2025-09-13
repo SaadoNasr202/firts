@@ -55,6 +55,22 @@ export async function POST(request: NextRequest) {
 			cart = [{ id: newCartId, userId: user.id, createdAt: new Date() }];
 		}
 
+		// التحقق من وجود منتجات من متاجر أخرى في السلة
+		const existingCartItems = await db
+			.select({
+				storeId: TB_cartItems.storeId,
+			})
+			.from(TB_cartItems)
+			.where(eq(TB_cartItems.cartId, cart[0].id))
+			.limit(1);
+
+		if (existingCartItems.length > 0 && existingCartItems[0].storeId !== storeId) {
+			return NextResponse.json({ 
+				error: "لا يمكن إضافة منتجات من متاجر مختلفة في نفس السلة. يرجى إفراغ السلة أولاً أو إكمال الطلب الحالي.",
+				requiresClearCart: true
+			}, { status: 400 });
+		}
+
 		// التحقق من وجود المنتج في السلة
 		const existingItem = await db
 			.select()

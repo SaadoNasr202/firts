@@ -20,7 +20,7 @@ export default function HomePage() {
 	const [currentPage, setCurrentPage] = useState("home");
 	const [selectedStore, setSelectedStore] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("");
-	const [selectedProductId, setSelectedProductId] = useState<number | null>(
+	const [selectedProductId, setSelectedProductId] = useState<string | null>(
 		null,
 	);
 	const [selectedRestaurantId, setSelectedRestaurantId] = useState<
@@ -73,8 +73,8 @@ export default function HomePage() {
 		setCurrentPage("products");
 	};
 
-	const handleProductClick = (productId: number) => {
-		// تبسيط - البيانات تأتي من قاعدة البيانات الآن
+	const handleProductClick = (productId: string) => {
+		// productId جاي كـ string من قاعدة البيانات
 		setSelectedProductId(productId);
 		setCurrentPage("product-details");
 	};

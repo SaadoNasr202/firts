@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useCart } from "@/hooks/useCart";
 
 interface Product {
-	id: number;
+	id: string;
 	name: string;
 	description: string;
 	image: string;
@@ -13,11 +14,16 @@ interface Product {
 	newPrice: string;
 	oldPrice?: string;
 	size?: string;
+	store?: {
+		id: string;
+		name: string;
+		type: string;
+	};
 }
 
 interface ProductDetailsPageProps {
-	productId: number;
-	onProductClick: (productId: number) => void;
+	productId: string;
+	onProductClick: (productId: string) => void;
 }
 
 export default function ProductDetailsPage({
@@ -27,6 +33,11 @@ export default function ProductDetailsPage({
 	const [product, setProduct] = useState<Product | null>(null);
 	const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [quantity, setQuantity] = useState(1);
+	const [showClearCartDialog, setShowClearCartDialog] = useState(false);
+	const [pendingProduct, setPendingProduct] = useState<{ productId: string; storeId: string } | null>(null);
+	
+	const { addToCart, clearCart, isLoading: cartLoading } = useCart();
 
 	useEffect(() => {
 		const fetchProductDetails = async () => {
@@ -60,6 +71,63 @@ export default function ProductDetailsPage({
 
 	// استخدام useState لإدارة حالة فتح/إغلاق قسم الوصف
 	const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+
+	// وظائف إدارة الكمية
+	const increaseQuantity = () => {
+		setQuantity(prev => prev + 1);
+	};
+
+	const decreaseQuantity = () => {
+		setQuantity(prev => prev > 1 ? prev - 1 : 1);
+	};
+
+	// وظيفة إضافة المنتج للسلة
+	const handleAddToCart = async () => {
+		if (!product?.store?.id) {
+			alert('خطأ: معرف المتجر غير متوفر');
+			return;
+		}
+
+		const result = await addToCart({ 
+			productId: product.id, 
+			storeId: product.store.id,
+			quantity 
+		});
+		
+		if (result.success) {
+			alert(result.message || 'تم إضافة المنتج للسلة بنجاح');
+		} else if (result.requiresClearCart) {
+			setPendingProduct({ productId: product.id, storeId: product.store.id });
+			setShowClearCartDialog(true);
+		} else {
+			alert(result.error || 'حدث خطأ أثناء إضافة المنتج للسلة');
+		}
+	};
+
+	// وظيفة إفراغ السلة وإضافة المنتج الجديد
+	const handleClearCartAndAdd = async () => {
+		if (!pendingProduct) return;
+
+		const cleared = await clearCart();
+		if (cleared) {
+			const result = await addToCart({ 
+				productId: pendingProduct.productId, 
+				storeId: pendingProduct.storeId,
+				quantity 
+			});
+			
+			if (result.success) {
+				alert(result.message || 'تم إضافة المنتج للسلة بنجاح');
+			} else {
+				alert(result.error || 'حدث خطأ أثناء إضافة المنتج للسلة');
+			}
+		} else {
+			alert('حدث خطأ أثناء إفراغ السلة');
+		}
+		
+		setShowClearCartDialog(false);
+		setPendingProduct(null);
+	};
 
 	// عرض حالة التحميل
 	if (isLoading) {
@@ -130,7 +198,11 @@ export default function ProductDetailsPage({
 								{product.newPrice}
 							</span>
 							<div className="mr-4 flex items-center overflow-hidden rounded-full border border-gray-300">
-								<button className="p-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
+								<button 
+									onClick={decreaseQuantity}
+									disabled={quantity <= 1}
+									className="p-2 text-gray-600 hover:bg-gray-100 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										className="h-5 w-5"
@@ -145,9 +217,12 @@ export default function ProductDetailsPage({
 									</svg>
 								</button>
 								<span className="px-4 text-lg font-semibold text-gray-800">
-									1
+									{quantity}
 								</span>
-								<button className="p-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
+								<button 
+									onClick={increaseQuantity}
+									className="p-2 text-gray-600 hover:bg-gray-100 focus:outline-none"
+								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										className="h-5 w-5"
@@ -241,7 +316,11 @@ export default function ProductDetailsPage({
 						</span>
 					)}
 				</div>
-				<button className="flex items-center rounded-full bg-white px-6 py-2 font-semibold text-green-700 transition-colors hover:bg-gray-100">
+				<button 
+					onClick={handleAddToCart}
+					disabled={cartLoading}
+					className="flex items-center rounded-full bg-white px-6 py-2 font-semibold text-green-700 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						className="ml-2 h-5 w-5"
@@ -256,9 +335,42 @@ export default function ProductDetailsPage({
 							d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
 						/>
 					</svg>
-					أضف إلى السلة
+					{cartLoading ? 'جاري الإضافة...' : 'أضف إلى السلة'}
 				</button>
 			</div>
+
+			{/* Dialog لإفراغ السلة */}
+			{showClearCartDialog && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+					<div className="bg-white rounded-lg p-6 max-w-md mx-4" dir="rtl">
+						<h3 className="text-lg font-bold text-gray-900 mb-4">
+							تنبيه
+						</h3>
+						<p className="text-gray-600 mb-6">
+							لا يمكن إضافة منتجات من متاجر مختلفة في نفس السلة. 
+							هل تريد إفراغ السلة الحالية وإضافة هذا المنتج؟
+						</p>
+						<div className="flex gap-3 justify-end">
+							<button
+								onClick={() => {
+									setShowClearCartDialog(false);
+									setPendingProduct(null);
+								}}
+								className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+							>
+								إلغاء
+							</button>
+							<button
+								onClick={handleClearCartAndAdd}
+								disabled={cartLoading}
+								className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+							>
+								{cartLoading ? 'جاري المعالجة...' : 'نعم، أفرغ السلة'}
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

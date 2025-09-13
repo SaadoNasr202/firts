@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useCart } from "@/hooks/useCart";
 
 interface Product {
 	id: string;
@@ -14,7 +15,7 @@ interface Product {
 interface ProductsPageProps {
 	categoryName: string;
 	storeName: string;
-	onProductClick: (productId: number) => void;
+	onProductClick: (productId: string) => void;
 }
 
 export default function ProductsPage({
@@ -24,6 +25,10 @@ export default function ProductsPage({
 }: ProductsPageProps) {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [storeId, setStoreId] = useState<string>("");
+	const [showClearCartDialog, setShowClearCartDialog] = useState(false);
+	const [pendingProduct, setPendingProduct] = useState<{ productId: string; storeId: string } | null>(null);
+	const { addToCart, clearCart, isLoading: cartLoading } = useCart();
 
 	useEffect(() => {
 		const fetchProducts = async () => {
@@ -33,6 +38,9 @@ export default function ProductsPage({
 				if (response.ok) {
 					const data = await response.json();
 					setProducts(data.products || []);
+					if (data.store?.id) {
+						setStoreId(data.store.id);
+					}
 				} else {
 					console.error('فشل في جلب المنتجات');
 				}
@@ -47,6 +55,43 @@ export default function ProductsPage({
 			fetchProducts();
 		}
 	}, [categoryName, storeName]);
+
+	const handleAddToCart = async (productId: string) => {
+		if (!storeId) {
+			alert('خطأ: معرف المتجر غير متوفر');
+			return;
+		}
+
+		const result = await addToCart({ productId, storeId });
+		
+		if (result.success) {
+			alert(result.message || 'تم إضافة المنتج للسلة بنجاح');
+		} else if (result.requiresClearCart) {
+			setPendingProduct({ productId, storeId });
+			setShowClearCartDialog(true);
+		} else {
+			alert(result.error || 'حدث خطأ أثناء إضافة المنتج للسلة');
+		}
+	};
+
+	const handleClearCartAndAdd = async () => {
+		if (!pendingProduct) return;
+
+		const clearSuccess = await clearCart();
+		if (clearSuccess) {
+			const result = await addToCart(pendingProduct);
+			if (result.success) {
+				alert(result.message || 'تم إضافة المنتج للسلة بنجاح');
+			} else {
+				alert(result.error || 'حدث خطأ أثناء إضافة المنتج للسلة');
+			}
+		} else {
+			alert('حدث خطأ أثناء إفراغ السلة');
+		}
+
+		setShowClearCartDialog(false);
+		setPendingProduct(null);
+	};
 
 	// عرض حالة التحميل
 	if (isLoading) {
@@ -87,7 +132,7 @@ export default function ProductsPage({
 					{products.map((product) => (
 						<button
 							key={product.id}
-							onClick={() => onProductClick(parseInt(product.id))}
+							onClick={() => onProductClick(product.id)}
 							className="flex cursor-pointer flex-col overflow-hidden rounded-lg bg-white p-4 text-center shadow-sm hover:shadow-md transition-shadow"
 						>
 							<div className="relative">
@@ -96,21 +141,36 @@ export default function ProductsPage({
 									alt={product.name}
 									className="h-32 w-full object-contain"
 								/>
-								<button className="absolute right-2 bottom-2 rounded-full bg-green-500 p-2 text-white shadow-md hover:bg-green-600 transition-colors">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className="h-4 w-4"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M12 4v16m8-8H4"
-										/>
-									</svg>
+								<button 
+									onClick={(e) => {
+										e.stopPropagation();
+										handleAddToCart(product.id);
+									}}
+									disabled={cartLoading}
+									className={`absolute right-2 bottom-2 rounded-full p-2 text-white shadow-md transition-colors ${
+										cartLoading 
+											? 'bg-gray-400 cursor-not-allowed' 
+											: 'bg-green-500 hover:bg-green-600'
+									}`}
+								>
+									{cartLoading ? (
+										<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+									) : (
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="h-4 w-4"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M12 4v16m8-8H4"
+											/>
+										</svg>
+									)}
 								</button>
 							</div>
 							<div className="mt-2 text-right">
@@ -133,6 +193,39 @@ export default function ProductsPage({
 							</div>
 						</button>
 					))}
+				</div>
+			)}
+
+			{/* Dialog لتأكيد إفراغ السلة */}
+			{showClearCartDialog && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" dir="rtl">
+					<div className="bg-white rounded-lg p-6 m-4 max-w-md w-full">
+						<h3 className="text-lg font-semibold text-gray-900 mb-4">
+							تحذير: السلة تحتوي على منتجات من متجر آخر
+						</h3>
+						<p className="text-gray-600 mb-6">
+							لا يمكن إضافة منتجات من متاجر مختلفة في نفس السلة. هل تريد إفراغ السلة الحالية وإضافة هذا المنتج؟
+						</p>
+						<div className="flex gap-4 justify-end">
+							<button
+								onClick={() => {
+									setShowClearCartDialog(false);
+									setPendingProduct(null);
+								}}
+								className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+								disabled={cartLoading}
+							>
+								إلغاء
+							</button>
+							<button
+								onClick={handleClearCartAndAdd}
+								disabled={cartLoading}
+								className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400"
+							>
+								{cartLoading ? 'جاري الإفراغ...' : 'إفراغ السلة والإضافة'}
+							</button>
+						</div>
+					</div>
 				</div>
 			)}
 		</div>
