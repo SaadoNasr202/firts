@@ -181,12 +181,31 @@ export const TB_shellausers = pgTable("shellausers", {
 	Adress: text("Adress").notNull(),
 });
 
+// جدول الأقسام
+export const TB_categories = pgTable("categories", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(), // اسم القسم: مطاعم، سوبرماركت، صيدلية، إلخ
+	description: text("description"), // وصف اختياري
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+export const TB_store_categories = pgTable("store_categories", {
+	id: text("id").primaryKey(),
+	storeId: text("store_id")
+		.notNull()
+		.references(() => TB_stores.id), // كل قسم فرعي مرتبط بمتجر
+	name: text("name").notNull(), // اسم القسم الفرعي
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const TB_stores = pgTable("stores", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
-	type: text("type").notNull(),
-	rating: text("rating"), 
-	image: text("image"), 
+	type: text("type").notNull(), // نوع المتجر: مطعم، بقال، إلخ
+	rating: text("rating"), // تقييم المتجر
+	image: text("image"), // صورة المتجر
+	categoryId: text("category_id") // FK للقسم
+		.notNull()
+		.references(() => TB_categories.id),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -198,8 +217,18 @@ export const TB_products = pgTable("products", {
 	originalPrice: text("original_price"),
 	unit: text("unit"),
 	storeId: text("store_id")
-		.references(() => TB_stores.id) 
+		.references(() => TB_stores.id)
 		.notNull(),
+});
+export const TB_store_products = pgTable("store_products", {
+	id: text("id").primaryKey(),
+	storeId: text("store_id")
+		.notNull()
+		.references(() => TB_stores.id),
+	productId: text("product_id")
+		.notNull()
+		.references(() => TB_products.id),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const TB_favouriteusers = pgTable("favouriteusers", {
@@ -236,14 +265,14 @@ export const TB_cartItems = pgTable("cart_items", {
 	id: text("id").primaryKey(),
 	cartId: text("cart_id")
 		.notNull()
-		.references(() => TB_cart.id), 
+		.references(() => TB_cart.id),
 	productId: text("product_id")
 		.notNull()
-		.references(() => TB_products.id), 
+		.references(() => TB_products.id),
 	storeId: text("store_id")
 		.notNull()
-		.references(() => TB_stores.id), 
+		.references(() => TB_stores.id),
 	quantity: integer("quantity").notNull().default(1),
-	priceAtAdd: text("price_at_add"), 
+	priceAtAdd: text("price_at_add"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });

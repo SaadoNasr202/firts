@@ -2,8 +2,17 @@
 
 "use client";
 
-import { restaurantMenu } from "./datar";
+import { useState, useEffect } from "react";
 
+interface Meal {
+	id: number;
+	restaurantId: number;
+	name: string;
+	price: string;
+	image: string;
+	section: string;
+	description: string;
+}
 
 interface MealsPageProps {
 	restaurantId: number;
@@ -11,37 +20,54 @@ interface MealsPageProps {
 	onMealClick: (mealId: number) => void;
 }
 
-// Add a type definition for the restaurantMenu object
-interface RestaurantMenuType {
-	[key: number]: {
-		sections: string[];
-		items: {
-			id: number;
-			restaurantId: number;
-			name: string;
-			price: string;
-			image: string;
-			section: string;
-			description: string;
-		}[];
-	};
-}
-
 export default function MealsPage({
 	restaurantId,
 	sectionName,
 	onMealClick,
 }: MealsPageProps) {
-	// Type assert the restaurantMenu object to allow number indexing
-	const menuData = (restaurantMenu as RestaurantMenuType)[restaurantId];
+	const [meals, setMeals] = useState<Meal[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
-	if (!menuData) {
+	useEffect(() => {
+		const fetchMeals = async () => {
+			try {
+				const response = await fetch(`/api/restaurants/${restaurantId}/meals?section=${encodeURIComponent(sectionName)}`);
+				if (response.ok) {
+					const data = await response.json();
+					setMeals(data.meals || []);
+				} else {
+					console.error("فشل في جلب الوجبات");
+				}
+			} catch (error) {
+				console.error("خطأ في جلب الوجبات:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchMeals();
+	}, [restaurantId, sectionName]);
+
+	// عرض حالة التحميل
+	if (isLoading) {
 		return (
-			<div className="p-8 text-center text-red-600">القائمة غير موجودة.</div>
+			<div className="p-4 md:p-8" dir="rtl">
+				<div className="h-6 w-32 animate-pulse bg-gray-300 rounded mb-6"></div>
+				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					{[1, 2, 3, 4, 5, 6].map((item) => (
+						<div key={item} className="w-[200px] overflow-hidden rounded-lg bg-white shadow-md">
+							<div className="h-[200px] w-[200px] animate-pulse bg-gray-300"></div>
+							<div className="p-4">
+								<div className="h-6 w-3/4 animate-pulse bg-gray-300 rounded mb-2"></div>
+								<div className="h-4 w-full animate-pulse bg-gray-300 rounded mb-2"></div>
+								<div className="h-5 w-16 animate-pulse bg-gray-300 rounded"></div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
 		);
 	}
-
-	const meals = menuData.items.filter((item) => item.section === sectionName);
 
 	if (meals.length === 0) {
 		return (

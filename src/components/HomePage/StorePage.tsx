@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Define the component's props
 interface StorePageProps {
@@ -8,61 +8,103 @@ interface StorePageProps {
   onCategoryClick: (categoryName: string) => void;
 }
 
-export default function StorePage({ storeName, onCategoryClick }: StorePageProps) {
-  const storeDetails = {
-    title: storeName,
-    rating: 4.7,
-    reviews: 500,
-    deliveryTime: "25 دقيقة",
-    image: "supermarketpic.jpg",
-    description: "بقلة وسوبر ماركت",
-    address: "2495",
-  };
+interface StoreDetails {
+  id: string;
+  name: string;
+  type: string;
+  rating: string;
+  image: string;
+}
 
-  const productCategories = [
-    "الخضار والفواكه", "المخبوزات", "العطور", "العناية بالحيوانات", "الصيدليات", "المطاعم",
-    "المياه", "الشوكولا والكانتي", "المنتجات", "العصائر والمرطبات", "مستلزمات طفلك",
-    "أجبان وألبان", "الخصومات", "اللحوم والأسماك", "اللحوم المجمدة", "المكسرات والبذور",
-    "مستلزمات تنظيف", "مستلزمات العناية", "البهارات والتوابل", "مأكولات زمان",
-    "المعجنات", "العناية بالبشرة", "مستلزمات العناية الشخصية", "القرطاسية",
-    "مستلزمات العناية بالحيوان", "إلكترونيات منزلية", "مستلزمات المطبخ",
-    "مشروبات ووجبات سريعة", "الشامبو والشعر", "أقوى العروض", "مستلزمات الشواء",
-    "مستلزمات التجميل",
-  ];
+export default function StorePage({ storeName, onCategoryClick }: StorePageProps) {
+  const [productCategories, setProductCategories] = useState<string[]>([]);
+  const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // جلب أقسام المتجر من قاعدة البيانات
+  useEffect(() => {
+    const fetchStoreCategories = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/store-categories?storeName=${encodeURIComponent(storeName)}`);
+        if (response.ok) {
+          const data = await response.json();
+          // جلب الأقسام وتفاصيل المتجر من قاعدة البيانات
+          setProductCategories(data.categories || []);
+          if (data.store) {
+            setStoreDetails(data.store);
+          }
+        }
+      } catch (error) {
+        console.error("خطأ في جلب أقسام المتجر:", error);
+        // في حالة الخطأ، عرض مصفوفة فارغة
+        setProductCategories([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (storeName) {
+      fetchStoreCategories();
+    }
+  }, [storeName]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans" dir="rtl">
       {/* Store Header Section */}
       <div className="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden bg-gray-200">
-        <img
-          src={storeDetails.image}
-          alt={storeDetails.title}
-          className="w-full h-full object-cover"
-        />
+        {isLoading ? (
+          <div className="w-full h-full animate-pulse bg-gray-300"></div>
+        ) : storeDetails?.image ? (
+          <img
+            src={storeDetails.image}
+            alt={storeDetails.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+            <svg className="h-24 w-24 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+        )}
       </div>
 
       <div className="bg-white p-4 md:p-8 rounded-t-2xl -mt-8 relative z-10 shadow-lg">
         <div className="flex justify-between items-start">
           <div className="text-right">
-            <h1 className="text-2xl font-bold text-gray-900">{storeDetails.title}</h1>
-            <p className="text-gray-600 mt-1">{storeDetails.description}</p>
-            <div className="flex items-center justify-end text-sm text-gray-500 mt-2">
-              <span className="mr-2">{storeDetails.address}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-            <div className="flex items-center justify-end text-sm text-gray-600 mt-1">
-              <span className="mr-1">({storeDetails.reviews}+ تقييمات)</span>
-              <span>{storeDetails.rating}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
-              </svg>
-            </div>
-            <p className="mt-2 text-sm font-semibold text-gray-800">
-              التوصيل: {storeDetails.deliveryTime}
-            </p>
+            {isLoading ? (
+              <>
+                <div className="h-8 w-48 animate-pulse bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 w-32 animate-pulse bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 w-40 animate-pulse bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 w-24 animate-pulse bg-gray-300 rounded"></div>
+              </>
+            ) : storeDetails ? (
+              <>
+                <h1 className="text-2xl font-bold text-gray-900">{storeDetails.name}</h1>
+                <p className="text-gray-600 mt-1">{storeDetails.type}</p>
+                <div className="flex items-center justify-end text-sm text-gray-500 mt-2">
+                  <span className="mr-2">متاح للتوصيل</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                {storeDetails.rating && (
+                  <div className="flex items-center justify-end text-sm text-gray-600 mt-1">
+                    <span className="mr-1">{storeDetails.rating}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
+                    </svg>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center text-gray-500">
+                <p>خطأ في تحميل تفاصيل المتجر</p>
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-center p-2 rounded-lg bg-gray-200">
             {/* Shopping cart icon */}
@@ -79,7 +121,16 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
       <div className="p-4 md:p-8">
         <h2 className="text-xl font-bold text-gray-900 mb-4">أقسام المتجر</h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-          {productCategories.map((category, index) => (
+          {isLoading ? (
+            // عرض skeleton أثناء التحميل بنفس التصميم
+            Array.from({ length: 12 }).map((_, index) => (
+              <div key={index} className="flex flex-col items-center text-center p-2 rounded-lg bg-white shadow-sm">
+                <div className="h-16 w-16 bg-gray-300 rounded-lg animate-pulse"></div>
+                <div className="mt-2 h-3 w-12 bg-gray-300 rounded animate-pulse"></div>
+              </div>
+            ))
+          ) : (
+            productCategories.map((category, index) => (
             <button
               key={index}
               onClick={() => onCategoryClick(category)}
@@ -93,7 +144,8 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
               </div>
               <p className="mt-2 text-sm font-semibold text-gray-700">{category}</p>
             </button>
-          ))}
+          ))
+          )}
         </div>
       </div>
     </div>

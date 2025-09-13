@@ -5,11 +5,8 @@
 import { useState } from "react";
 import Breadcrumb from "./Breadcrumb";
 import CategoriesSlider from "./CategoriesSlider";
-import { allProducts } from "./data";
-import { allRestaurants, restaurantMenu } from "./datar";
-import DeliveryAddress from "./DeliveryAddress";
+import CategoryStoresPage from "./CategoryStoresPage";
 import DiscountSlider from "./DiscountSlider";
-import EditAddressModal from "./EditAddressModal";
 import MealDetailsPage from "./MealDetailsPage";
 import MealsPage from "./MealsPage";
 import NearbyStoresPage from "./NearbyStoresPage";
@@ -17,9 +14,7 @@ import PopularStoresSlider from "./PopularStoresSlider";
 import ProductDetailsPage from "./ProductDetailsPage";
 import ProductsPage from "./ProductsPage";
 import RestaurantSectionsPage from "./RestaurantPageDetails";
-import RestaurantsPage from "./RestaurantsPage";
 import StorePage from "./StorePage";
-import SuperMarket from "./SuperMarket";
 
 export default function HomePage() {
 	const [currentPage, setCurrentPage] = useState("home");
@@ -34,12 +29,6 @@ export default function HomePage() {
 	const [selectedSection, setSelectedSection] = useState("");
 	const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
 	const [breadcrumbPath, setBreadcrumbPath] = useState<string[]>(["الرئيسية"]);
-	const [isEditAddressModalOpen, setIsEditAddressModalOpen] = useState(false);
-	const [currentUserAddress, setCurrentUserAddress] = useState<{
-		formattedAddress: string;
-		lat: number;
-		lng: number;
-	} | null>(null);
 
 	const handleDiscountClick = (discountTitle: string) => {
 		console.log(`Discount on ${discountTitle} was clicked.`);
@@ -53,13 +42,14 @@ export default function HomePage() {
 
 	const handleCategoryClick = (categoryName: string) => {
 		setBreadcrumbPath(["الرئيسية", categoryName]);
-		if (categoryName === "سوبر ماركت") {
-			setCurrentPage("supermarket");
-		} else if (categoryName === "المطاعم") {
-			setCurrentPage("restaurants");
-		} else {
-			setCurrentPage("home");
-		}
+		setSelectedCategory(categoryName);
+		setCurrentPage("category-stores");
+	};
+
+	const handleCategoryStoreClick = (storeName: string) => {
+		setBreadcrumbPath(["الرئيسية", selectedCategory, storeName]);
+		setSelectedStore(storeName);
+		setCurrentPage("store");
 	};
 
 	const handleStoreClick = (storeName: string) => {
@@ -84,21 +74,15 @@ export default function HomePage() {
 	};
 
 	const handleProductClick = (productId: number) => {
-		const product = allProducts.find((p) => p.id === productId);
-		if (product) {
-			setBreadcrumbPath([...breadcrumbPath, product.name]);
-			setSelectedProductId(productId);
-			setCurrentPage("product-details");
-		}
+		// تبسيط - البيانات تأتي من قاعدة البيانات الآن
+		setSelectedProductId(productId);
+		setCurrentPage("product-details");
 	};
 
 	const handleRestaurantClick = (restaurantId: number) => {
-		const restaurant = allRestaurants.find((r) => r.id === restaurantId);
-		if (restaurant) {
-			setBreadcrumbPath(["الرئيسية", "المطاعم", restaurant.name]);
-			setSelectedRestaurantId(restaurantId);
-			setCurrentPage("restaurant-sections"); // اسم جديد للصفحة
-		}
+		// تبسيط - البيانات تأتي من قاعدة البيانات الآن
+		setSelectedRestaurantId(restaurantId);
+		setCurrentPage("restaurant-sections");
 	};
 
 	const handleSectionClick = (sectionName: string, restaurantId: number) => {
@@ -108,16 +92,9 @@ export default function HomePage() {
 	};
 
 	const handleMealClick = (mealId: number) => {
-		const allMeals = Object.values(restaurantMenu).flatMap(
-			(menu) => menu.items,
-		);
-		const meal = allMeals.find((item) => item.id === mealId);
-
-		if (meal) {
-			setBreadcrumbPath([...breadcrumbPath, meal.name]);
-			setSelectedMealId(mealId);
-			setCurrentPage("meal-details");
-		}
+		// تبسيط - البيانات تأتي من قاعدة البيانات الآن
+		setSelectedMealId(mealId);
+		setCurrentPage("meal-details");
 	};
 
 	const handleBreadcrumbClick = (index: number) => {
@@ -125,63 +102,39 @@ export default function HomePage() {
 		setBreadcrumbPath(newPath);
 
 		if (newPath.length === 1) {
+			// الرجوع للرئيسية
 			setCurrentPage("home");
 			setSelectedRestaurantId(null);
 			setSelectedSection("");
 			setSelectedMealId(null);
-		} else if (newPath[1] === "سوبر ماركت") {
-			if (newPath.length === 2) setCurrentPage("supermarket");
-			else if (newPath.length === 3) setCurrentPage("store");
-			else if (newPath.length === 4) setCurrentPage("products");
-			else if (newPath.length === 5) setCurrentPage("product-details");
-			setSelectedStore(newPath[2]);
-			setSelectedCategory(newPath[3]);
-			setSelectedProductId(null);
-		} else if (newPath[1] === "المطاعم") {
-			if (newPath.length === 2) {
-				setCurrentPage("restaurants");
-			} else if (newPath.length === 3) {
-				setCurrentPage("restaurant-sections");
-				const restaurant = allRestaurants.find((r) => r.name === newPath[2]);
-				setSelectedRestaurantId(restaurant?.id || null);
-				setSelectedSection("");
-			} else if (newPath.length === 4) {
-				setCurrentPage("meals");
-				const restaurant = allRestaurants.find((r) => r.name === newPath[2]);
-				setSelectedRestaurantId(restaurant?.id || null);
-				setSelectedSection(newPath[3]);
-				setSelectedMealId(null);
-			} else if (newPath.length === 5) {
-				setCurrentPage("meal-details");
-				// Note: mealId is not in breadcrumb, so we just set page
-			}
+			setSelectedCategory("");
+			setSelectedStore("");
 		} else if (newPath[1] === "المتاجر القريبة منك") {
+			// معالجة المتاجر القريبة منك (حالة خاصة)
 			if (newPath.length === 2) {
 				setCurrentPage("nearby-stores");
 			} else if (newPath.length === 3) {
 				setCurrentPage("store");
 				setSelectedStore(newPath[2]);
 			}
+		} else {
+			// معالجة جميع الأقسام (السوبرماركت، المطاعم، الصيدليات، إلخ)
+			if (newPath.length === 2) {
+				// الرجوع لصفحة متاجر القسم
+				setCurrentPage("category-stores");
+				setSelectedCategory(newPath[1]);
+				setSelectedStore("");
+			} else if (newPath.length === 3) {
+				// الانتقال لصفحة المتجر المحدد
+				setCurrentPage("store");
+				setSelectedStore(newPath[2]);
+				setSelectedCategory(newPath[1]);
+			}
 		}
-	};
-
-	const handleEditAddress = () => {
-		setIsEditAddressModalOpen(true);
-	};
-
-	const handleAddressUpdate = (newAddress: {
-		formattedAddress: string;
-		lat: number;
-		lng: number;
-	}) => {
-		setCurrentUserAddress(newAddress);
-		setIsEditAddressModalOpen(false);
 	};
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-			{/* مكون عنوان التوصيل */}
-			<DeliveryAddress onEditAddress={handleEditAddress} />
 			<div className="mb-4">
 				<Breadcrumb
 					path={breadcrumbPath}
@@ -261,18 +214,16 @@ export default function HomePage() {
 				</>
 			)}
 
-			{currentPage === "supermarket" && (
-				<SuperMarket onStoreClick={handleSupermarketStoreClick} />
-			)}
 			{currentPage === "store" && selectedStore && (
 				<StorePage
 					storeName={selectedStore}
 					onCategoryClick={handleStoreCategoryClick}
 				/>
 			)}
-			{currentPage === "products" && selectedCategory && (
+			{currentPage === "products" && selectedCategory && selectedStore && (
 				<ProductsPage
 					categoryName={selectedCategory}
+					storeName={selectedStore}
 					onProductClick={handleProductClick}
 				/>
 			)}
@@ -281,9 +232,6 @@ export default function HomePage() {
 					productId={selectedProductId}
 					onProductClick={handleProductClick}
 				/>
-			)}
-			{currentPage === "restaurants" && (
-				<RestaurantsPage onRestaurantClick={handleRestaurantClick} />
 			)}
 			{currentPage === "restaurant-sections" &&
 				selectedRestaurantId !== null && (
@@ -304,14 +252,12 @@ export default function HomePage() {
 			{currentPage === "meal-details" && selectedMealId !== null && (
 				<MealDetailsPage mealId={selectedMealId} />
 			)}
-
-			{/* Modal تعديل العنوان */}
-			<EditAddressModal
-				isOpen={isEditAddressModalOpen}
-				onClose={() => setIsEditAddressModalOpen(false)}
-				currentAddress={currentUserAddress}
-				onAddressUpdate={handleAddressUpdate}
-			/>
+			{currentPage === "category-stores" && selectedCategory && (
+				<CategoryStoresPage
+					categoryName={selectedCategory}
+					onStoreClick={handleCategoryStoreClick}
+				/>
+			)}
 		</div>
 	);
 }

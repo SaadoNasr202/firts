@@ -1,3 +1,14 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+// تحديد نوع البيانات
+interface Category {
+	id: string;
+	name: string;
+	description?: string;
+}
+
 // تحديد نوع الخاصية (prop)
 interface CategoriesSliderProps {
 	onCategoryClick: (categoryName: string) => void;
@@ -6,12 +17,28 @@ interface CategoriesSliderProps {
 export default function CategoriesSlider({
 	onCategoryClick,
 }: CategoriesSliderProps) {
-	const categories = [
-		{ name: "خدمة خدمتي", image: "supermarket.png" },
-		{ name: "استلام وتسليم", image: "supermarket.png" },
-		{ name: " طلبات", image: "supermarket.png" },
-		
-	];
+	const [categories, setCategories] = useState<Category[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const response = await fetch("/api/categories");
+				if (response.ok) {
+					const data = await response.json();
+					setCategories(data.categories || []);
+				} else {
+					console.error("فشل في جلب الأقسام");
+				}
+			} catch (error) {
+				console.error("خطأ في جلب الأقسام:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchCategories();
+	}, []);
 
 	const handleScrollRight = () => {
 		document
@@ -24,6 +51,34 @@ export default function CategoriesSlider({
 			.getElementById("categories-scroll-container")
 			?.scrollBy({ left: -200, behavior: "smooth" });
 	};
+
+	// إذا كان يتم تحميل البيانات
+	if (isLoading) {
+		return (
+			<div className="relative flex items-center">
+				<div className="scrollbar-hide flex gap-8 space-x-reverse overflow-x-auto px-4 pb-2">
+					{[1, 2, 3, 4, 5].map((item) => (
+						<div
+							key={item}
+							className="flex w-[85px] flex-shrink-0 flex-col items-center text-center"
+						>
+							<div className="h-[85px] w-[85px] animate-pulse rounded-full bg-gray-300"></div>
+							<div className="mt-2 h-3 w-16 animate-pulse rounded bg-gray-300"></div>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	}
+
+	// إذا لم توجد أقسام
+	if (categories.length === 0) {
+		return (
+			<div className="flex items-center justify-center py-8">
+				<p className="text-gray-500">لا توجد أقسام متاحة حالياً</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="relative flex items-center">
@@ -53,20 +108,31 @@ export default function CategoriesSlider({
 				id="categories-scroll-container"
 				className="scrollbar-hide flex gap-5 space-x-reverse overflow-x-auto px-4 pb-2"
 			>
-				{categories.map((category, index) => (
+				{categories.map((category) => (
 					<button
-						key={index}
+						key={category.id}
 						className="flex w-[85px] flex-shrink-0 cursor-pointer flex-col items-center text-center"
 						onClick={() => onCategoryClick(category.name)}
 					>
-						<div className="flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full bg-gray-200 shadow-md">
-							<img
-								src={category.image}
-								alt={category.name}
-								className="h-full w-full object-cover"
-							/>
+						<div className="flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-md">
+							{/* أيقونة افتراضية للقسم */}
+							<svg
+								className="h-10 w-10 text-white"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+								/>
+							</svg>
 						</div>
-						<p className="mt-2 text-xs text-gray-700">{category.name}</p>
+						<p className="mt-2 text-xs font-medium text-gray-700">
+							{category.name}
+						</p>
 					</button>
 				))}
 			</div>

@@ -2,21 +2,15 @@
 
 "use client";
 
-import { restaurantMenu } from "./datar";
+import { useState, useEffect } from "react";
 
-
-interface RestaurantMenuData {
-	[key: number]: {
-		sections: string[];
-		items: {
-			id: number;
-			name: string;
-			price: string;
-			image: string;
-			section: string;
-			description: string;
-		}[];
-	};
+interface Meal {
+	id: number;
+	name: string;
+	price: string;
+	image: string;
+	section: string;
+	description: string;
 }
 
 interface MealDetailsPageProps {
@@ -24,10 +18,45 @@ interface MealDetailsPageProps {
 }
 
 export default function MealDetailsPage({ mealId }: MealDetailsPageProps) {
-	const allMeals = Object.values(restaurantMenu as RestaurantMenuData).flatMap(
-		(menu) => menu.items,
-	);
-	const meal = allMeals.find((item) => item.id === mealId);
+	const [meal, setMeal] = useState<Meal | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchMealDetails = async () => {
+			try {
+				const response = await fetch(`/api/meals/${mealId}`);
+				if (response.ok) {
+					const data = await response.json();
+					setMeal(data.meal);
+				} else {
+					console.error("فشل في جلب تفاصيل الوجبة");
+				}
+			} catch (error) {
+				console.error("خطأ في جلب تفاصيل الوجبة:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchMealDetails();
+	}, [mealId]);
+
+	// عرض حالة التحميل
+	if (isLoading) {
+		return (
+			<div className="p-4 md:p-8" dir="rtl">
+				<div className="relative mb-8 h-64 w-full overflow-hidden rounded-lg shadow-md md:h-80">
+					<div className="h-full w-full animate-pulse bg-gray-300"></div>
+				</div>
+				<div className="text-right">
+					<div className="h-8 w-3/4 animate-pulse bg-gray-300 rounded mb-2"></div>
+					<div className="h-6 w-24 animate-pulse bg-gray-300 rounded mb-4"></div>
+					<div className="h-4 w-full animate-pulse bg-gray-300 rounded mb-2"></div>
+					<div className="h-4 w-2/3 animate-pulse bg-gray-300 rounded"></div>
+				</div>
+			</div>
+		);
+	}
 
 	if (!meal) {
 		return (

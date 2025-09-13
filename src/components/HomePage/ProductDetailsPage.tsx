@@ -1,7 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { allProducts } from "./data";
+import { useState, useEffect } from "react";
+
+interface Product {
+	id: number;
+	name: string;
+	description: string;
+	image: string;
+	mainImage?: string;
+	thumbnailImages?: string[];
+	category: string;
+	newPrice: string;
+	oldPrice?: string;
+	size?: string;
+}
 
 interface ProductDetailsPageProps {
 	productId: number;
@@ -12,10 +24,62 @@ export default function ProductDetailsPage({
 	productId,
 	onProductClick,
 }: ProductDetailsPageProps) {
-	const product = allProducts.find((p) => p.id === productId);
+	const [product, setProduct] = useState<Product | null>(null);
+	const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchProductDetails = async () => {
+			try {
+				// جلب تفاصيل المنتج
+				const productResponse = await fetch(`/api/products/${productId}`);
+				if (productResponse.ok) {
+					const productData = await productResponse.json();
+					setProduct(productData.product);
+
+					// جلب المنتجات ذات الصلة من نفس الفئة
+					if (productData.product?.category) {
+						const relatedResponse = await fetch(`/api/products?category=${encodeURIComponent(productData.product.category)}&exclude=${productId}&limit=6`);
+						if (relatedResponse.ok) {
+							const relatedData = await relatedResponse.json();
+							setRelatedProducts(relatedData.products || []);
+						}
+					}
+				} else {
+					console.error("فشل في جلب تفاصيل المنتج");
+				}
+			} catch (error) {
+				console.error("خطأ في جلب تفاصيل المنتج:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchProductDetails();
+	}, [productId]);
 
 	// استخدام useState لإدارة حالة فتح/إغلاق قسم الوصف
 	const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+
+	// عرض حالة التحميل
+	if (isLoading) {
+		return (
+			<div className="min-h-screen bg-gray-50 p-4 font-sans" dir="rtl">
+				<div className="mx-auto max-w-4xl">
+					{/* صورة المنتج الرئيسية */}
+					<div className="mb-8 h-80 w-full animate-pulse bg-gray-300 rounded-lg"></div>
+					
+					{/* تفاصيل المنتج */}
+					<div className="rounded-lg bg-white p-6 shadow-lg">
+						<div className="h-8 w-3/4 animate-pulse bg-gray-300 rounded mb-4"></div>
+						<div className="h-6 w-24 animate-pulse bg-gray-300 rounded mb-4"></div>
+						<div className="h-4 w-full animate-pulse bg-gray-300 rounded mb-2"></div>
+						<div className="h-4 w-2/3 animate-pulse bg-gray-300 rounded mb-4"></div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	if (!product) {
 		return (
@@ -28,10 +92,7 @@ export default function ProductDetailsPage({
 	const mainProductImage = product.mainImage || product.image;
 	const thumbnailImages = product.thumbnailImages || [product.image];
 
-	// فلترة المنتجات ذات الصلة من نفس الفئة وباستثناء المنتج الحالي
-	const relatedProducts = allProducts
-		.filter((p) => p.category === product.category && p.id !== product.id)
-		.slice(0, 6); // عرض 6 منتجات كحد أقصى للمنتجات ذات الصلة
+	// المنتجات ذات الصلة تم جلبها من قاعدة البيانات في useEffect
 
 	return (
 		<div className="min-h-screen bg-gray-50 pb-20 font-sans" dir="rtl">

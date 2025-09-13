@@ -1,25 +1,15 @@
 // NearbyStoresPage.tsx
 "use client";
 
-// بيانات المتاجر (يفضل أن تكون في ملف بيانات منفصل)
-const nearbyStoresData = [
-	{ name: "منجو الفارس", image: "restlogo.jpg" },
-	{ name: "بيت القهوة", image: "restlogo.jpg" },
-	{ name: "بروست", image: "restlogo.jpg" },
-	{ name: "إليت", image: "restlogo.jpg" },
-	{ name: "مطعم الشيف", image: "restlogo.jpg" },
-	{ name: "استراحة", image: "restlogo.jpg" },
-	{ name: "بيت المندي", image: "restlogo.jpg" },
-	{ name: "قهوجي", image: "restlogo.jpg" },
-	{ name: "باك", image: "restlogo.jpg" },
-	{ name: "إليت", image: "restlogo.jpg" },
-	{ name: "مطعم الشيف", image: "restlogo.jpg" },
-	{ name: "استراحة", image: "restlogo.jpg" },
-	{ name: "بيت المندي", image: "restlogo.jpg" },
-	{ name: "قهوجي", image: "restlogo.jpg" },
-	{ name: "باك", image: "restlogo.jpg" },
-	// أضف المزيد من المتاجر هنا
-];
+import { useState, useEffect } from "react";
+
+interface Store {
+	id: string;
+	name: string;
+	image: string;
+	type?: string;
+	rating?: string;
+}
 
 interface NearbyStoresPageProps {
 	onStoreClick: (storeName: string) => void;
@@ -28,6 +18,28 @@ interface NearbyStoresPageProps {
 export default function NearbyStoresPage({
 	onStoreClick,
 }: NearbyStoresPageProps) {
+	const [stores, setStores] = useState<Store[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchNearbyStores = async () => {
+			try {
+				const response = await fetch('/api/stores/nearby');
+				if (response.ok) {
+					const data = await response.json();
+					setStores(data.stores || []);
+				} else {
+					console.error('فشل في جلب المتاجر القريبة');
+				}
+			} catch (error) {
+				console.error('خطأ في جلب المتاجر القريبة:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchNearbyStores();
+	}, []);
 	const handleScrollRight = () => {
 		document
 			.getElementById("nearby-stores-scroll-container")
@@ -39,6 +51,31 @@ export default function NearbyStoresPage({
 			.getElementById("nearby-stores-scroll-container")
 			?.scrollBy({ left: -200, behavior: "smooth" });
 	};
+
+	// عرض حالة التحميل
+	if (isLoading) {
+		return (
+			<div className="relative flex items-center p-4 md:p-8" dir="rtl">
+				<div className="scrollbar-hide flex gap-5 space-x-reverse overflow-x-auto px-4 pb-2">
+					{[1, 2, 3, 4, 5, 6].map((item) => (
+						<div key={item} className="flex w-[109px] flex-shrink-0 flex-col items-center text-center">
+							<div className="h-[85px] w-[85px] animate-pulse rounded-lg bg-gray-300"></div>
+							<div className="mt-2 h-3 w-16 animate-pulse bg-gray-300 rounded"></div>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	}
+
+	// إذا لم توجد متاجر
+	if (stores.length === 0) {
+		return (
+			<div className="flex items-center justify-center py-8">
+				<p className="text-gray-500">لا توجد متاجر قريبة متاحة حالياً</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="relative flex items-center p-4 md:p-8" dir="rtl">
@@ -68,7 +105,7 @@ export default function NearbyStoresPage({
 				id="nearby-stores-scroll-container"
 				className="scrollbar-hide flex gap-5 space-x-reverse overflow-x-auto px-4 pb-2"
 			>
-				{nearbyStoresData.map((store, index) => (
+				{stores.map((store, index) => (
 					<button
 						key={index}
 						onClick={() => onStoreClick(store.name)}

@@ -1,6 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+interface Discount {
+	id: string;
+	title: string;
+	description: string;
+	time: string;
+	image: string;
+}
 
 // Define the props for the component
 interface DiscountSliderProps {
@@ -8,27 +16,28 @@ interface DiscountSliderProps {
 }
 
 export default function DiscountSlider({ onDiscountClick }: DiscountSliderProps) {
-	const discounts = [
-		{
-			title: "فيلي ستيكس",
-			description: "ساندويتش، وجبات سريعة",
-			time: "30 دقيقة",
-			image: "https://via.placeholder.com/400x200?text=Philly+Steaks",
-		},
-		{
-			title: "ماكدونالدز",
-			description: "ساندويتش، وجبات سريعة",
-			time: "90 دقيقة",
-			image: "https://via.placeholder.com/400x200?text=McDonalds",
-		},
-		{
-			title: "فواكه وخضار الإيمان",
-			description: "بقالة",
-			time: "60 دقيقة",
-			image: "https://via.placeholder.com/400x200?text=Groceries",
-		},
-	
-	];
+	const [discounts, setDiscounts] = useState<Discount[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchDiscounts = async () => {
+			try {
+				const response = await fetch('/api/discounts');
+				if (response.ok) {
+					const data = await response.json();
+					setDiscounts(data.discounts || []);
+				} else {
+					console.error('فشل في جلب الخصومات');
+				}
+			} catch (error) {
+				console.error('خطأ في جلب الخصومات:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchDiscounts();
+	}, []);
 
 	const handleScrollRight = () => {
 		document
@@ -41,6 +50,34 @@ export default function DiscountSlider({ onDiscountClick }: DiscountSliderProps)
 			.getElementById("discounts-scroll-container")
 			?.scrollBy({ left: -300, behavior: "smooth" });
 	};
+
+	// عرض حالة التحميل
+	if (isLoading) {
+		return (
+			<div className="relative flex items-center">
+				<div className="scrollbar-hide flex gap-4 overflow-x-auto px-4 pb-2">
+					{[1, 2, 3].map((item) => (
+						<div key={item} className="flex w-80 flex-shrink-0 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm md:w-96">
+							<div className="relative h-48 animate-pulse bg-gray-300"></div>
+							<div className="p-4">
+								<div className="h-6 w-3/4 animate-pulse bg-gray-300 rounded mb-2"></div>
+								<div className="h-4 w-full animate-pulse bg-gray-300 rounded"></div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	}
+
+	// إذا لم توجد خصومات
+	if (discounts.length === 0) {
+		return (
+			<div className="flex items-center justify-center py-8">
+				<p className="text-gray-500">لا توجد خصومات متاحة حالياً</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="relative flex items-center">
