@@ -12,7 +12,19 @@ export async function GET(request: NextRequest) {
 		const exclude = searchParams.get('exclude');
 		const limit = parseInt(searchParams.get('limit') || '10');
 
-		let query = db
+		// بناء الشروط
+		const conditions = [];
+		
+		if (category) {
+			conditions.push(eq(TB_stores.type, category));
+		}
+		
+		if (exclude) {
+			conditions.push(ne(TB_products.id, exclude));
+		}
+
+		// بناء الـ query مع الشروط
+		const baseQuery = db
 			.select({
 				id: TB_products.id,
 				name: TB_products.name,
@@ -25,22 +37,10 @@ export async function GET(request: NextRequest) {
 			.from(TB_products)
 			.leftJoin(TB_stores, eq(TB_products.storeId, TB_stores.id));
 
-		// إضافة فلاتر
-		const conditions = [];
-		
-		if (category) {
-			conditions.push(eq(TB_stores.type, category));
-		}
-		
-		if (exclude) {
-			conditions.push(ne(TB_products.id, exclude));
-		}
-
-		if (conditions.length > 0) {
-			query = query.where(and(...conditions));
-		}
-
-		const products = await query.limit(limit);
+		// تطبيق الشروط والحصول على النتائج
+		const products = conditions.length > 0 
+			? await baseQuery.where(and(...conditions)).limit(limit)
+			: await baseQuery.limit(limit);
 
 		// تحويل البيانات للتنسيق المطلوب
 		const formattedProducts = products.map(product => ({
