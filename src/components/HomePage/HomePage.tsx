@@ -7,17 +7,19 @@ import Breadcrumb from "./Breadcrumb";
 import CategoriesSlider from "./CategoriesSlider";
 import { allProducts } from "./data";
 import { allRestaurants, restaurantMenu } from "./datar";
+import DeliveryAddress from "./DeliveryAddress";
 import DiscountSlider from "./DiscountSlider";
+import EditAddressModal from "./EditAddressModal";
 import MealDetailsPage from "./MealDetailsPage";
 import MealsPage from "./MealsPage";
+import NearbyStoresPage from "./NearbyStoresPage";
+import PopularStoresSlider from "./PopularStoresSlider";
 import ProductDetailsPage from "./ProductDetailsPage";
 import ProductsPage from "./ProductsPage";
 import RestaurantSectionsPage from "./RestaurantPageDetails";
 import RestaurantsPage from "./RestaurantsPage";
 import StorePage from "./StorePage";
 import SuperMarket from "./SuperMarket";
-import NearbyStoresPage from "./NearbyStoresPage";
-import PopularStoresSlider from "./PopularStoresSlider";
 
 export default function HomePage() {
 	const [currentPage, setCurrentPage] = useState("home");
@@ -32,6 +34,12 @@ export default function HomePage() {
 	const [selectedSection, setSelectedSection] = useState("");
 	const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
 	const [breadcrumbPath, setBreadcrumbPath] = useState<string[]>(["الرئيسية"]);
+	const [isEditAddressModalOpen, setIsEditAddressModalOpen] = useState(false);
+	const [currentUserAddress, setCurrentUserAddress] = useState<{
+		formattedAddress: string;
+		lat: number;
+		lng: number;
+	} | null>(null);
 
 	const handleDiscountClick = (discountTitle: string) => {
 		console.log(`Discount on ${discountTitle} was clicked.`);
@@ -157,8 +165,23 @@ export default function HomePage() {
 		}
 	};
 
+	const handleEditAddress = () => {
+		setIsEditAddressModalOpen(true);
+	};
+
+	const handleAddressUpdate = (newAddress: {
+		formattedAddress: string;
+		lat: number;
+		lng: number;
+	}) => {
+		setCurrentUserAddress(newAddress);
+		setIsEditAddressModalOpen(false);
+	};
+
 	return (
 		<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
+			{/* مكون عنوان التوصيل */}
+			<DeliveryAddress onEditAddress={handleEditAddress} />
 			<div className="mb-4">
 				<Breadcrumb
 					path={breadcrumbPath}
@@ -281,6 +304,14 @@ export default function HomePage() {
 			{currentPage === "meal-details" && selectedMealId !== null && (
 				<MealDetailsPage mealId={selectedMealId} />
 			)}
+
+			{/* Modal تعديل العنوان */}
+			<EditAddressModal
+				isOpen={isEditAddressModalOpen}
+				onClose={() => setIsEditAddressModalOpen(false)}
+				currentAddress={currentUserAddress}
+				onAddressUpdate={handleAddressUpdate}
+			/>
 		</div>
 	);
 }
