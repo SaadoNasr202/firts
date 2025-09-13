@@ -194,7 +194,18 @@ export function LoginForm({
 							</form>
 						</Form>
 
-						{/* النص "Don't have an account? Register." */}
+						{/* رابط التسجيل */}
+						<div className="mt-4 text-center">
+							<p className="text-gray-300">
+								ليس لديك حساب؟{" "}
+								<button
+									onClick={() => router.push("/register")}
+									className="text-[#ADF0D1] hover:underline"
+								>
+									إنشاء حساب جديد
+								</button>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>

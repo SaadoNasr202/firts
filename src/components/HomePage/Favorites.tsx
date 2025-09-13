@@ -22,7 +22,7 @@ interface Store {
 export default function Favorites() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [stores, setStores] = useState<Store[]>([]);
-	const [activeTab, setActiveTab] = useState<"products" | "stores">("products"); // الحالة الحالية للتبويب
+	const [activeTab, setActiveTab] = useState<"products" | "stores">("products"); 
 
 	useEffect(() => {
 		fetch("/api/favorites")

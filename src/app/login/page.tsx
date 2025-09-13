@@ -37,8 +37,8 @@ async function LoginAction(
 			return { field: "email", message: "Username not found" };
 		}
 		// تعطيل الهاش مؤقتاً للتجربة مع كلمات مرور غير مشفرة
-		if (user[0].password !== data.password) {
-		// if (user[0].password !== hash(data.password)) {
+		//if (user[0].password !== data.password) {
+		 if (user[0].password !== hash(data.password)) {
 			return { field: "password", message: "Incorrect password" };
 		}
 		const session = await lucia.createSession(user[0].id, {});

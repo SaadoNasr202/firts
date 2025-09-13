@@ -28,6 +28,7 @@ export default function ProfileList() {
 	
 	const [activePage, setActivePage] = useState("معلومات الحساب");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const renderContent = () => {
 		switch (activePage) {
@@ -93,6 +94,62 @@ export default function ProfileList() {
 		checkLoginStatus();
 	}, [router]);
 
+	// وظيفة تسجيل الخروج
+	const handleLogout = async () => {
+		if (isLoggingOut) return; // منع الضغط المتعدد
+		
+		// تأكيد تسجيل الخروج
+		const confirmLogout = window.confirm("هل أنت متأكد من تسجيل الخروج؟");
+		if (!confirmLogout) return;
+		
+		setIsLoggingOut(true);
+		
+		try {
+			const response = await fetch("/api/logout", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.ok) {
+				console.log("✅ تم تسجيل الخروج بنجاح");
+				// إعادة توجيه إلى صفحة تسجيل الدخول
+				router.push("/login");
+			} else {
+				console.error("❌ فشل في تسجيل الخروج");
+				// حتى لو فشل، نوجه المستخدم لصفحة تسجيل الدخول
+				router.push("/login");
+			}
+		} catch (error) {
+			console.error("❌ خطأ في تسجيل الخروج:", error);
+			// في حالة الخطأ، نوجه المستخدم لصفحة تسجيل الدخول
+			router.push("/login");
+		} finally {
+			setIsLoggingOut(false);
+		}
+	};
+
+	// إذا كان يتم تسجيل الخروج، عرض شاشة تحميل
+	if (isLoggingOut) {
+		return (
+			<div className="flex h-screen items-center justify-center bg-gray-100">
+				<div className="flex flex-col items-center">
+					<div className="h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-red-500"></div>
+					<p className="mt-4 text-lg text-gray-600">جاري تسجيل الخروج...</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (isLoading) {
+		return (
+			<div className="flex h-screen items-center justify-center bg-gray-100">
+				<div className="h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-[#ADF0D1]"></div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
 			{/* الكرت بالنص */}
@@ -109,7 +166,11 @@ export default function ProfileList() {
 
 				{/* Sidebar Desktop (يسار) */}
 				<div className="hidden w-[420px] border-r border-gray-200 bg-gray-50 px-6 py-8 md:block">
-					<Sidebar activePage={activePage} setActivePage={setActivePage} />
+					<Sidebar 
+						activePage={activePage} 
+						setActivePage={setActivePage} 
+						onLogout={handleLogout}
+					/>
 				</div>
 
 				{/* Sidebar Mobile Modal (يسار) */}
@@ -132,6 +193,7 @@ export default function ProfileList() {
 									setActivePage(page);
 									setIsSidebarOpen(false);
 								}}
+								onLogout={handleLogout}
 							/>
 						</div>
 					</>
