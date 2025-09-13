@@ -569,6 +569,7 @@ export default function StoreForm({
 
 							{/* زر تحديد الموقع */}
 							<button
+								type="button"
 								onClick={() => {
 									if (navigator.geolocation) {
 										navigator.geolocation.getCurrentPosition(
@@ -586,13 +587,15 @@ export default function StoreForm({
 										);
 									} else alert(t("partnerForm.locationNotSupported"));
 								}}
-								className="hover: absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition"
+								className="absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition bg-blue-500 text-white hover:bg-blue-600"
 							>
 								{t("partnerForm.myLocation")}
 							</button>
 						</>
 					) : (
-						<p>{t("partnerForm.loadingMap")}</p>
+						<div className="flex h-full items-center justify-center bg-gray-200">
+							<p>{t("partnerForm.loadingMap")}</p>
+						</div>
 					)}
 				</div>
 			</div>

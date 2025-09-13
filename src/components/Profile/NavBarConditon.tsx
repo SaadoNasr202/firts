@@ -20,11 +20,19 @@ const MobileMenu = ({
 	activeTab,
 	setActiveTab,
 	openAterms,
+	user,
+	isLoggedIn,
+	cartCount,
+	isLoadingUser,
 }: {
 	onClose: () => void;
 	activeTab: string;
 	setActiveTab: (tab: string) => void;
 	openAterms: () => void;
+	user: { fullName: string; email: string } | null;
+	isLoggedIn: boolean;
+	cartCount: number;
+	isLoadingUser: boolean;
 }) => {
 	const handleClick = (tab: string, href: string) => {
 		setActiveTab(tab);
@@ -77,18 +85,25 @@ const MobileMenu = ({
 
 				<button
 					onClick={() => handleClick("cart", "/cart")}
-					className={`flex items-center gap-2 ${
+					className={`flex items-center gap-2 relative ${
 						activeTab === "cart"
 							? "text-green-600"
 							: "text-gray-700 hover:text-green-600"
 					}`}
 				>
-					<ShoppingBag size={22} />
+					<div className="relative">
+						<ShoppingBag size={22} />
+						{cartCount > 0 && (
+							<span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+								{cartCount > 99 ? '99+' : cartCount}
+							</span>
+						)}
+					</div>
 					<span className="text-base">السلة</span>
 				</button>
 
 				<button
-					onClick={() => handleClick("login", "/profile")}
+					onClick={() => handleClick("login", isLoggedIn ? "/profile" : "/login")}
 					className={`flex items-center gap-2 ${
 						activeTab === "login"
 							? "text-green-600"
@@ -96,7 +111,9 @@ const MobileMenu = ({
 					}`}
 				>
 					<User size={22} />
-					<span className="text-base">تسجيل الدخول</span>
+					<span className="text-base truncate max-w-32">
+						{isLoadingUser ? "..." : (isLoggedIn && user ? user.fullName : "تسجيل الدخول")}
+					</span>
 				</button>
 
 				<button
@@ -132,6 +149,10 @@ export default function NavBarCondition() {
 	const [activeTab, setActiveTab] = useState("");
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [showAterms, setShowAterms] = useState(false); // مودال اتصل بنا
+	const [cartCount, setCartCount] = useState(0);
+	const [user, setUser] = useState<{ fullName: string; email: string } | null>(null);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isLoadingUser, setIsLoadingUser] = useState(true);
 
 	useEffect(() => {
 		if (pathname.startsWith("/profile")) setActiveTab("login");
@@ -139,6 +160,52 @@ export default function NavBarCondition() {
 		else if (pathname.startsWith("/orders")) setActiveTab("orders");
 		else setActiveTab("home");
 	}, [pathname]);
+
+	// جلب بيانات المستخدم وعدد عناصر السلة
+	useEffect(() => {
+		const fetchUserData = async () => {
+			try {
+				const response = await fetch("/api/user");
+				if (response.ok) {
+					const userData = await response.json();
+					setUser(userData);
+					setIsLoggedIn(true);
+				} else {
+					setUser(null);
+					setIsLoggedIn(false);
+				}
+			} catch (error) {
+				console.error("Error fetching user data:", error);
+				setUser(null);
+				setIsLoggedIn(false);
+			} finally {
+				setIsLoadingUser(false);
+			}
+		};
+
+		const fetchCartCount = async () => {
+			try {
+				const response = await fetch("/api/cart/count");
+				if (response.ok) {
+					const data = await response.json();
+					setCartCount(data.count || 0);
+				}
+			} catch (error) {
+				console.error("Error fetching cart count:", error);
+			}
+		};
+
+		const fetchData = async () => {
+			await fetchUserData();
+			await fetchCartCount();
+		};
+
+		fetchData();
+		
+		// تحديث البيانات كل 30 ثانية
+		const interval = setInterval(fetchData, 30000);
+		return () => clearInterval(interval);
+	}, []);
 
 	const handleClick = (tab: string, href: string) => {
 		setActiveTab(tab);
@@ -193,18 +260,25 @@ export default function NavBarCondition() {
 
 					<button
 						onClick={() => handleClick("cart", "/cart")}
-						className={`flex items-center gap-2 ${
+						className={`flex items-center gap-2 relative ${
 							activeTab === "cart"
 								? "text-green-600"
 								: "text-gray-700 hover:text-green-600"
 						}`}
 					>
-						<ShoppingBag size={22} />
+						<div className="relative">
+							<ShoppingBag size={22} />
+							{cartCount > 0 && (
+								<span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+									{cartCount > 99 ? '99+' : cartCount}
+								</span>
+							)}
+						</div>
 						<span className="text-sm">السلة</span>
 					</button>
 
 					<button
-						onClick={() => handleClick("login", "/profile")}
+						onClick={() => handleClick("login", isLoggedIn ? "/profile" : "/login")}
 						className={`flex items-center gap-2 ${
 							activeTab === "login"
 								? "text-green-600"
@@ -212,7 +286,9 @@ export default function NavBarCondition() {
 						}`}
 					>
 						<User size={22} />
-						<span className="text-sm">تسجيل الدخول</span>
+						<span className="text-sm truncate max-w-24">
+							{isLoadingUser ? "..." : (isLoggedIn && user ? user.fullName : "تسجيل الدخول")}
+						</span>
 					</button>
 
 					<button
@@ -247,6 +323,10 @@ export default function NavBarCondition() {
 					activeTab={activeTab}
 					setActiveTab={setActiveTab}
 					openAterms={() => setShowAterms(true)}
+					user={user}
+					isLoggedIn={isLoggedIn}
+					cartCount={cartCount}
+					isLoadingUser={isLoadingUser}
 				/>
 			)}
 

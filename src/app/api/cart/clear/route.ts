@@ -1,6 +1,6 @@
 import { lucia } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { TB_user } from "@/lib/schema";
+import { TB_cart, TB_cartItems } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 // إجبار Next.js على معاملة هذا الـ route كـ dynamic
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function DELETE() {
 	try {
 		// التحقق من تسجيل الدخول
 		const sessionCookie = cookies().get(lucia.sessionCookieName);
@@ -21,26 +21,26 @@ export async function GET() {
 			return NextResponse.json({ error: "جلسة غير صالحة" }, { status: 401 });
 		}
 
-		// جلب بيانات المستخدم من قاعدة البيانات
-		const userData = await db
-			.select({
-				id: TB_user.id,
-				fullName: TB_user.fullName,
-				email: TB_user.email,
-				phoneNumber: TB_user.phoneNumber,
-			})
-			.from(TB_user)
-			.where(eq(TB_user.id, user.id))
+		// البحث عن السلة
+		const cart = await db
+			.select()
+			.from(TB_cart)
+			.where(eq(TB_cart.userId, user.id))
 			.limit(1);
 
-		if (userData.length === 0) {
-			return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
+		if (cart.length === 0) {
+			return NextResponse.json({ error: "السلة غير موجودة" }, { status: 404 });
 		}
 
-		return NextResponse.json(userData[0]);
+		// حذف جميع العناصر من السلة
+		await db
+			.delete(TB_cartItems)
+			.where(eq(TB_cartItems.cartId, cart[0].id));
+
+		return NextResponse.json({ success: true });
 
 	} catch (error) {
-		console.error("خطأ في جلب بيانات المستخدم:", error);
+		console.error("خطأ في إفراغ السلة:", error);
 		return NextResponse.json(
 			{ error: "خطأ في الخادم" },
 			{ status: 500 }
