@@ -16,7 +16,6 @@ export const TB_user = pgTable("shellausers", {
 	}).notNull(),
 	email: text("email").notNull().unique(),
 	password: text("password").notNull(),
-	Adress: text("Adress").notNull(),
 });
 
 export const TB_session = pgTable("session", {
@@ -178,7 +177,16 @@ export const TB_shellausers = pgTable("shellausers", {
 	}).notNull(),
 	email: text("email").notNull().unique(),
 	password: text("password").notNull(),
-	Adress: text("Adress").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const TB_addresses = pgTable("addresses", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => TB_shellausers.id, { onDelete: "cascade" }),
+	address: text("address").notNull(), // نص كامل للعنوان
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // جدول الأقسام

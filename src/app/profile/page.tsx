@@ -18,12 +18,6 @@ export default function Profile() {
 				const response = await fetch("/api/is_logged_in");
 				console.log("🔍 Profile: Response status:", response.status);
 
-				if (!response.ok) {
-					console.log("❌ Profile: Response not OK, redirecting to login");
-					router.push("/login");
-					return;
-				}
-
 				const data = await response.json();
 				console.log("🔍 Profile: Response data:", data);
 

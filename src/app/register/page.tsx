@@ -2,7 +2,7 @@ import { RegisterForm } from "@/components/RegisterForm";
 import hash from "@/components/utils";
 import { lucia } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { TB_user } from "@/lib/schema";
+import { TB_user, TB_addresses } from "@/lib/schema";
 import { RegisterFormError, registerFormSchema } from "@/lib/types/authSchemas";
 import { eq } from "drizzle-orm";
 import { generateId } from "lucia";
@@ -50,12 +50,18 @@ async function RegisterAction(
 			birthDate: data.birthDate,
 			email: data.email,
 			password: hash(data.password), // تشفير كلمة المرور
-			Adress: `${data.address.lat},${data.address.lng}`, // حفظ العنوان بصيغة lat,lng
 		});
 
-		console.log("✅ تم إنشاء المستخدم بنجاح:", userId);
+		// إضافة العنوان إلى جدول العناوين المنفصل
+		const addressId = generateId(15);
+		await db.insert(TB_addresses).values({
+			id: addressId,
+			userId: userId,
+			address: `${data.address.lat},${data.address.lng}`, // حفظ العنوان بصيغة lat,lng
+		});
+
+		console.log("✅ تم إنشاء المستخدم والعنوان بنجاح:", userId);
 		
-		// إرجاع نجاح العملية
 		return undefined;
 	} catch (e) {
 		console.error("❌ خطأ في إنشاء المستخدم:", e);

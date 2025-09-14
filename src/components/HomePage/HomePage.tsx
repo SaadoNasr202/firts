@@ -5,6 +5,7 @@
 import { useState } from "react";
 import Breadcrumb from "./Breadcrumb";
 import CategoriesSlider from "./CategoriesSlider";
+import DeliveryAddressSelector from "./DeliveryAddressSelector";
 import CategoryStoresPage from "./CategoryStoresPage";
 import DiscountSlider from "./DiscountSlider";
 import MealDetailsPage from "./MealDetailsPage";
@@ -29,6 +30,11 @@ export default function HomePage() {
 	const [selectedSection, setSelectedSection] = useState("");
 	const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
 	const [breadcrumbPath, setBreadcrumbPath] = useState<string[]>(["الرئيسية"]);
+	const [selectedDeliveryAddress, setSelectedDeliveryAddress] = useState<any>(null);
+
+	const handleDeliveryAddressChange = (address: any) => {
+		setSelectedDeliveryAddress(address);
+	};
 
 	const handleDiscountClick = (discountTitle: string) => {
 		// معاملة الخصومات كمتاجر - الانتقال لصفحة المتجر
@@ -146,6 +152,9 @@ export default function HomePage() {
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
+			<div className="mb-4">
+				<DeliveryAddressSelector onAddressChange={handleDeliveryAddressChange} />
+			</div>
 			<div className="mb-4">
 				<Breadcrumb
 					path={breadcrumbPath}

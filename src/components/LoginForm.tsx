@@ -27,15 +27,9 @@ export function LoginForm({
 		async function checkLoginStatus() {
 			try {
 				const response = await fetch("/api/is_logged_in");
-
-				if (!response.ok) {
-					console.error("Failed to fetch login status:", response.statusText);
-					setIsLoading(false);
-					return;
-				}
-
 				const data = await response.json();
 				console.log("LoginForm - checking login status:", data);
+				
 				if (data.isLoggedIn) {
 					console.log("LoginForm - User already logged in, redirecting to profile");
 					router.push("/profile");
@@ -76,6 +70,7 @@ export function LoginForm({
 		} else {
 			// تسجيل الدخول نجح، انتقل إلى صفحة البروفايل
 			console.log("✅ Login successful, redirecting to profile");
+			setIsSubmitting(false);
 			// إعطاء وقت قصير للكوكيز لتسجل
 			setTimeout(() => {
 				router.push("/profile");
