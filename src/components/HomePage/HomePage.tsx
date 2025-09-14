@@ -31,7 +31,10 @@ export default function HomePage() {
 	const [breadcrumbPath, setBreadcrumbPath] = useState<string[]>(["الرئيسية"]);
 
 	const handleDiscountClick = (discountTitle: string) => {
-		console.log(`Discount on ${discountTitle} was clicked.`);
+		// معاملة الخصومات كمتاجر - الانتقال لصفحة المتجر
+		setBreadcrumbPath(["الرئيسية", "أقوى الخصومات", discountTitle]);
+		setSelectedStore(discountTitle);
+		setCurrentPage("store");
 	};
 
 	const handlePopularStoreClick = (storeName: string) => {
@@ -113,6 +116,14 @@ export default function HomePage() {
 			// معالجة المتاجر القريبة منك (حالة خاصة)
 			if (newPath.length === 2) {
 				setCurrentPage("nearby-stores");
+			} else if (newPath.length === 3) {
+				setCurrentPage("store");
+				setSelectedStore(newPath[2]);
+			}
+		} else if (newPath[1] === "أقوى الخصومات") {
+			// معالجة أقوى الخصومات
+			if (newPath.length === 2) {
+				setCurrentPage("home"); // العودة للرئيسية حيث توجد الخصومات
 			} else if (newPath.length === 3) {
 				setCurrentPage("store");
 				setSelectedStore(newPath[2]);
@@ -202,12 +213,12 @@ export default function HomePage() {
 							<h2 className="text-xl font-bold text-gray-900">
 								أشهر المحلات في منطقتك
 							</h2>
-							<a
-								href="#"
+							<button
+								onClick={handleNearbyStoresClick}
 								className="text-sm font-semibold text-green-600 hover:text-green-800"
 							>
 								عرض الكل
-							</a>
+							</button>
 						</div>
 						<PopularStoresSlider onStoreClick={handlePopularStoreClick} />
 					</section>
@@ -256,6 +267,11 @@ export default function HomePage() {
 				<CategoryStoresPage
 					categoryName={selectedCategory}
 					onStoreClick={handleCategoryStoreClick}
+				/>
+			)}
+			{currentPage === "nearby-stores" && (
+				<NearbyStoresPage
+					onStoreClick={handleStoreClick}
 				/>
 			)}
 		</div>
