@@ -103,10 +103,26 @@ function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
 		setIsGettingLocation(true);
 		
 		if (navigator.geolocation) {
+			// خيارات محسنة لتحديد الموقع
+			const options: PositionOptions = {
+				enableHighAccuracy: true, // دقة عالية
+				timeout: 10000, // مهلة 10 ثوان
+				maximumAge: 0, // عدم استخدام الموقع المخزن، طلب موقع جديد دائماً
+			};
+			
 			navigator.geolocation.getCurrentPosition(
 				async (pos) => {
 					const lat = pos.coords.latitude;
 					const lng = pos.coords.longitude;
+					
+					// التحقق من دقة الموقع
+					const accuracy = pos.coords.accuracy;
+					console.log(`موقع محدد بدقة: ${accuracy} متر`);
+					
+					// إذا كانت الدقة أسوأ من 100 متر، نطلب تحسين
+					if (accuracy > 100) {
+						alert(`تم تحديد موقعك بدقة ${Math.round(accuracy)} متر. قد تحتاج لتحسين الدقة.`);
+					}
 					
 					setLocation(`${lat},${lng}`);
 					
@@ -123,18 +139,19 @@ function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
 					let errorMessage = "فشل في الحصول على موقعك";
 					switch (error.code) {
 						case 1:
-							errorMessage = "تم رفض الإذن للوصول للموقع";
+							errorMessage = "تم رفض الإذن للوصول للموقع. يرجى السماح بالوصول للموقع في إعدادات المتصفح.";
 							break;
 						case 2:
-							errorMessage = "معلومات الموقع غير متوفرة";
+							errorMessage = "معلومات الموقع غير متوفرة. تأكد من تشغيل GPS.";
 							break;
 						case 3:
-							errorMessage = "انتهت مهلة الحصول على الموقع";
+							errorMessage = "انتهت مهلة الحصول على الموقع. حاول مرة أخرى.";
 							break;
 					}
 					alert(errorMessage);
 					setIsGettingLocation(false);
-				}
+				},
+				options
 			);
 		} else {
 			alert("خدمة تحديد الموقع غير متوفرة في متصفحك");
@@ -167,8 +184,14 @@ function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
 				{/* تعليمات استخدام الموقع */}
 				<div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
 					<p className="text-sm text-blue-800">
-						💡 <strong>نصيحة:</strong> ابحث عن العنوان أو اضغط على الخريطة لتحديد الموقع، أو استخدم زر "📍 موقعي" للحصول على موقعك الحالي.
+						💡 <strong>نصيحة:</strong> 
 					</p>
+					<ul className="text-sm text-blue-700 mt-2 space-y-1">
+						<li>• ابحث عن العنوان في شريط البحث</li>
+						<li>• اضغط على الخريطة لتحديد الموقع</li>
+						<li>• استخدم زر "📍 موقعي الحالي" للحصول على موقعك بدقة عالية</li>
+						<li>• تأكد من السماح بالوصول للموقع في إعدادات المتصفح</li>
+					</ul>
 				</div>
 
 				{/* الخريطة مع البحث */}
@@ -182,8 +205,8 @@ function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
 							>
 								<input
 									type="text"
-									placeholder="ابحث عن العنوان..."
-									className="w-full rounded-lg border bg-white px-4 py-2 shadow focus:outline-none"
+									placeholder="ابحث عن موقعك..."
+									className="w-full rounded-lg border bg-amber-50 px-4 py-2 shadow focus:outline-none"
 								/>
 							</Autocomplete>
 						</div>
@@ -191,56 +214,60 @@ function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
 
 					{/* زر موقعي */}
 					<button
+						type="button"
 						onClick={handleGetCurrentLocation}
 						disabled={isGettingLocation}
-						className={`absolute top-14 right-2 z-50 rounded-lg px-4 py-2 font-semibold shadow-lg transition flex items-center gap-2 ${
+						className={`absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold shadow-lg transition ${
 							isGettingLocation 
 								? 'bg-gray-400 cursor-not-allowed text-white' 
-								: 'bg-blue-500 hover:bg-blue-600 text-white'
+								: 'bg-blue-500 text-white hover:bg-blue-600'
 						}`}
 					>
 						{isGettingLocation ? (
 							<>
-								<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-								جاري...
+								<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block mr-2"></div>
+								جاري تحديد الموقع...
 							</>
 						) : (
-							<>
-								📍 موقعي
-							</>
+							'موقعي'
 						)}
 					</button>
 
 					{/* الخريطة */}
 					{isLoaded ? (
-						<GoogleMap
-							mapContainerStyle={{ width: "100%", height: "100%" }}
-							center={
-								location
-									? {
+						<>
+							<GoogleMap
+								mapContainerStyle={{ width: "100%", height: "100%" }}
+								center={
+									location
+										? {
+												lat: parseFloat(location.split(",")[0]),
+												lng: parseFloat(location.split(",")[1]),
+											}
+										: defaultCenter
+								}
+								zoom={10}
+								onClick={(e) => {
+									if (e.latLng) {
+										const lat = e.latLng.lat().toString();
+										const lng = e.latLng.lng().toString();
+										setLocation(`${lat},${lng}`);
+									}
+								}}
+							>
+								{location && (
+									<Marker
+										position={{
 											lat: parseFloat(location.split(",")[0]),
 											lng: parseFloat(location.split(",")[1]),
-										}
-									: defaultCenter
-							}
-							zoom={location ? 15 : 10}
-							onClick={handleMapClick}
-						>
-							{location && (
-								<Marker
-									position={{
-										lat: parseFloat(location.split(",")[0]),
-										lng: parseFloat(location.split(",")[1]),
-									}}
-								/>
-							)}
-						</GoogleMap>
+										}}
+									/>
+								)}
+							</GoogleMap>
+						</>
 					) : (
-						<div className="w-full h-full bg-gray-200 flex items-center justify-center">
-							<div className="text-gray-500 text-center">
-								<div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-2"></div>
-								جاري تحميل الخريطة...
-							</div>
+						<div className="flex h-full items-center justify-center bg-gray-200">
+							<p>جارٍ تحميل الخريطة...</p>
 						</div>
 					)}
 				</div>
@@ -251,7 +278,7 @@ function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
 						<p className="text-sm text-gray-600 mb-1">العنوان المحدد:</p>
 						<p className="text-[#00203F] font-medium">{selectedAddress.formattedAddress}</p>
 						<p className="text-xs text-gray-500 mt-1">
-							الإحداثيات: {selectedAddress.lat.toFixed(6)}, {selectedAddress.lng.toFixed(6)}
+							الإحداثيات: {selectedAddress.lat.toFixed(6)},{selectedAddress.lng.toFixed(6)}
 						</p>
 					</div>
 				)}
@@ -560,7 +587,7 @@ export function RegisterForm({
 															<div className="text-xs text-gray-300 px-2 space-y-1">
 																<div>{field.value.formattedAddress}</div>
 																<div className="text-green-400">
-																	الإحداثيات: {field.value.lat.toFixed(6)}, {field.value.lng.toFixed(6)}
+																	الإحداثيات: {field.value.lat.toFixed(6)},{field.value.lng.toFixed(6)}
 																</div>
 															</div>
 														)}

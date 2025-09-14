@@ -31,8 +31,9 @@ export default function SavedAddress({ setActivePage }: SavedAddressProps) {
 
 	// تحميل مكتبة جوجل
 	const { isLoaded } = useJsApiLoader({
+		id: 'google-map-script',
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-		libraries: ["places"],
+		libraries: ["places", "geometry"],
 	});
 
 	// دالة لتحويل الإحداثيات إلى عنوان نصي

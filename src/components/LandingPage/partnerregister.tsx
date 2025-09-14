@@ -575,19 +575,19 @@ export default function StoreForm({
 										navigator.geolocation.getCurrentPosition(
 											(pos) => {
 												const position = {
-													lat: pos.coords.latitude,
 													lng: pos.coords.longitude,
+													lat: pos.coords.latitude,
 												};
 												setFormData((prev) => ({
 													...prev,
-													location: `${position.lat},${position.lng}`,
+													location: `${position.lng},${position.lat}`,
 												}));
 											},
 											() => alert(t("partnerForm.locationError")),
 										);
 									} else alert(t("partnerForm.locationNotSupported"));
 								}}
-								className="absolute top-14 right-0 z-50 rounded-lg px-4 py-2 font-semibold text-black shadow-lg transition bg-blue-500 text-white hover:bg-blue-600"
+								className="absolute top-14 right-0 z-50 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-black text-white shadow-lg transition hover:bg-blue-600"
 							>
 								{t("partnerForm.myLocation")}
 							</button>
