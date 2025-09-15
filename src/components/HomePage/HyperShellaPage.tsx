@@ -34,7 +34,9 @@ export default function HyperPage({
 	const [activePopularFilter, setActivePopularFilter] = useState("الكل");
 	const [popularProducts, setPopularProducts] = useState<any[]>([]);
 	const [perfumeProducts, setPerfumeProducts] = useState<any[]>([]);
-	const [vegetableFruitProducts, setVegetableFruitProducts] = useState<any[]>([]);
+	const [vegetableFruitProducts, setVegetableFruitProducts] = useState<any[]>(
+		[],
+	);
 	const [isLoadingPopular, setIsLoadingPopular] = useState(false);
 
 	// جلب أقسام هايبر شلة من قاعدة البيانات
@@ -119,24 +121,34 @@ export default function HyperPage({
 					const productsData = await productsResponse.json();
 					// أخذ المنتجات الأكثر شهرة (يمكن تحسين هذا لاحقاً بإضافة rating أو popularity)
 					setPopularProducts(productsData.products?.slice(0, 10) || []);
-					
+
 					// فلترة منتجات العطور (يمكن تحسين هذا لاحقاً بإضافة category)
-					setPerfumeProducts(productsData.products?.filter((p: any) => 
-						p.name?.toLowerCase().includes('عطر') || 
-						p.name?.toLowerCase().includes('perfume') ||
-						p.name?.toLowerCase().includes('كولونيا')
-					)?.slice(0, 10) || []);
-					
+					setPerfumeProducts(
+						productsData.products
+							?.filter(
+								(p: any) =>
+									p.name?.toLowerCase().includes("عطر") ||
+									p.name?.toLowerCase().includes("perfume") ||
+									p.name?.toLowerCase().includes("كولونيا"),
+							)
+							?.slice(0, 10) || [],
+					);
+
 					// فلترة الخضار والفواكه
-					setVegetableFruitProducts(productsData.products?.filter((p: any) => 
-						p.name?.toLowerCase().includes('خضار') || 
-						p.name?.toLowerCase().includes('فواكه') ||
-						p.name?.toLowerCase().includes('طماطم') ||
-						p.name?.toLowerCase().includes('بصل') ||
-						p.name?.toLowerCase().includes('جزر') ||
-						p.name?.toLowerCase().includes('تفاح') ||
-						p.name?.toLowerCase().includes('موز')
-					)?.slice(0, 10) || []);
+					setVegetableFruitProducts(
+						productsData.products
+							?.filter(
+								(p: any) =>
+									p.name?.toLowerCase().includes("خضار") ||
+									p.name?.toLowerCase().includes("فواكه") ||
+									p.name?.toLowerCase().includes("طماطم") ||
+									p.name?.toLowerCase().includes("بصل") ||
+									p.name?.toLowerCase().includes("جزر") ||
+									p.name?.toLowerCase().includes("تفاح") ||
+									p.name?.toLowerCase().includes("موز"),
+							)
+							?.slice(0, 10) || [],
+					);
 				}
 			} catch (error) {
 				console.error("خطأ في جلب البيانات الأكثر شهرة:", error);
@@ -183,15 +195,16 @@ export default function HyperPage({
 				<section>
 					<div className="relative">
 						{/* صورة الخلفية */}
-						<div className="flex h-[430px] w-full items-center justify-center sm:h-[400px] md:h-[500px] lg:h-[650px]">
+						<div className="w-full">
 							<img
 								src="hyshealla.png"
 								alt="مع شلة كل احتياجاتك بضغطة زر"
-								className="h-full w-full object-cover"
+								className="h-auto w-full object-cover object-center"
 							/>
 						</div>
 					</div>
 				</section>
+
 				{/* //categories section */}
 				<section>
 					<div className="p-4 md:p-8">
@@ -408,7 +421,9 @@ export default function HyperPage({
 				{/* قسم الاختيارات الأكثر شهرة */}
 				<section className="p-4 md:p-8">
 					<div className="mb-4 flex items-center justify-between">
-						<h2 className="text-xl font-bold text-gray-900">الاختيارات الأكثر شهرة</h2>
+						<h2 className="text-xl font-bold text-gray-900">
+							الاختيارات الأكثر شهرة
+						</h2>
 						<div className="flex items-center gap-2">
 							<span className="text-sm text-gray-600">عرض الكل</span>
 							<div className="flex gap-1">
