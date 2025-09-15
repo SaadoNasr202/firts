@@ -2,7 +2,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Breadcrumb from "./Breadcrumb";
 import CategoriesSlider from "./CategoriesSlider";
 import DeliveryAddressSelector from "./DeliveryAddressSelector";
@@ -16,8 +17,12 @@ import ProductDetailsPage from "./ProductDetailsPage";
 import ProductsPage from "./ProductsPage";
 import RestaurantSectionsPage from "./RestaurantPageDetails";
 import StorePage from "./StorePage";
+import HyperShellaPage from "./HyperShellaPage";
 
 export default function HomePage() {
+	const searchParams = useSearchParams();
+	const router = useRouter();
+	
 	const [currentPage, setCurrentPage] = useState("home");
 	const [selectedStore, setSelectedStore] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("");
@@ -31,6 +36,82 @@ export default function HomePage() {
 	const [selectedMealId, setSelectedMealId] = useState<number | null>(null);
 	const [breadcrumbPath, setBreadcrumbPath] = useState<string[]>(["الرئيسية"]);
 	const [selectedDeliveryAddress, setSelectedDeliveryAddress] = useState<any>(null);
+	const [isInitialized, setIsInitialized] = useState(false);
+
+	// تحميل الحالة من URL عند بدء التطبيق
+	useEffect(() => {
+		const page = searchParams.get('page');
+		const store = searchParams.get('store');
+		const category = searchParams.get('category');
+		const productId = searchParams.get('productId');
+		const restaurantId = searchParams.get('restaurantId');
+		const section = searchParams.get('section');
+		const mealId = searchParams.get('mealId');
+		const breadcrumb = searchParams.get('breadcrumb');
+
+		if (page) {
+			setCurrentPage(page);
+		}
+		if (store) {
+			setSelectedStore(store);
+		}
+		if (category) {
+			setSelectedCategory(category);
+		}
+		if (productId) {
+			setSelectedProductId(productId);
+		}
+		if (restaurantId) {
+			setSelectedRestaurantId(parseInt(restaurantId));
+		}
+		if (section) {
+			setSelectedSection(section);
+		}
+		if (mealId) {
+			setSelectedMealId(parseInt(mealId));
+		}
+		if (breadcrumb) {
+			setBreadcrumbPath(JSON.parse(decodeURIComponent(breadcrumb)));
+		}
+
+		setIsInitialized(true);
+	}, [searchParams]);
+
+	// دالة مساعدة لتحديث URL
+	const updateURL = (params: {
+		page?: string;
+		store?: string;
+		category?: string;
+		productId?: string | null;
+		restaurantId?: number | null;
+		section?: string;
+		mealId?: number | null;
+		breadcrumb?: string[];
+	}) => {
+		const url = new URL(window.location.href);
+		
+		// مسح المعاملات السابقة
+		url.searchParams.delete('page');
+		url.searchParams.delete('store');
+		url.searchParams.delete('category');
+		url.searchParams.delete('productId');
+		url.searchParams.delete('restaurantId');
+		url.searchParams.delete('section');
+		url.searchParams.delete('mealId');
+		url.searchParams.delete('breadcrumb');
+
+		// إضافة المعاملات الجديدة
+		if (params.page) url.searchParams.set('page', params.page);
+		if (params.store) url.searchParams.set('store', params.store);
+		if (params.category) url.searchParams.set('category', params.category);
+		if (params.productId) url.searchParams.set('productId', params.productId);
+		if (params.restaurantId) url.searchParams.set('restaurantId', params.restaurantId.toString());
+		if (params.section) url.searchParams.set('section', params.section);
+		if (params.mealId) url.searchParams.set('mealId', params.mealId.toString());
+		if (params.breadcrumb) url.searchParams.set('breadcrumb', encodeURIComponent(JSON.stringify(params.breadcrumb)));
+
+		router.replace(url.pathname + url.search);
+	};
 
 	const handleDeliveryAddressChange = (address: any) => {
 		setSelectedDeliveryAddress(address);
@@ -38,72 +119,156 @@ export default function HomePage() {
 
 	const handleDiscountClick = (discountTitle: string) => {
 		// معاملة الخصومات كمتاجر - الانتقال لصفحة المتجر
-		setBreadcrumbPath(["الرئيسية", "أقوى الخصومات", discountTitle]);
+		const newBreadcrumb = ["الرئيسية", "أقوى الخصومات", discountTitle];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedStore(discountTitle);
 		setCurrentPage("store");
+		updateURL({
+			page: "store",
+			store: discountTitle,
+			breadcrumb: newBreadcrumb
+		});
 	};
 
 	const handlePopularStoreClick = (storeName: string) => {
-		setBreadcrumbPath(["الرئيسية", "أشهر المحلات في منطقتك", storeName]);
+		const newBreadcrumb = ["الرئيسية", "أشهر المحلات في منطقتك", storeName];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedStore(storeName);
 		setCurrentPage("store");
+		updateURL({
+			page: "store",
+			store: storeName,
+			breadcrumb: newBreadcrumb
+		});
 	};
 
 	const handleCategoryClick = (categoryName: string) => {
-		setBreadcrumbPath(["الرئيسية", categoryName]);
-		setSelectedCategory(categoryName);
-		setCurrentPage("category-stores");
+		const newBreadcrumb = ["الرئيسية", categoryName];
+		setBreadcrumbPath(newBreadcrumb);
+		
+		if (categoryName === "هايبر شلة") {
+			setCurrentPage("hyper-shella");
+			updateURL({
+				page: "hyper-shella",
+				breadcrumb: newBreadcrumb
+			});
+		} else {
+			setSelectedCategory(categoryName);
+			setCurrentPage("category-stores");
+			updateURL({
+				page: "category-stores",
+				category: categoryName,
+				breadcrumb: newBreadcrumb
+			});
+		}
 	};
 
 	const handleCategoryStoreClick = (storeName: string) => {
-		setBreadcrumbPath(["الرئيسية", selectedCategory, storeName]);
+		const newBreadcrumb = ["الرئيسية", selectedCategory, storeName];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedStore(storeName);
 		setCurrentPage("store");
+		updateURL({
+			page: "store",
+			store: storeName,
+			category: selectedCategory,
+			breadcrumb: newBreadcrumb
+		});
 	};
 
 	const handleStoreClick = (storeName: string) => {
-		setBreadcrumbPath(["الرئيسية", "المتاجر القريبة منك", storeName]);
+		const newBreadcrumb = ["الرئيسية", "المتاجر القريبة منك", storeName];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedStore(storeName);
 		setCurrentPage("store");
+		updateURL({
+			page: "store",
+			store: storeName,
+			breadcrumb: newBreadcrumb
+		});
 	};
 	const handleNearbyStoresClick = () => {
-		setBreadcrumbPath(["الرئيسية", "المتاجر القريبة منك"]);
+		const newBreadcrumb = ["الرئيسية", "المتاجر القريبة منك"];
+		setBreadcrumbPath(newBreadcrumb);
 		setCurrentPage("nearby-stores");
+		updateURL({
+			page: "nearby-stores",
+			breadcrumb: newBreadcrumb
+		});
 	};
 	const handleSupermarketStoreClick = (storeName: string) => {
-		setBreadcrumbPath(["الرئيسية", "سوبر ماركت", storeName]);
+		const newBreadcrumb = ["الرئيسية", "سوبر ماركت", storeName];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedStore(storeName);
 		setCurrentPage("store");
+		updateURL({
+			page: "store",
+			store: storeName,
+			breadcrumb: newBreadcrumb
+		});
 	};
 
 	const handleStoreCategoryClick = (categoryName: string) => {
-		setBreadcrumbPath([...breadcrumbPath, categoryName]);
+		const newBreadcrumb = [...breadcrumbPath, categoryName];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedCategory(categoryName);
 		setCurrentPage("products");
+		updateURL({
+			page: "products",
+			category: categoryName,
+			store: selectedStore,
+			breadcrumb: newBreadcrumb
+		});
 	};
 
 	const handleProductClick = (productId: string) => {
 		// productId جاي كـ string من قاعدة البيانات
 		setSelectedProductId(productId);
 		setCurrentPage("product-details");
+		updateURL({
+			page: "product-details",
+			productId: productId,
+			store: selectedStore,
+			category: selectedCategory,
+			breadcrumb: breadcrumbPath
+		});
 	};
 
 	const handleRestaurantClick = (restaurantId: number) => {
 		// تبسيط - البيانات تأتي من قاعدة البيانات الآن
 		setSelectedRestaurantId(restaurantId);
 		setCurrentPage("restaurant-sections");
+		updateURL({
+			page: "restaurant-sections",
+			restaurantId: restaurantId,
+			breadcrumb: breadcrumbPath
+		});
 	};
 
 	const handleSectionClick = (sectionName: string, restaurantId: number) => {
-		setBreadcrumbPath([...breadcrumbPath, sectionName]);
+		const newBreadcrumb = [...breadcrumbPath, sectionName];
+		setBreadcrumbPath(newBreadcrumb);
 		setSelectedSection(sectionName);
 		setCurrentPage("meals");
+		updateURL({
+			page: "meals",
+			restaurantId: restaurantId,
+			section: sectionName,
+			breadcrumb: newBreadcrumb
+		});
 	};
 
 	const handleMealClick = (mealId: number) => {
 		// تبسيط - البيانات تأتي من قاعدة البيانات الآن
 		setSelectedMealId(mealId);
 		setCurrentPage("meal-details");
+		updateURL({
+			page: "meal-details",
+			mealId: mealId,
+			restaurantId: selectedRestaurantId,
+			section: selectedSection,
+			breadcrumb: breadcrumbPath
+		});
 	};
 
 	const handleBreadcrumbClick = (index: number) => {
@@ -118,22 +283,32 @@ export default function HomePage() {
 			setSelectedMealId(null);
 			setSelectedCategory("");
 			setSelectedStore("");
+			setSelectedProductId(null);
+			updateURL({ page: "home", breadcrumb: newPath });
 		} else if (newPath[1] === "المتاجر القريبة منك") {
 			// معالجة المتاجر القريبة منك (حالة خاصة)
 			if (newPath.length === 2) {
 				setCurrentPage("nearby-stores");
+				updateURL({ page: "nearby-stores", breadcrumb: newPath });
 			} else if (newPath.length === 3) {
 				setCurrentPage("store");
 				setSelectedStore(newPath[2]);
+				updateURL({ page: "store", store: newPath[2], breadcrumb: newPath });
 			}
 		} else if (newPath[1] === "أقوى الخصومات") {
 			// معالجة أقوى الخصومات
 			if (newPath.length === 2) {
 				setCurrentPage("home"); // العودة للرئيسية حيث توجد الخصومات
+				updateURL({ page: "home", breadcrumb: newPath });
 			} else if (newPath.length === 3) {
 				setCurrentPage("store");
 				setSelectedStore(newPath[2]);
+				updateURL({ page: "store", store: newPath[2], breadcrumb: newPath });
 			}
+		} else if (newPath[1] === "هايبر شلة") {
+			// معالجة هايبر شلة
+			setCurrentPage("hyper-shella");
+			updateURL({ page: "hyper-shella", breadcrumb: newPath });
 		} else {
 			// معالجة جميع الأقسام (السوبرماركت، المطاعم، الصيدليات، إلخ)
 			if (newPath.length === 2) {
@@ -141,14 +316,25 @@ export default function HomePage() {
 				setCurrentPage("category-stores");
 				setSelectedCategory(newPath[1]);
 				setSelectedStore("");
+				updateURL({ page: "category-stores", category: newPath[1], breadcrumb: newPath });
 			} else if (newPath.length === 3) {
 				// الانتقال لصفحة المتجر المحدد
 				setCurrentPage("store");
 				setSelectedStore(newPath[2]);
 				setSelectedCategory(newPath[1]);
+				updateURL({ page: "store", store: newPath[2], category: newPath[1], breadcrumb: newPath });
 			}
 		}
 	};
+
+	// عدم عرض المحتوى حتى يتم تحميل الحالة من URL
+	if (!isInitialized) {
+		return (
+			<div className="flex h-screen items-center justify-center">
+				<div className="h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-[#ADF0D1]"></div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
@@ -281,6 +467,12 @@ export default function HomePage() {
 			{currentPage === "nearby-stores" && (
 				<NearbyStoresPage
 					onStoreClick={handleStoreClick}
+				/>
+			)}
+			{currentPage === "hyper-shella" && (
+				<HyperShellaPage 
+					storeName="هايبر شلة"
+					onCategoryClick={handleStoreCategoryClick}
 				/>
 			)}
 		</div>

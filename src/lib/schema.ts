@@ -205,6 +205,14 @@ export const TB_store_categories = pgTable("store_categories", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// جدول أقسام هايبر شلة
+export const TB_hyper_shella_categories = pgTable("hyper_shella_categories", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(), // اسم القسم: خضروات، فواكه، لحوم، إلخ
+	image: text("image"), // صورة القسم (اختياري)
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const TB_stores = pgTable("stores", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),

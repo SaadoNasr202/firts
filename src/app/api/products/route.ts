@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { TB_products, TB_stores } from "@/lib/schema";
-import { eq, ne, and } from "drizzle-orm";
+import { eq, ne, and, notInArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
@@ -19,8 +19,14 @@ export async function GET(request: NextRequest) {
 			conditions.push(eq(TB_stores.type, category));
 		}
 		
+		// دعم استبعاد عدة منتجات
 		if (exclude) {
-			conditions.push(ne(TB_products.id, exclude));
+			const excludeIds = exclude.split(',').filter(id => id.trim());
+			if (excludeIds.length === 1) {
+				conditions.push(ne(TB_products.id, excludeIds[0]));
+			} else if (excludeIds.length > 1) {
+				conditions.push(notInArray(TB_products.id, excludeIds));
+			}
 		}
 
 		// بناء الـ query مع الشروط
@@ -32,6 +38,8 @@ export async function GET(request: NextRequest) {
 				price: TB_products.price,
 				originalPrice: TB_products.originalPrice,
 				unit: TB_products.unit,
+				storeId: TB_products.storeId,
+				storeName: TB_stores.name,
 				storeType: TB_stores.type,
 			})
 			.from(TB_products)
@@ -44,14 +52,16 @@ export async function GET(request: NextRequest) {
 
 		// تحويل البيانات للتنسيق المطلوب
 		const formattedProducts = products.map(product => ({
-			id: product.id, // إبقاء الـ ID كـ string
+			id: product.id,
 			name: product.name,
 			description: `${product.name} - منتج عالي الجودة`,
 			image: product.image,
+			price: product.price,
+			originalPrice: product.originalPrice,
+			unit: product.unit,
+			storeId: product.storeId,
+			storeName: product.storeName || "متجر عام",
 			category: product.storeType || "منتجات عامة",
-			newPrice: product.price,
-			oldPrice: product.originalPrice,
-			size: product.unit,
 		}));
 
 		return NextResponse.json({ 
