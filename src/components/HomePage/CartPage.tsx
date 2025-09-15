@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { Button } from "../ui/button";
+import MoreProductsSection from "./MoreProductsSection";
 
 interface CartItem {
 	id: string;
@@ -294,6 +295,11 @@ export default function CartPage() {
 						</div>
 					</div>
 				</div>
+
+				{/* قسم شراء المزيد */}
+				<MoreProductsSection 
+					excludeProductIds={cartData.items.map(item => item.productId)}
+				/>
 			</div>
 		</div>
 	);
