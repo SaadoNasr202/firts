@@ -41,11 +41,19 @@ export default function ProfileDetails() {
 		{ label: "رقم الهاتف", value: user.phoneNumber },
 		{
 			label: "تاريخ الميلاد",
-			value: new Date(user.birthDate).toLocaleDateString(),
+			value: user.birthDate
+				? new Date(user.birthDate).toLocaleDateString("ar-EG", {
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+					})
+				: "غير محدد",
 		},
 		{ label: "البريد الالكتروني", value: user.email },
 		{ label: "كلمة المرور", value: "********" }, // لا تعرض كلمة المرور الحقيقية
 	];
+
+	console.log("birth", user.birthDate);
 
 	return (
 		<div className="flex flex-col">

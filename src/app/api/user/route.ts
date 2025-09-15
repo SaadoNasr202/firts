@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 // إجبار Next.js على معاملة هذا الـ route كـ dynamic
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET() {
 	try {
@@ -28,22 +28,22 @@ export async function GET() {
 				fullName: TB_user.fullName,
 				email: TB_user.email,
 				phoneNumber: TB_user.phoneNumber,
+				birthDate: TB_user.birthDate,
 			})
 			.from(TB_user)
 			.where(eq(TB_user.id, user.id))
 			.limit(1);
 
 		if (userData.length === 0) {
-			return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "المستخدم غير موجود" },
+				{ status: 404 },
+			);
 		}
 
 		return NextResponse.json(userData[0]);
-
 	} catch (error) {
 		console.error("خطأ في جلب بيانات المستخدم:", error);
-		return NextResponse.json(
-			{ error: "خطأ في الخادم" },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: "خطأ في الخادم" }, { status: 500 });
 	}
 }
