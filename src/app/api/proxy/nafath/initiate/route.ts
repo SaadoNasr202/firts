@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 				},
 				body: JSON.stringify(body),
 			},
-		);
+		);		
 
 		const data = await response.json();
 		console.log("Proxy response data:", data); 
