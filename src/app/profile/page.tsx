@@ -1,47 +1,35 @@
-"use client";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import ProfileList from "@/components/Profile/ProfileList";
 import Shellafooter from "@/components/shellafooter";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Metadata } from "next";
+import ProfileContent from "./ProfileContent";
+
+export const metadata: Metadata = {
+  title: "الملف الشخصي - شلة",
+  description: "إدارة ملفك الشخصي في شلة. عرض معلوماتك، طلباتك، المفضلة، العناوين المحفوظة، وإعدادات الحساب.",
+  keywords: "الملف الشخصي, شلة, حساب, طلبات, مفضلة, عناوين, إعدادات",
+  openGraph: {
+    title: "الملف الشخصي - شلة",
+    description: "إدارة ملفك الشخصي في شلة. عرض معلوماتك، طلباتك، المفضلة، العناوين المحفوظة، وإعدادات الحساب.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "الملف الشخصي - شلة",
+    description: "إدارة ملفك الشخصي في شلة. عرض معلوماتك، طلباتك، المفضلة، العناوين المحفوظة، وإعدادات الحساب.",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function Profile() {
-	const router = useRouter();
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		async function checkLoginStatus() {
-			try {
-				// إعطاء وقت أكثر للجلسة لتسجل في الكوكيز
-				await new Promise(resolve => setTimeout(resolve, 100));
-				
-				const response = await fetch("/api/is_logged_in");
-				console.log("🔍 Profile: Response status:", response.status);
-
-				const data = await response.json();
-				console.log("🔍 Profile: Response data:", data);
-
-				if (data.isLoggedIn) {
-					console.log("✅ Profile: User is logged in, showing profile");
-					setIsLoading(false);
-				} else {
-					console.log("❌ Profile: User not logged in, redirecting to login");
-					router.push("/login");
-				}
-			} catch (error) {
-				console.error("💥 Profile: Login check failed:", error);
-				router.push("/login");
-			}
-		}
-
-		checkLoginStatus();
-	}, [router]);
-
-	if (isLoading) return <div>Loading...</div>;
 	return (
 		<>
 			<NavBarCondition />
-			<ProfileList />
+			<ProfileContent />
 			<Shellafooter />
 		</>
 	);

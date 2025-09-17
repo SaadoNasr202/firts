@@ -26,7 +26,9 @@ export default function HomePage() {
 
 	const handleDiscountClick = (discountTitle: string) => {
 		// معاملة الخصومات كمتاجر - الانتقال لصفحة المتجر
-		router.push(`/store?store=${encodeURIComponent(discountTitle)}&source=discounts`);
+		router.push(
+			`/store?store=${encodeURIComponent(discountTitle)}&source=discounts`,
+		);
 	};
 
 	const handlePopularStoreClick = (storeName: string) => {
@@ -36,8 +38,12 @@ export default function HomePage() {
 	const handleCategoryClick = (categoryName: string) => {
 		if (categoryName === "هايبر شلة") {
 			router.push("/hyper-shella");
+		} else if (categoryName == "استلام وتسليم") {
+			router.push("/PickUp");
 		} else {
-			router.push(`/category-stores?category=${encodeURIComponent(categoryName)}`);
+			router.push(
+				`/category-stores?category=${encodeURIComponent(categoryName)}`,
+			);
 		}
 	};
 
@@ -46,13 +52,6 @@ export default function HomePage() {
 	const handleStoreClick = (storeName: string) => {
 		router.push(`/store?store=${encodeURIComponent(storeName)}&source=nearby`);
 	};
-	const handleNearbyStoresClick = () => {
-		router.push("/nearby-stores");
-	};
-	const handleSupermarketStoreClick = (storeName: string) => {
-		router.push(`/store?store=${encodeURIComponent(storeName)}&category=سوبر ماركت`);
-	};
-
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
@@ -75,7 +74,7 @@ export default function HomePage() {
 				</div>
 				<CategoriesSlider onCategoryClick={handleCategoryClick} />
 			</section>
-			
+
 			<section>
 				<div className="relative">
 					{/* صورة الخلفية */}

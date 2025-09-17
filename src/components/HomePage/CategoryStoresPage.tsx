@@ -93,11 +93,21 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 					>
 						<div className="relative h-48 bg-gray-200">
 							{store.image ? (
-								<img
-									src={store.image}
-									alt={store.name}
-									className="w-full h-full object-cover"
-								/>
+							<img
+								src={store.image}
+								alt={store.name}
+								className="w-full h-full object-cover"
+								onError={(e) => {
+									try {
+										const img = e.currentTarget as HTMLImageElement;
+										// منع الحلقة: ألغِ معالج الخطأ قبل تبديل المصدر
+										img.onerror = null;
+										// لا ترسل طلب شبكة: استخدم Data URI كبديل
+										img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='Arial' font-size='28'>لا توجد صورة</text></svg>";
+										console.warn("Store image failed:", store.name, store.image);
+									} catch {}
+								}}
+							/>
 							) : (
 								<div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
 									<svg className="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

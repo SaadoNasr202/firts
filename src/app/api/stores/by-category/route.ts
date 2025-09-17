@@ -45,8 +45,23 @@ export async function GET(request: NextRequest) {
 			.where(eq(TB_stores.categoryId, category[0].id))
 			.orderBy(TB_stores.createdAt);
 
+		// تطبيع روابط الصور لضمان العرض الصحيح في الواجهة
+		const normalizeImageUrl = (raw?: string | null) => {
+			if (!raw) return raw as unknown as string;
+			let url = String(raw).trim().replace(/\\/g, "/");
+			if (url.startsWith("lh3.googleusercontent.com")) {
+				url = `https://${url}`;
+			}
+			return url;
+		};
+
+		const normalizedStores = stores.map((s) => ({
+			...s,
+			image: normalizeImageUrl(s.image),
+		}));
+
 		return NextResponse.json({ 
-			stores,
+			stores: normalizedStores,
 			categoryExists: true,
 			category: {
 				id: category[0].id,

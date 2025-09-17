@@ -5,6 +5,28 @@ import { db } from "@/lib/db";
 import { TB_DeliveryDrivers } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "التسجيل كسائق - شلة",
+  description: "انضم إلى فريق سائقي شلة وابدأ رحلتك في عالم التوصيل. سجل الآن كسائق توصيل واكسب دخل إضافي مع مرونة في العمل.",
+  keywords: "سائق توصيل, شلة, تسجيل سائق, توصيل طلبات, دخل إضافي, عمل مرن",
+  openGraph: {
+    title: "التسجيل كسائق - شلة",
+    description: "انضم إلى فريق سائقي شلة وابدأ رحلتك في عالم التوصيل. سجل الآن كسائق توصيل واكسب دخل إضافي مع مرونة في العمل.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "التسجيل كسائق - شلة",
+    description: "انضم إلى فريق سائقي شلة وابدأ رحلتك في عالم التوصيل. سجل الآن كسائق توصيل واكسب دخل إضافي مع مرونة في العمل.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function driver() {
 	return (

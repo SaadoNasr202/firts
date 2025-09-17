@@ -89,6 +89,27 @@ export default function SavedAddress({ setActivePage }: SavedAddressProps) {
 		fetchAddresses();
 	}, [isLoaded]);
 
+	// دالة مساعدة لإعادة الجلب والتطبيق بعد عمليات الإضافة/التحديث/الحذف
+	async function refetchAndApplyAddresses() {
+		try {
+			const res = await fetch("/api/address");
+			const data = await res.json();
+			const addressesData = data.addresses || [];
+			const addressesWithFormatted = await Promise.all(
+				addressesData.map(async (address: Address) => {
+					const formattedAddress = await convertCoordinatesToAddress(address.address);
+					return { ...address, formattedAddress };
+				})
+			);
+			setAddresses(addressesWithFormatted);
+			if (addressesWithFormatted.length > 0) {
+				setLocation(addressesWithFormatted[0].address);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
 	// تحويل الإحداثيات إلى عنوان نصي
 	useEffect(() => {
 		if (!isLoaded || !location) return;
@@ -126,11 +147,10 @@ export default function SavedAddress({ setActivePage }: SavedAddressProps) {
 			const data = await res.json();
 			if (data.success) {
 				alert("تم إضافة العنوان بنجاح!");
-				// إعادة جلب العناوين
-				const addressesRes = await fetch("/api/address");
-				const addressesData = await addressesRes.json();
-				setAddresses(addressesData.addresses || []);
+				// إعادة جلب العناوين وتطبيقها
+				await refetchAndApplyAddresses();
 				setIsAddingNew(false);
+				setIsEditing(false);
 				setLocation("");
 			} else {
 				alert(data.error || "حدث خطأ أثناء إضافة العنوان");
@@ -154,10 +174,8 @@ export default function SavedAddress({ setActivePage }: SavedAddressProps) {
 			const data = await res.json();
 			if (data.success) {
 				alert("تم تحديث العنوان بنجاح!");
-				// إعادة جلب العناوين
-				const addressesRes = await fetch("/api/address");
-				const addressesData = await addressesRes.json();
-				setAddresses(addressesData.addresses || []);
+				// إعادة جلب العناوين وتطبيقها
+				await refetchAndApplyAddresses();
 				setIsEditing(false);
 				setEditingAddressId(null);
 			} else {
@@ -180,10 +198,8 @@ export default function SavedAddress({ setActivePage }: SavedAddressProps) {
 			const data = await res.json();
 			if (data.success) {
 				alert("تم حذف العنوان بنجاح!");
-				// إعادة جلب العناوين
-				const addressesRes = await fetch("/api/address");
-				const addressesData = await addressesRes.json();
-				setAddresses(addressesData.addresses || []);
+				// إعادة جلب العناوين وتطبيقها
+				await refetchAndApplyAddresses();
 			} else {
 				alert(data.error || "حدث خطأ أثناء حذف العنوان");
 			}

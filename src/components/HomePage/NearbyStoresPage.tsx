@@ -116,6 +116,14 @@ export default function NearbyStoresPage({
 								src={store.image}
 								alt={store.name}
 								className="h-full w-full object-cover"
+								onError={(e) => {
+									try {
+										const img = e.currentTarget as HTMLImageElement;
+										img.onerror = null;
+										img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='Arial' font-size='14'>لا توجد صورة</text></svg>";
+										console.warn("Store image failed:", store.name, store.image);
+									} catch {}
+								}}
 							/>
 						</div>
 						<p className="mt-2 text-xs text-gray-700">{store.name}</p>

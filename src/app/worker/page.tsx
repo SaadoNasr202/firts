@@ -5,6 +5,28 @@ import { db } from "@/lib/db";
 import { TB_Worker } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "التسجيل كعامل - شلة",
+  description: "انضم إلى فريق عمال شلة وابدأ مسيرتك المهنية في مجال الخدمات والتوصيل. سجل الآن كعامل واكسب دخل مستقر.",
+  keywords: "عامل شلة, تسجيل عامل, وظائف, خدمات, توصيل, دخل مستقر, عمل",
+  openGraph: {
+    title: "التسجيل كعامل - شلة",
+    description: "انضم إلى فريق عمال شلة وابدأ مسيرتك المهنية في مجال الخدمات والتوصيل. سجل الآن كعامل واكسب دخل مستقر.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "التسجيل كعامل - شلة",
+    description: "انضم إلى فريق عمال شلة وابدأ مسيرتك المهنية في مجال الخدمات والتوصيل. سجل الآن كعامل واكسب دخل مستقر.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function Worker() {
 	return (

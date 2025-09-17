@@ -2,6 +2,28 @@ import HomePage from "@/components/HomePage/HomePage";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Suspense } from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "الصفحة الرئيسية - شلة",
+  description: "اكتشف أفضل المتاجر والمطاعم في منطقتك. تسوق من سوبرماركت، مطاعم، صيدليات وأكثر. توصيل سريع وموثوق إلى باب منزلك.",
+  keywords: "شلة, تسوق, توصيل, مطاعم, سوبرماركت, صيدليات, متاجر قريبة, خصومات, عروض",
+  openGraph: {
+    title: "الصفحة الرئيسية - شلة",
+    description: "اكتشف أفضل المتاجر والمطاعم في منطقتك. تسوق من سوبرماركت، مطاعم، صيدليات وأكثر. توصيل سريع وموثوق إلى باب منزلك.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "الصفحة الرئيسية - شلة",
+    description: "اكتشف أفضل المتاجر والمطاعم في منطقتك. تسوق من سوبرماركت، مطاعم، صيدليات وأكثر. توصيل سريع وموثوق إلى باب منزلك.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 // Loading component للـ Suspense
 function HomePageLoading() {

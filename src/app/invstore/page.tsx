@@ -4,6 +4,28 @@ import Shellafooter from "@/components/shellafooter";
 import { db } from "@/lib/db";
 import { TB_Investore } from "@/lib/schema";
 import { nanoid } from "nanoid";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "التسجيل كمستثمر - شلة",
+  description: "انضم إلى برنامج الاستثمار في شلة واستثمر في مستقبل التوصيل والخدمات. سجل الآن كمستثمر وكن جزءاً من النمو.",
+  keywords: "مستثمر شلة, استثمار, تسجيل مستثمر, استثمار في التوصيل, نمو الأعمال, فرص استثمارية",
+  openGraph: {
+    title: "التسجيل كمستثمر - شلة",
+    description: "انضم إلى برنامج الاستثمار في شلة واستثمر في مستقبل التوصيل والخدمات. سجل الآن كمستثمر وكن جزءاً من النمو.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "التسجيل كمستثمر - شلة",
+    description: "انضم إلى برنامج الاستثمار في شلة واستثمر في مستقبل التوصيل والخدمات. سجل الآن كمستثمر وكن جزءاً من النمو.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function Invstore() {
 	return (

@@ -1,11 +1,31 @@
-"use client";
-
 import StorePage from "@/components/HomePage/StorePage";
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { Metadata } from "next";
+import StorePageContent from "./StorePageContent";
+
+export const metadata: Metadata = {
+  title: "المتجر - شلة",
+  description: "تصفح منتجات المتجر واستمتع بأفضل العروض والخصومات. توصيل سريع وموثوق إلى باب منزلك.",
+  keywords: "متجر, منتجات, عروض, خصومات, توصيل سريع, تسوق",
+  openGraph: {
+    title: "المتجر - شلة",
+    description: "تصفح منتجات المتجر واستمتع بأفضل العروض والخصومات. توصيل سريع وموثوق إلى باب منزلك.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "المتجر - شلة",
+    description: "تصفح منتجات المتجر واستمتع بأفضل العروض والخصومات. توصيل سريع وموثوق إلى باب منزلك.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function StorePageRoute() {
     return (
@@ -17,50 +37,6 @@ export default function StorePageRoute() {
                 </Suspense>
             </div>
             <Shellafooter />
-        </>
-    );
-}
-
-function StorePageContent() {
-    const searchParams = useSearchParams();
-    const storeName = searchParams.get("store") || "";
-    const categoryName = searchParams.get("category") || "";
-    const source = searchParams.get("source") || "";
-
-    const handleCategoryClick = (categoryName: string) => {
-        window.location.href = `/products?store=${encodeURIComponent(storeName)}&category=${encodeURIComponent(categoryName)}`;
-    };
-
-    const handleBreadcrumbClick = (index: number) => {
-        if (index === 0) {
-            window.location.href = "/HomePage";
-        } else if (source === "nearby") {
-            window.location.href = "/nearby-stores";
-        } else if (source === "discounts") {
-            window.location.href = "/discounts";
-        } else if (source === "popular") {
-            window.location.href = "/popular-stores";
-        } else if (categoryName) {
-            window.location.href = `/category-stores?category=${encodeURIComponent(categoryName)}`;
-        }
-    };
-
-    if (!storeName) {
-        return <div className="text-center text-gray-600">المتجر غير محدد.</div>;
-    }
-
-    return (
-        <>
-            <div className="mb-4">
-                <Breadcrumb 
-                    path={["الرئيسية", storeName]} 
-                    onBreadcrumbClick={handleBreadcrumbClick} 
-                />
-            </div>
-            <StorePage 
-                storeName={storeName}
-                onCategoryClick={handleCategoryClick}
-            />
         </>
     );
 }

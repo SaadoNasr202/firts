@@ -8,14 +8,28 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { Metadata } from "next";
 
-// export const metadata: Metadata = {
-// 	title: "SQLMentor - Login",
-// 	icons: {
-// 		icon: "/logo.ico",
-// 		apple: "/logo.png",
-// 	},
-// };
+export const metadata: Metadata = {
+  title: "تسجيل الدخول - شلة",
+  description: "سجل دخولك إلى حسابك في شلة واستمتع بخدمات التوصيل والتسوق المتنوعة. وصول سريع وآمن لحسابك.",
+  keywords: "تسجيل دخول, شلة, حساب, دخول, تسوق, توصيل, خدمات",
+  openGraph: {
+    title: "تسجيل الدخول - شلة",
+    description: "سجل دخولك إلى حسابك في شلة واستمتع بخدمات التوصيل والتسوق المتنوعة. وصول سريع وآمن لحسابك.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "تسجيل الدخول - شلة",
+    description: "سجل دخولك إلى حسابك في شلة واستمتع بخدمات التوصيل والتسوق المتنوعة. وصول سريع وآمن لحسابك.",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function LoginPage() {
 	return <LoginForm loginAction={LoginAction} />;

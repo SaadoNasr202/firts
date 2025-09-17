@@ -5,6 +5,28 @@ import { db } from "@/lib/db";
 import { TB_Partner } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "التسجيل كشريك - شلة",
+  description: "انضم إلى شبكة شركاء شلة ووسع عملك. سجل متجرك أو مطعمك معنا ووصل لعملاء جدد في منطقتك.",
+  keywords: "شريك شلة, تسجيل متجر, تسجيل مطعم, شراكة تجارية, توسيع العمل, عملاء جدد",
+  openGraph: {
+    title: "التسجيل كشريك - شلة",
+    description: "انضم إلى شبكة شركاء شلة ووسع عملك. سجل متجرك أو مطعمك معنا ووصل لعملاء جدد في منطقتك.",
+    type: "website",
+    locale: "ar_SA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "التسجيل كشريك - شلة",
+    description: "انضم إلى شبكة شركاء شلة ووسع عملك. سجل متجرك أو مطعمك معنا ووصل لعملاء جدد في منطقتك.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function Partner() {
 	return (
