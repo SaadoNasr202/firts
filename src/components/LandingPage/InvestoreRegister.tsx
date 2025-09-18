@@ -268,6 +268,84 @@ export default function InvestoreForm({
 			}
 		}
 
+		// التحقق من الأسماء (2-30 حرف، أحرف عربية/إنجليزية فقط)
+		const nameFields = ["first_name", "father_name", "family_name", "grandfather_name"];
+		for (const field of nameFields) {
+			const value = formData[field as keyof typeof formData] as string;
+			if (value.length < 2 || value.length > 30) {
+				return {
+					isValid: false,
+					message: `${field.replace('_', ' ')} يجب أن يكون بين 2-30 حرف`,
+				};
+			}
+			if (!/^[\u0600-\u06FFa-zA-Z\s]+$/.test(value)) {
+				return {
+					isValid: false,
+					message: `${field.replace('_', ' ')} يجب أن يحتوي على أحرف عربية أو إنجليزية فقط`,
+				};
+			}
+		}
+
+		// التحقق من تاريخ الميلاد (أكبر من 18 سنة، أقل من 80 سنة)
+		const birthDate = new Date(formData.birth_date);
+		const today = new Date();
+		const age = today.getFullYear() - birthDate.getFullYear();
+		if (age < 18 || age > 80) {
+			return {
+				isValid: false,
+				message: "العمر يجب أن يكون بين 18-80 سنة",
+			};
+		}
+
+		// التحقق من الهوية الوطنية (10 أرقام بالضبط)
+		if (!/^\d{10}$/.test(formData.national_id)) {
+			return {
+				isValid: false,
+				message: "الهوية الوطنية يجب أن تحتوي على 10 أرقام بالضبط",
+			};
+		}
+
+		// التحقق من البريد الإلكتروني
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+			return {
+				isValid: false,
+				message: "البريد الإلكتروني غير صحيح",
+			};
+		}
+
+		// التحقق من البريد الإلكتروني الوطني
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.national_address_email)) {
+			return {
+				isValid: false,
+				message: "البريد الإلكتروني الوطني غير صحيح",
+			};
+		}
+
+		// التحقق من المنطقة
+		if (formData.region.length < 2 || formData.region.length > 50) {
+			return {
+				isValid: false,
+				message: "المنطقة يجب أن تكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من اسم البنك
+		if (formData.bank_name.length < 2 || formData.bank_name.length > 100) {
+			return {
+				isValid: false,
+				message: "اسم البنك يجب أن يكون بين 2-100 حرف",
+			};
+		}
+
+		// التحقق من المبلغ (أكبر من 1000، أقل من 10,000,000)
+		const amount = parseFloat(formData.amount);
+		if (isNaN(amount) || amount < 1000 || amount > 10000000) {
+			return {
+				isValid: false,
+				message: "المبلغ يجب أن يكون بين 1,000 - 10,000,000 ريال",
+			};
+		}
+
 		if (!formData.agreed) {
 			return {
 				isValid: false,

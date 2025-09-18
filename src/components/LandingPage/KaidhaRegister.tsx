@@ -195,6 +195,134 @@ export default function KaidhaRegister({
 			}
 		}
 
+		// التحقق من الأسماء (2-30 حرف، أحرف عربية/إنجليزية فقط)
+		const nameFields = ["firstName", "lastName", "fatherName", "grandFatherName"];
+		for (const field of nameFields) {
+			const value = formData[field as keyof typeof formData] as string;
+			if (value.length < 2 || value.length > 30) {
+				return {
+					isValid: false,
+					message: `${field} يجب أن يكون بين 2-30 حرف`,
+				};
+			}
+			if (!/^[\u0600-\u06FFa-zA-Z\s]+$/.test(value)) {
+				return {
+					isValid: false,
+					message: `${field} يجب أن يحتوي على أحرف عربية أو إنجليزية فقط`,
+				};
+			}
+		}
+
+		// التحقق من تاريخ الميلاد (أكبر من 21 سنة، أقل من 65 سنة)
+		const birthDate = new Date(formData.birthDate);
+		const today = new Date();
+		const age = today.getFullYear() - birthDate.getFullYear();
+		if (age < 21 || age > 65) {
+			return {
+				isValid: false,
+				message: "العمر يجب أن يكون بين 21-65 سنة",
+			};
+		}
+
+		// التحقق من الجنسية
+		if (formData.nationality.length < 2 || formData.nationality.length > 50) {
+			return {
+				isValid: false,
+				message: "الجنسية يجب أن تكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من الهوية الوطنية (10 أرقام بالضبط)
+		if (!/^\d{10}$/.test(formData.personalIdNumber)) {
+			return {
+				isValid: false,
+				message: "الهوية الوطنية يجب أن تحتوي على 10 أرقام بالضبط",
+			};
+		}
+
+		// التحقق من البريد الإلكتروني
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+			return {
+				isValid: false,
+				message: "البريد الإلكتروني غير صحيح",
+			};
+		}
+
+		// التحقق من المدينة
+		if (formData.city.length < 2 || formData.city.length > 50) {
+			return {
+				isValid: false,
+				message: "المدينة يجب أن تكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من الحي
+		if (formData.neighborhood.length < 2 || formData.neighborhood.length > 50) {
+			return {
+				isValid: false,
+				message: "الحي يجب أن يكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من تفاصيل العنوان
+		if (formData.addressDetails.length < 5 || formData.addressDetails.length > 200) {
+			return {
+				isValid: false,
+				message: "تفاصيل العنوان يجب أن تكون بين 5-200 حرف",
+			};
+		}
+
+		// التحقق من اسم الشركة
+		if (formData.companyName && (formData.companyName.length < 2 || formData.companyName.length > 100)) {
+			return {
+				isValid: false,
+				message: "اسم الشركة يجب أن يكون بين 2-100 حرف",
+			};
+		}
+
+		// التحقق من المسمى الوظيفي
+		if (formData.jobTitle && (formData.jobTitle.length < 2 || formData.jobTitle.length > 100)) {
+			return {
+				isValid: false,
+				message: "المسمى الوظيفي يجب أن يكون بين 2-100 حرف",
+			};
+		}
+
+		// التحقق من سنوات الخبرة
+		if (formData.yearsOfExperience && (isNaN(parseInt(formData.yearsOfExperience)) || parseInt(formData.yearsOfExperience) < 0 || parseInt(formData.yearsOfExperience) > 50)) {
+			return {
+				isValid: false,
+				message: "سنوات الخبرة يجب أن تكون بين 0-50 سنة",
+			};
+		}
+
+		// التحقق من الراتب (أكبر من 3000، أقل من 100,000)
+		if (formData.grossSalary) {
+			const salary = parseFloat(formData.grossSalary);
+			if (isNaN(salary) || salary < 3000 || salary > 100000) {
+				return {
+					isValid: false,
+					message: "الراتب يجب أن يكون بين 3,000 - 100,000 ريال",
+				};
+			}
+		}
+
+		// التحقق من عنوان العمل
+		if (formData.workAddress && (formData.workAddress.length < 5 || formData.workAddress.length > 200)) {
+			return {
+				isValid: false,
+				message: "عنوان العمل يجب أن يكون بين 5-200 حرف",
+			};
+		}
+
+		// التحقق من الموقع الجغرافي
+		if (!formData.locationhouse || !formData.locationwork) {
+			return {
+				isValid: false,
+				message: "يجب تحديد موقع المنزل والعمل على الخريطة",
+			};
+		}
+
 		return { isValid: true, message: "" };
 	};
 

@@ -177,6 +177,69 @@ export default function StoreForm({
 			}
 		}
 
+		// التحقق من اسم المتجر (3-100 حرف، أحرف عربية/إنجليزية وأرقام)
+		if (formData.storeName.length < 3 || formData.storeName.length > 100) {
+			return {
+				isValid: false,
+				message: "اسم المتجر يجب أن يكون بين 3-100 حرف",
+			};
+		}
+		if (!/^[\u0600-\u06FFa-zA-Z0-9\s]+$/.test(formData.storeName)) {
+			return {
+				isValid: false,
+				message: "اسم المتجر يجب أن يحتوي على أحرف عربية أو إنجليزية وأرقام فقط",
+			};
+		}
+
+		// التحقق من تصنيف المتجر
+		if (formData.storeClassification.length < 2 || formData.storeClassification.length > 50) {
+			return {
+				isValid: false,
+				message: "تصنيف المتجر يجب أن يكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من المدينة
+		if (formData.city.length < 2 || formData.city.length > 50) {
+			return {
+				isValid: false,
+				message: "المدينة يجب أن تكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من ما يقدمه المتجر
+		if (formData.whatYourStoreOffers.length < 5 || formData.whatYourStoreOffers.length > 200) {
+			return {
+				isValid: false,
+				message: "وصف الخدمات يجب أن يكون بين 5-200 حرف",
+			};
+		}
+
+		// التحقق من عدد الفروع (رقم موجب، أقل من 100)
+		const branchCount = parseInt(formData.branchCount);
+		if (isNaN(branchCount) || branchCount < 1 || branchCount > 100) {
+			return {
+				isValid: false,
+				message: "عدد الفروع يجب أن يكون بين 1-100 فرع",
+			};
+		}
+
+		// التحقق من الهوية الوطنية (10 أرقام بالضبط)
+		if (!/^\d{10}$/.test(formData.personalIdNumber)) {
+			return {
+				isValid: false,
+				message: "الهوية الوطنية يجب أن تحتوي على 10 أرقام بالضبط",
+			};
+		}
+
+		// التحقق من الموقع الجغرافي
+		if (!formData.location || !formData.location.includes(',')) {
+			return {
+				isValid: false,
+				message: "يجب تحديد موقع المتجر على الخريطة",
+			};
+		}
+
 		if (!formData.agreed) {
 			return {
 				isValid: false,

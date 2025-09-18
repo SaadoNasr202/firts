@@ -150,6 +150,58 @@ export default function WorkerRegister({
 			}
 		}
 
+		// التحقق من الاسم الأول
+		if (formData.firstName.length < 2 || formData.firstName.length > 50) {
+			return {
+				isValid: false,
+				message: "الاسم الأول يجب أن يكون بين 2-50 حرف",
+			};
+		}
+		if (!/^[\u0600-\u06FFa-zA-Z\s]+$/.test(formData.firstName)) {
+			return {
+				isValid: false,
+				message: "الاسم الأول يجب أن يحتوي على أحرف عربية أو إنجليزية فقط",
+			};
+		}
+
+		// التحقق من الاسم الأخير
+		if (formData.lastName.length < 2 || formData.lastName.length > 50) {
+			return {
+				isValid: false,
+				message: "الاسم الأخير يجب أن يكون بين 2-50 حرف",
+			};
+		}
+		if (!/^[\u0600-\u06FFa-zA-Z\s]+$/.test(formData.lastName)) {
+			return {
+				isValid: false,
+				message: "الاسم الأخير يجب أن يحتوي على أحرف عربية أو إنجليزية فقط",
+			};
+		}
+
+		// التحقق من البريد الإلكتروني
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+			return {
+				isValid: false,
+				message: "البريد الإلكتروني غير صحيح",
+			};
+		}
+
+		// التحقق من المنطقة
+		if (formData.region.length < 2 || formData.region.length > 50) {
+			return {
+				isValid: false,
+				message: "المنطقة يجب أن تكون بين 2-50 حرف",
+			};
+		}
+
+		// التحقق من الهوية الوطنية (10 أرقام بالضبط)
+		if (!/^\d{10}$/.test(formData.personalIdNumber)) {
+			return {
+				isValid: false,
+				message: "الهوية الوطنية يجب أن تحتوي على 10 أرقام بالضبط",
+			};
+		}
+
 		if (!formData.agreed) {
 			return {
 				isValid: false,
