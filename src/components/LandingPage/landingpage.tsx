@@ -1,7 +1,7 @@
 "use client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BriefcaseBusiness, Store, Truck, UsersRound } from "lucide-react";
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 export default function LandingPage() {
 	const { t } = useLanguage();
 	return (
@@ -12,6 +12,7 @@ export default function LandingPage() {
 		>
 			{/* المحتوى الرئيسي */}
 			<main className="flex-grow">
+				 <SpeedInsights />
 				<div className="mx-auto max-w-[1800px] px-4 py-8 sm:px-6 lg:px-8">
 					{/* ====== HERO SECTION (القسم الأول) ====== */}
 					<section className="relative mb-8 overflow-hidden rounded-lg shadow-lg">
