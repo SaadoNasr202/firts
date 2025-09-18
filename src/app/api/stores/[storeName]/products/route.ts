@@ -54,9 +54,7 @@ export async function GET(
 			});
 		}
 
-		// جلب المنتجات من المتجر
-		// حالياً نعرض جميع منتجات المتجر للقسم المختار
-		// يمكن تحسين هذا لاحقاً بإضافة ربط المنتجات بالأقسام
+		// جلب المنتجات من المتجر المفلترة حسب القسم
 		const products = await db
 			.select({
 				id: TB_products.id,
@@ -67,7 +65,12 @@ export async function GET(
 				unit: TB_products.unit,
 			})
 			.from(TB_products)
-			.where(eq(TB_products.storeId, store[0].id));
+			.where(
+				and(
+					eq(TB_products.storeId, store[0].id),
+					eq(TB_products.storeCategoryId, storeCategory[0].id)
+				)
+			);
 
 		return NextResponse.json({ 
 			products,

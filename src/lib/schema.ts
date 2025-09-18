@@ -235,6 +235,9 @@ export const TB_products = pgTable("products", {
 	storeId: text("store_id")
 		.references(() => TB_stores.id)
 		.notNull(),
+	storeCategoryId: text("store_category_id") // الرابط للقسم
+		.references(() => TB_store_categories.id)
+		.notNull(),
 });
 export const TB_store_products = pgTable("store_products", {
 	id: text("id").primaryKey(),

@@ -9,6 +9,14 @@ export async function GET(request: NextRequest) {
 	try {
 		const { searchParams } = new URL(request.url);
 		const categoryName = searchParams.get('category');
+		const limitParam = searchParams.get('limit');
+		const offsetParam = searchParams.get('offset');
+
+		// ضبط الباجينغ: حد افتراضي 20 وبحد أقصى 50
+		const pageSizeRaw = Number.parseInt(limitParam ?? '20', 10);
+		const pageSize = Number.isNaN(pageSizeRaw) ? 20 : Math.min(Math.max(pageSizeRaw, 1), 50);
+		const offsetRaw = Number.parseInt(offsetParam ?? '0', 10);
+		const offset = Number.isNaN(offsetRaw) ? 0 : Math.max(offsetRaw, 0);
 
 		if (!categoryName) {
 			return NextResponse.json(
@@ -33,7 +41,8 @@ export async function GET(request: NextRequest) {
 		}
 
 		// جلب المتاجر التي تنتمي لهذا القسم
-		const stores = await db
+		// نجلب (pageSize + 1) عنصر لمعرفة إن كان هناك المزيد
+		const storesPage = await db
 			.select({
 				id: TB_stores.id,
 				name: TB_stores.name,
@@ -43,7 +52,9 @@ export async function GET(request: NextRequest) {
 			})
 			.from(TB_stores)
 			.where(eq(TB_stores.categoryId, category[0].id))
-			.orderBy(TB_stores.createdAt);
+			.orderBy(TB_stores.createdAt)
+			.limit(pageSize + 1)
+			.offset(offset);
 
 		// تطبيع روابط الصور لضمان العرض الصحيح في الواجهة
 		const normalizeImageUrl = (raw?: string | null) => {
@@ -55,10 +66,14 @@ export async function GET(request: NextRequest) {
 			return url;
 		};
 
-		const normalizedStores = stores.map((s) => ({
+		const normalizedStoresAll = storesPage.map((s) => ({
 			...s,
 			image: normalizeImageUrl(s.image),
 		}));
+
+		// قص النتائج للحد المطلوب وتحديد إن كان هناك المزيد
+		const hasMore = normalizedStoresAll.length > pageSize;
+		const normalizedStores = hasMore ? normalizedStoresAll.slice(0, pageSize) : normalizedStoresAll;
 
 		return NextResponse.json({ 
 			stores: normalizedStores,
@@ -66,7 +81,10 @@ export async function GET(request: NextRequest) {
 			category: {
 				id: category[0].id,
 				name: category[0].name
-			}
+			},
+			hasMore,
+			nextOffset: offset + normalizedStores.length,
+			limit: pageSize
 		});
 	} catch (error) {
 		console.error("خطأ في جلب المتاجر حسب القسم:", error);

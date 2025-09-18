@@ -18,15 +18,21 @@ interface CategoryStoresPageProps {
 export default function CategoryStoresPage({ categoryName, onStoreClick }: CategoryStoresPageProps) {
 	const [stores, setStores] = useState<Store[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isLoadingMore, setIsLoadingMore] = useState(false);
+	const [hasMore, setHasMore] = useState(true);
+	const [nextOffset, setNextOffset] = useState(0);
+	const pageSize = 20;
 
 	useEffect(() => {
 		const fetchCategoryStores = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName)}`);
+				const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName)}&limit=${pageSize}&offset=0`);
 				if (response.ok) {
 					const data = await response.json();
 					setStores(data.stores || []);
+					setHasMore(Boolean(data.hasMore));
+					setNextOffset(Number(data.nextOffset ?? (data.stores?.length ?? 0)));
 				} else {
 					console.error('فشل في جلب متاجر القسم');
 				}
@@ -41,6 +47,24 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 			fetchCategoryStores();
 		}
 	}, [categoryName]);
+
+	const handleLoadMore = async () => {
+		if (!hasMore || isLoadingMore) return;
+		setIsLoadingMore(true);
+		try {
+			const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName)}&limit=${pageSize}&offset=${nextOffset}`);
+			if (response.ok) {
+				const data = await response.json();
+				setStores(prev => [...prev, ...(data.stores || [])]);
+				setHasMore(Boolean(data.hasMore));
+				setNextOffset(Number(data.nextOffset ?? nextOffset));
+			}
+		} catch (error) {
+			console.error('خطأ في جلب المزيد من المتاجر:', error);
+		} finally {
+			setIsLoadingMore(false);
+		}
+	};
 
 	// عرض حالة التحميل
 	if (isLoading) {
@@ -131,6 +155,18 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 					</div>
 				))}
 			</div>
+			{/* زر عرض المزيد */}
+			{hasMore && (
+				<div className="mt-8 flex justify-center">
+					<button
+						onClick={handleLoadMore}
+						disabled={isLoadingMore}
+						className={`px-6 py-2 rounded-md text-white transition-colors ${isLoadingMore ? 'bg-gray-400' : 'bg-[#0EA5E9] hover:bg-[#0284C7]'}`}
+					>
+						{isLoadingMore ? '...جاري التحميل' : 'عرض المزيد'}
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }
