@@ -580,7 +580,7 @@ export default function StoreForm({
 												};
 												setFormData((prev) => ({
 													...prev,
-													location: `${position.lng},${position.lat}`,
+													location: `${position.lat},${position.lng}`,
 												}));
 											},
 											() => alert(t("partnerForm.locationError")),
