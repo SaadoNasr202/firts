@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useStoreFavorites } from "@/hooks/useFavorites";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 
 interface Store {
 	id: string;
@@ -13,6 +15,69 @@ interface Store {
 interface CategoryStoresPageProps {
 	categoryName: string;
 	onStoreClick: (storeName: string) => void;
+}
+
+// مكون بطاقة المتجر مع زر المفضلة
+function StoreCard({ 
+	store, 
+	onStoreClick 
+}: { 
+	store: Store; 
+	onStoreClick: (storeName: string) => void;
+}) {
+	const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useStoreFavorites(store.id);
+
+	return (
+		<div
+			onClick={() => onStoreClick(store.name)}
+			className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200 relative"
+		>
+			<div className="relative h-48 bg-gray-200">
+				{store.image ? (
+					<img
+						src={store.image}
+						alt={store.name}
+						className="w-full h-full object-cover"
+						onError={(e) => {
+							try {
+								const img = e.currentTarget as HTMLImageElement;
+								img.onerror = null;
+								img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='Arial' font-size='28'>لا توجد صورة</text></svg>";
+								console.warn("Store image failed:", store.name, store.image);
+							} catch {}
+						}}
+					/>
+				) : (
+					<div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+						<svg className="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+						</svg>
+					</div>
+				)}
+				
+				{/* زر المفضلة */}
+				<FavoriteButton
+					isFavorite={isFavorite}
+					isLoading={favoriteLoading}
+					onToggle={toggleFavorite}
+					size="md"
+					className="absolute top-4 left-4"
+				/>
+			</div>
+			<div className="p-4 text-right">
+				<h3 className="text-lg font-semibold text-gray-900 mb-1">{store.name}</h3>
+				<p className="text-sm text-gray-600 mb-2">{store.type}</p>
+				{store.rating && (
+					<div className="flex items-center justify-end">
+						<span className="text-sm text-gray-500 mr-1">{store.rating}</span>
+						<svg className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+							<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
+						</svg>
+					</div>
+				)}
+			</div>
+		</div>
+	);
 }
 
 export default function CategoryStoresPage({ categoryName, onStoreClick }: CategoryStoresPageProps) {
@@ -110,49 +175,11 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 			<h2 className="text-2xl font-bold text-gray-900 mb-6">{categoryName}</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 				{stores.map((store) => (
-					<div
+					<StoreCard
 						key={store.id}
-						onClick={() => onStoreClick(store.name)}
-						className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200"
-					>
-						<div className="relative h-48 bg-gray-200">
-							{store.image ? (
-							<img
-								src={store.image}
-								alt={store.name}
-								className="w-full h-full object-cover"
-								onError={(e) => {
-									try {
-										const img = e.currentTarget as HTMLImageElement;
-										// منع الحلقة: ألغِ معالج الخطأ قبل تبديل المصدر
-										img.onerror = null;
-										// لا ترسل طلب شبكة: استخدم Data URI كبديل
-										img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='Arial' font-size='28'>لا توجد صورة</text></svg>";
-										console.warn("Store image failed:", store.name, store.image);
-									} catch {}
-								}}
-							/>
-							) : (
-								<div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-									<svg className="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-									</svg>
-								</div>
-							)}
-						</div>
-						<div className="p-4 text-right">
-							<h3 className="text-lg font-semibold text-gray-900 mb-2">{store.name}</h3>
-							<p className="text-gray-600 mb-2">{store.type}</p>
-							{store.rating && (
-								<div className="flex items-center justify-end">
-									<span className="text-sm text-gray-500 mr-1">{store.rating}</span>
-									<svg className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-										<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
-									</svg>
-								</div>
-							)}
-						</div>
-					</div>
+						store={store}
+						onStoreClick={onStoreClick}
+					/>
 				))}
 			</div>
 			{/* زر عرض المزيد */}

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
+import { useProductFavorites } from "@/hooks/useFavorites";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 
 interface Product {
 	id: string;
@@ -16,6 +18,95 @@ interface ProductsPageProps {
 	categoryName: string;
 	storeName: string;
 	onProductClick: (productId: string) => void;
+}
+
+// مكون بطاقة المنتج مع زر المفضلة
+function ProductCard({ 
+	product, 
+	onProductClick, 
+	onAddToCart, 
+	cartLoading 
+}: { 
+	product: Product; 
+	onProductClick: (productId: string) => void;
+	onAddToCart: (productId: string) => void;
+	cartLoading: boolean;
+}) {
+	const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useProductFavorites(product.id);
+
+	return (
+		<button
+			onClick={() => onProductClick(product.id)}
+			className="flex cursor-pointer flex-col overflow-hidden rounded-lg bg-white p-4 text-center shadow-sm hover:shadow-md transition-shadow relative"
+		>
+			<div className="relative">
+				<img
+					src={product.image}
+					alt={product.name}
+					className="h-32 w-full object-contain"
+				/>
+				
+				{/* زر المفضلة */}
+				<FavoriteButton
+					isFavorite={isFavorite}
+					isLoading={favoriteLoading}
+					onToggle={toggleFavorite}
+					size="sm"
+				/>
+				
+				{/* زر إضافة للسلة */}
+				<button 
+					onClick={(e) => {
+						e.stopPropagation();
+						onAddToCart(product.id);
+					}}
+					disabled={cartLoading}
+					className={`absolute right-2 bottom-2 rounded-full p-2 text-white shadow-md transition-colors ${
+						cartLoading 
+							? 'bg-gray-400 cursor-not-allowed' 
+							: 'bg-green-500 hover:bg-green-600'
+					}`}
+				>
+					{cartLoading ? (
+						<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+					) : (
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="h-4 w-4"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M12 4v16m8-8H4"
+							/>
+						</svg>
+					)}
+				</button>
+			</div>
+			<div className="mt-2 text-right">
+				<h3 className="text-sm font-semibold text-gray-800">
+					{product.name}
+				</h3>
+				{product.unit && (
+					<p className="text-xs text-gray-500">{product.unit}</p>
+				)}
+				<div className="mt-2 flex items-center justify-end">
+					{product.originalPrice && (
+						<span className="ml-2 text-xs text-gray-400 line-through">
+							{product.originalPrice}
+						</span>
+					)}
+					<span className="text-md font-bold text-green-600">
+						{product.price}
+					</span>
+				</div>
+			</div>
+		</button>
+	);
 }
 
 export default function ProductsPage({
@@ -130,68 +221,13 @@ export default function ProductsPage({
 			) : (
 				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
 					{products.map((product) => (
-						<button
+						<ProductCard
 							key={product.id}
-							onClick={() => onProductClick(product.id)}
-							className="flex cursor-pointer flex-col overflow-hidden rounded-lg bg-white p-4 text-center shadow-sm hover:shadow-md transition-shadow"
-						>
-							<div className="relative">
-								<img
-									src={product.image}
-									alt={product.name}
-									className="h-32 w-full object-contain"
-								/>
-								<button 
-									onClick={(e) => {
-										e.stopPropagation();
-										handleAddToCart(product.id);
-									}}
-									disabled={cartLoading}
-									className={`absolute right-2 bottom-2 rounded-full p-2 text-white shadow-md transition-colors ${
-										cartLoading 
-											? 'bg-gray-400 cursor-not-allowed' 
-											: 'bg-green-500 hover:bg-green-600'
-									}`}
-								>
-									{cartLoading ? (
-										<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-									) : (
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="h-4 w-4"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M12 4v16m8-8H4"
-											/>
-										</svg>
-									)}
-								</button>
-							</div>
-							<div className="mt-2 text-right">
-								<h3 className="text-sm font-semibold text-gray-800">
-									{product.name}
-								</h3>
-								{product.unit && (
-									<p className="text-xs text-gray-500">{product.unit}</p>
-								)}
-								<div className="mt-2 flex items-center justify-end">
-									{product.originalPrice && (
-										<span className="ml-2 text-xs text-gray-400 line-through">
-											{product.originalPrice}
-										</span>
-									)}
-									<span className="text-md font-bold text-green-600">
-										{product.price}
-									</span>
-								</div>
-							</div>
-						</button>
+							product={product}
+							onProductClick={onProductClick}
+							onAddToCart={handleAddToCart}
+							cartLoading={cartLoading}
+						/>
 					))}
 				</div>
 			)}

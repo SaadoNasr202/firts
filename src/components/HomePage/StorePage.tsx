@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useStoreFavorites } from "@/hooks/useFavorites";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 
 // Define the component's props
 interface StorePageProps {
@@ -20,6 +22,10 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
   const [productCategories, setProductCategories] = useState<string[]>([]);
   const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useStoreFavorites(
+    storeDetails?.id || ""
+  );
 
   // جلب أقسام المتجر من قاعدة البيانات
   useEffect(() => {
@@ -68,11 +74,22 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
             </svg>
           </div>
         )}
+        
+        {/* زر المفضلة في الزاوية اليسرى العليا من الصورة */}
+        {storeDetails?.id && !isLoading && (
+          <FavoriteButton
+            isFavorite={isFavorite}
+            isLoading={favoriteLoading}
+            onToggle={toggleFavorite}
+            size="md"
+            className="absolute top-4 left-4"
+          />
+        )}
       </div>
 
       <div className="bg-white p-4 md:p-8 rounded-t-2xl -mt-8 relative z-10 shadow-lg">
         <div className="flex justify-between items-start">
-          <div className="text-right">
+          <div className="text-right relative">
             {isLoading ? (
               <>
                 <div className="h-8 w-48 animate-pulse bg-gray-300 rounded mb-2"></div>
@@ -134,7 +151,7 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
             <button
               key={index}
               onClick={() => onCategoryClick(category)}
-              className="flex flex-col items-center text-center p-2 rounded-lg bg-white shadow-sm hover:bg-gray-100 transition-colors"
+              className="flex flex-col items-center text-center p-2 rounded-lg bg-white shadow-sm hover:bg-gray-100 transition-colors relative"
             >
               <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center">
                 {/* Placeholder for icon/image */}
