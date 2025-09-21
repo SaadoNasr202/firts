@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 					type: "store",
 					image: store.image,
 					description: `${store.name} - ${store.type || "متجر"}`,
-					rating: store.rating || 0,
+					rating: typeof store.rating === 'number' ? store.rating : 0,
 				});
 			});
 		} catch (storeError) {

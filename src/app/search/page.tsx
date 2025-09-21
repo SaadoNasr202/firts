@@ -1,6 +1,7 @@
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Metadata } from "next";
+import { Suspense } from "react";
 import SearchPageContent from "./SearchPageContent";
 
 export const metadata: Metadata = {
@@ -29,7 +30,14 @@ export default function SearchPageRoute() {
 		<>
 			<NavBarCondition />
 			<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-				<SearchPageContent />
+				<Suspense fallback={
+					<div className="text-center py-12">
+						<div className="h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-[#ADF0D1] mx-auto mb-4"></div>
+						<p className="text-gray-600">جاري تحميل صفحة البحث...</p>
+					</div>
+				}>
+					<SearchPageContent />
+				</Suspense>
 			</div>
 			<Shellafooter />
 		</>

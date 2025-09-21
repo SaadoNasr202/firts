@@ -95,7 +95,7 @@ export default function NearbyStoresPageContent() {
 	});
 
 	// الحصول على الأقسام الفريدة
-	const categories = ["الكل", ...new Set(stores.map(store => store.type).filter(Boolean))];
+	const categories = ["الكل", ...new Set(stores.map(store => store.type).filter(Boolean))] as string[];
 
 	// عرض حالة التحميل
 	if (isLoading) {

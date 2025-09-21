@@ -101,7 +101,7 @@ export default function DiscountsPageContent() {
 	});
 
 	// الحصول على الأقسام الفريدة
-	const categories = ["الكل", ...new Set(discounts.map(discount => getDiscountInfo(discount).category))];
+	const categories = ["الكل", ...new Set(discounts.map(discount => getDiscountInfo(discount).category))] as string[];
 
 	// حساب الأيام المتبقية
 	const getDaysRemaining = (validUntil: string) => {
