@@ -34,10 +34,20 @@ const MobileMenu = ({
 	cartCount: number;
 	isLoadingUser: boolean;
 }) => {
+	const [searchTerm, setSearchTerm] = useState("");
+
 	const handleClick = (tab: string, href: string) => {
 		setActiveTab(tab);
 		window.location.href = href;
 		onClose();
+	};
+
+	const handleSearch = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (searchTerm.trim()) {
+			window.location.href = `/search?q=${encodeURIComponent(searchTerm.trim())}`;
+			onClose();
+		}
 	};
 
 	return (
@@ -50,14 +60,18 @@ const MobileMenu = ({
 					<X size={24} />
 				</button>
 			</div>
-			<div className="relative mt-8 flex w-full items-center">
-				<Search size={20} className="absolute right-4 text-gray-400" />
-				<input
-					type="text"
-					placeholder="ابحث عن المتاجر أو المطاعم..."
-					className="w-full rounded-2xl border bg-gray-100 py-2 pr-10 pl-4 text-right text-sm placeholder-gray-500 focus:outline-none"
-				/>
-			</div>
+			<form onSubmit={handleSearch} className="mt-8">
+				<div className="relative flex w-full items-center">
+					<Search size={20} className="absolute right-4 text-gray-400" />
+					<input
+						type="text"
+						placeholder="ابحث عن المتاجر أو المطاعم..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						className="w-full rounded-2xl border bg-gray-100 py-2 pr-10 pl-4 text-right text-sm placeholder-gray-500 focus:outline-none"
+					/>
+				</div>
+			</form>
 			<div className="mt-8 flex flex-col items-start gap-6">
 				<button
 					onClick={() => handleClick("home", "/")}
@@ -153,6 +167,7 @@ export default function NavBarCondition() {
 	const [user, setUser] = useState<{ fullName: string; email: string } | null>(null);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [isLoadingUser, setIsLoadingUser] = useState(true);
+	const [searchTerm, setSearchTerm] = useState("");
 
 	useEffect(() => {
 		if (pathname.startsWith("/profile")) setActiveTab("login");
@@ -212,6 +227,13 @@ export default function NavBarCondition() {
 		window.location.href = href;
 	};
 
+	const handleSearch = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (searchTerm.trim()) {
+			window.location.href = `/search?q=${encodeURIComponent(searchTerm.trim())}`;
+		}
+	};
+
 	return (
 		<>
 			<nav className="flex w-full items-center justify-between border-b bg-white px-4 py-2 shadow-sm md:px-6">
@@ -224,14 +246,16 @@ export default function NavBarCondition() {
 					</button>
 				</div>
 
-				<div className="relative flex w-full items-center md:order-2 md:w-auto">
+				<form onSubmit={handleSearch} className="relative flex w-full items-center md:order-2 md:w-auto">
 					<Search size={20} className="absolute right-4 text-gray-400" />
 					<input
 						type="text"
 						placeholder="ابحث عن المتاجر أو المطاعم أو المنتجات الفريدة..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
 						className="h-fit w-full rounded-2xl border bg-gray-100 py-2 pr-10 pl-4 text-right text-sm placeholder-gray-500 focus:outline-none md:w-96"
 					/>
-				</div>
+				</form>
 
 				<div className="hidden w-full flex-row-reverse items-center justify-between gap-4 md:order-1 md:flex md:w-auto">
 					<button
