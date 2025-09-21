@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { TB_store_categories, TB_stores } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
 
 // إجبار Next.js على معاملة هذا الـ route كـ dynamic
 export const dynamic = 'force-dynamic';
@@ -18,6 +19,17 @@ export async function GET(request: NextRequest) {
 			);
 		}
 
+		// التحقق من التخزين المؤقت أولاً
+		const cacheKeyForStore = `store-categories:${storeName}`;
+		const cachedData = cache.get<any>(cacheKeyForStore);
+		
+		if (isValidCacheData(cachedData)) {
+			return NextResponse.json({ 
+				...cachedData,
+				cached: true
+			});
+		}
+
 		// البحث عن المتجر بالاسم أولاً
 		const store = await db
 			.select()
@@ -27,10 +39,13 @@ export async function GET(request: NextRequest) {
 
 		if (store.length === 0) {
 			// إذا لم يوجد المتجر، إرجاع array فارغ بدلاً من خطأ
-			return NextResponse.json({ 
+			const emptyResult = { 
 				categories: [],
 				storeExists: false 
-			});
+			};
+			// حفظ النتيجة الفارغة في التخزين المؤقت لمدة دقيقة واحدة
+			cache.set(cacheKeyForStore, emptyResult, 60);
+			return NextResponse.json(emptyResult);
 		}
 
 		// جلب أقسام المتجر
@@ -43,7 +58,7 @@ export async function GET(request: NextRequest) {
 			.where(eq(TB_store_categories.storeId, store[0].id))
 			.orderBy(TB_store_categories.createdAt);
 
-		return NextResponse.json({ 
+		const result = { 
 			categories: storeCategories.map(cat => cat.name), // إرجاع أسماء فقط مثل الـ array الأصلي
 			storeExists: true,
 			store: {
@@ -53,6 +68,14 @@ export async function GET(request: NextRequest) {
 				rating: store[0].rating,
 				image: store[0].image
 			}
+		};
+
+		// حفظ النتائج في التخزين المؤقت لمدة 10 دقائق
+		cache.set(cacheKeyForStore, result, 600);
+
+		return NextResponse.json({ 
+			...result,
+			cached: false
 		});
 	} catch (error) {
 		console.error("خطأ في جلب أقسام المتجر:", error);

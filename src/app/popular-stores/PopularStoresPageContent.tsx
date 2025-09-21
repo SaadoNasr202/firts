@@ -2,6 +2,7 @@
 
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import { useState, useEffect } from "react";
+import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
 
 interface Store {
 	id: string;
@@ -16,31 +17,21 @@ export default function PopularStoresPageContent() {
 	const [selectedCategory, setSelectedCategory] = useState("الكل");
 	const [sortBy, setSortBy] = useState("rating");
 	const [showOnlyPopular, setShowOnlyPopular] = useState(false);
-	const [stores, setStores] = useState<Store[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 
-	// جلب المتاجر من قاعدة البيانات
-	useEffect(() => {
-		const fetchStores = async () => {
-			try {
-				const response = await fetch('/api/stores/nearby');
-				if (response.ok) {
-					const data = await response.json();
-					setStores(data.stores || []);
-				} else {
-					setError('فشل في جلب المتاجر');
-				}
-			} catch (error) {
-				console.error('خطأ في جلب المتاجر:', error);
-				setError('خطأ في جلب المتاجر');
-			} finally {
-				setIsLoading(false);
+	// استخدام التخزين المؤقت على مستوى العميل
+	const { data: storesData, isLoading, error } = useClientCache(
+		cacheKeys.stores(),
+		async () => {
+			const response = await fetch('/api/stores/nearby');
+			if (!response.ok) {
+				throw new Error('فشل في جلب المتاجر');
 			}
-		};
+			return response.json();
+		},
+		600 // 10 دقائق
+	);
 
-		fetchStores();
-	}, []);
+	const stores = storesData?.stores || [];
 
 	const handleStoreClick = (storeName: string) => {
 		window.location.href = `/store?store=${encodeURIComponent(storeName)}&source=popular`;
@@ -81,7 +72,7 @@ export default function PopularStoresPageContent() {
 	};
 
 	// تصفية المحلات
-	const filteredStores = stores.filter(store => {
+	const filteredStores = stores.filter((store: Store) => {
 		const storeInfo = getStoreInfo(store);
 		const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			storeInfo.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -91,7 +82,7 @@ export default function PopularStoresPageContent() {
 	});
 
 	// ترتيب المحلات
-	const sortedStores = [...filteredStores].sort((a, b) => {
+	const sortedStores = [...filteredStores].sort((a: Store, b: Store) => {
 		const aInfo = getStoreInfo(a);
 		const bInfo = getStoreInfo(b);
 		
@@ -110,7 +101,7 @@ export default function PopularStoresPageContent() {
 	});
 
 	// الحصول على الأقسام الفريدة
-	const categories = ["الكل", ...new Set(stores.map(store => store.type).filter(Boolean))] as string[];
+	const categories = ["الكل", ...new Set(stores.map((store: Store) => store.type).filter(Boolean))] as string[];
 
 	// عرض حالة التحميل
 	if (isLoading) {
@@ -226,7 +217,7 @@ export default function PopularStoresPageContent() {
 
 			{/* شبكة المحلات */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{sortedStores.map((store) => {
+					{sortedStores.map((store: Store) => {
 					const storeInfo = getStoreInfo(store);
 					return (
 						<div

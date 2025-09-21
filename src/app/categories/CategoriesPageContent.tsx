@@ -2,6 +2,7 @@
 
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import { useState, useEffect } from "react";
+import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
 
 interface Category {
 	id: string;
@@ -11,31 +12,21 @@ interface Category {
 
 export default function CategoriesPageContent() {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [categories, setCategories] = useState<Category[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 
-	// جلب الأقسام من قاعدة البيانات
-	useEffect(() => {
-		const fetchCategories = async () => {
-			try {
-				const response = await fetch('/api/categories');
-				if (response.ok) {
-					const data = await response.json();
-					setCategories(data.categories || []);
-				} else {
-					setError('فشل في جلب الأقسام');
-				}
-			} catch (error) {
-				console.error('خطأ في جلب الأقسام:', error);
-				setError('خطأ في جلب الأقسام');
-			} finally {
-				setIsLoading(false);
+	// استخدام التخزين المؤقت على مستوى العميل
+	const { data: categoriesData, isLoading, error } = useClientCache(
+		cacheKeys.categories(),
+		async () => {
+			const response = await fetch('/api/categories');
+			if (!response.ok) {
+				throw new Error('فشل في جلب الأقسام');
 			}
-		};
+			return response.json();
+		},
+		900 // 15 دقيقة
+	);
 
-		fetchCategories();
-	}, []);
+	const categories = categoriesData?.categories || [];
 
 	const handleCategoryClick = (categoryName: string) => {
 		if (categoryName === "هايبر شلة") {
@@ -69,7 +60,7 @@ export default function CategoriesPageContent() {
 		return styles[categoryName] || { icon: "📂", color: "bg-gray-50 border-gray-200 hover:bg-gray-100", textColor: "text-gray-700" };
 	};
 
-	const filteredCategories = categories.filter(category =>
+	const filteredCategories = categories.filter((category: Category) =>
 		category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 		(category.description && category.description.toLowerCase().includes(searchTerm.toLowerCase()))
 	);
@@ -150,7 +141,7 @@ export default function CategoriesPageContent() {
 
 			{/* شبكة الأقسام */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{filteredCategories.map((category) => {
+					{filteredCategories.map((category: Category) => {
 					const style = getCategoryStyle(category.name);
 					return (
 						<div

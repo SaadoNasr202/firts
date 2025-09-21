@@ -1,12 +1,24 @@
 import { db } from "@/lib/db";
 import { TB_stores } from "@/lib/schema";
 import { NextResponse } from "next/server";
+import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
 
 // إجبار Next.js على معاملة هذا الـ route كـ dynamic
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
 	try {
+		// التحقق من التخزين المؤقت أولاً
+		const cacheKeyForStores = cacheKey.stores();
+		const cachedStores = cache.get<any[]>(cacheKeyForStores);
+		
+		if (isValidCacheData(cachedStores)) {
+			return NextResponse.json({ 
+				stores: cachedStores,
+				cached: true
+			});
+		}
+
 		// جلب المتاجر من قاعدة البيانات (اسم المتجر والصورة)
 		const stores = await db
 			.select({
@@ -34,7 +46,13 @@ export async function GET() {
 			image: normalizeImageUrl(s.image),
 		}));
 
-		return NextResponse.json({ stores: normalizedStores });
+		// حفظ النتائج في التخزين المؤقت لمدة 10 دقائق
+		cache.set(cacheKeyForStores, normalizedStores, 600);
+
+		return NextResponse.json({ 
+			stores: normalizedStores,
+			cached: false
+		});
 	} catch (error) {
 		console.error("خطأ في جلب المتاجر:", error);
 		return NextResponse.json(

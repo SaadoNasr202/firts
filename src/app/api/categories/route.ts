@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { TB_categories } from "@/lib/schema";
 import { NextResponse } from "next/server";
+import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,18 @@ interface Category {
 
 export async function GET() {
 	try {
+		// التحقق من التخزين المؤقت أولاً
+		const cacheKeyForCategories = cacheKey.categories();
+		const cachedCategories = cache.get<Category[]>(cacheKeyForCategories);
+		
+		if (isValidCacheData(cachedCategories)) {
+			return NextResponse.json({ 
+				categories: cachedCategories,
+				success: true,
+				cached: true
+			});
+		}
+
 		let categories: Category[] = [];
 		
 		try {
@@ -41,9 +54,13 @@ export async function GET() {
 			] as Category[];
 		}
 
+		// حفظ النتائج في التخزين المؤقت لمدة 15 دقيقة
+		cache.set(cacheKeyForCategories, categories, 900);
+
 		return NextResponse.json({ 
 			categories,
-			success: true 
+			success: true,
+			cached: false
 		});
 	} catch (error) {
 		console.error("خطأ في جلب الأقسام:", error);

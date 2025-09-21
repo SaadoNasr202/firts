@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { TB_products, TB_stores, TB_store_categories } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { cache, isValidCacheData } from "@/lib/cache";
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,17 @@ export async function GET(
 			);
 		}
 
+		// التحقق من التخزين المؤقت أولاً
+		const cacheKeyForProducts = `products:${params.storeName}:${categoryName}`;
+		const cachedData = cache.get<any>(cacheKeyForProducts);
+		
+		if (isValidCacheData(cachedData)) {
+			return NextResponse.json({ 
+				...cachedData,
+				cached: true
+			});
+		}
+
 		// البحث عن المتجر بالاسم
 		const store = await db
 			.select()
@@ -28,10 +40,12 @@ export async function GET(
 			.limit(1);
 
 		if (store.length === 0) {
-			return NextResponse.json({ 
+			const emptyResult = { 
 				products: [],
 				storeExists: false 
-			});
+			};
+			cache.set(cacheKeyForProducts, emptyResult, 60);
+			return NextResponse.json(emptyResult);
 		}
 
 		// البحث عن القسم في المتجر
@@ -47,11 +61,13 @@ export async function GET(
 			.limit(1);
 
 		if (storeCategory.length === 0) {
-			return NextResponse.json({ 
+			const emptyResult = { 
 				products: [],
 				storeExists: true,
 				categoryExists: false 
-			});
+			};
+			cache.set(cacheKeyForProducts, emptyResult, 60);
+			return NextResponse.json(emptyResult);
 		}
 
 		// جلب المنتجات من المتجر المفلترة حسب القسم
@@ -72,7 +88,7 @@ export async function GET(
 				)
 			);
 
-		return NextResponse.json({ 
+		const result = { 
 			products,
 			storeExists: true,
 			categoryExists: true,
@@ -84,6 +100,14 @@ export async function GET(
 				id: storeCategory[0].id,
 				name: storeCategory[0].name
 			}
+		};
+
+		// حفظ النتائج في التخزين المؤقت لمدة 5 دقائق
+		cache.set(cacheKeyForProducts, result, 300);
+
+		return NextResponse.json({ 
+			...result,
+			cached: false
 		});
 	} catch (error) {
 		console.error("خطأ في جلب منتجات المتجر:", error);

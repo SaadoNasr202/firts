@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStoreFavorites } from "@/hooks/useFavorites";
 import FavoriteButton from "@/components/ui/FavoriteButton";
+import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
 
 // Define the component's props
 interface StorePageProps {
@@ -21,39 +22,33 @@ interface StoreDetails {
 export default function StorePage({ storeName, onCategoryClick }: StorePageProps) {
   const [productCategories, setProductCategories] = useState<string[]>([]);
   const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   
   const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useStoreFavorites(
     storeDetails?.id || ""
   );
 
-  // جلب أقسام المتجر من قاعدة البيانات
-  useEffect(() => {
-    const fetchStoreCategories = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/store-categories?storeName=${encodeURIComponent(storeName)}`);
-        if (response.ok) {
-          const data = await response.json();
-          // جلب الأقسام وتفاصيل المتجر من قاعدة البيانات
-          setProductCategories(data.categories || []);
-          if (data.store) {
-            setStoreDetails(data.store);
-          }
-        }
-      } catch (error) {
-        console.error("خطأ في جلب أقسام المتجر:", error);
-        // في حالة الخطأ، عرض مصفوفة فارغة
-        setProductCategories([]);
-      } finally {
-        setIsLoading(false);
+  // استخدام التخزين المؤقت على مستوى العميل
+  const { data: storeData, isLoading, error } = useClientCache(
+    cacheKeys.storeCategories(storeName),
+    async () => {
+      const response = await fetch(`/api/store-categories?storeName=${encodeURIComponent(storeName)}`);
+      if (!response.ok) {
+        throw new Error('فشل في جلب بيانات المتجر');
       }
-    };
+      return response.json();
+    },
+    600 // 10 دقائق
+  );
 
-    if (storeName) {
-      fetchStoreCategories();
+  // تحديث البيانات عند تغيير storeData
+  useEffect(() => {
+    if (storeData) {
+      setProductCategories(storeData.categories || []);
+      if (storeData.store) {
+        setStoreDetails(storeData.store);
+      }
     }
-  }, [storeName]);
+  }, [storeData]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans" dir="rtl">

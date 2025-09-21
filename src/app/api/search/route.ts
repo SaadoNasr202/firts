@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { TB_stores, TB_products } from "@/lib/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { or, like, and, eq } from "drizzle-orm";
+import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +29,23 @@ export async function GET(request: NextRequest) {
 			});
 		}
 
-		const searchTerm = `%${query.trim()}%`;
+		const trimmedQuery = query.trim();
+		
+		// التحقق من التخزين المؤقت أولاً
+		const cacheKeyForQuery = cacheKey.search(trimmedQuery);
+		const cachedResults = cache.get<SearchResult[]>(cacheKeyForQuery);
+		
+		if (isValidCacheData(cachedResults)) {
+			return NextResponse.json({ 
+				results: cachedResults,
+				success: true,
+				query: trimmedQuery,
+				total: cachedResults.length,
+				cached: true
+			});
+		}
+
+		const searchTerm = `%${trimmedQuery}%`;
 		const results: SearchResult[] = [];
 
 		// البحث في المتاجر
@@ -104,11 +121,15 @@ export async function GET(request: NextRequest) {
 			return 0;
 		});
 
+		// حفظ النتائج في التخزين المؤقت لمدة 5 دقائق
+		cache.set(cacheKeyForQuery, results, 300);
+
 		return NextResponse.json({ 
 			results,
 			success: true,
-			query: query.trim(),
-			total: results.length
+			query: trimmedQuery,
+			total: results.length,
+			cached: false
 		});
 
 	} catch (error) {
