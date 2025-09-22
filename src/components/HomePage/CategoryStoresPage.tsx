@@ -10,6 +10,7 @@ interface Store {
 	type: string;
 	rating?: string;
 	image?: string;
+    logo?: string | null;
 }
 
 interface CategoryStoresPageProps {
@@ -32,7 +33,7 @@ function StoreCard({
 			onClick={() => onStoreClick(store.name)}
 			className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-200 relative"
 		>
-			<div className="relative h-48 bg-gray-200">
+            <div className="relative h-48 bg-gray-200">
 				{store.image ? (
 					<img
 						src={store.image}
@@ -63,6 +64,19 @@ function StoreCard({
 					size="md"
 					className="absolute top-4 left-4"
 				/>
+
+                {/* شعار المتجر 96x96 تحت زر المفضلة */}
+                {store.logo && (
+                    <div className="absolute top-16 left-4 w-24 h-24 rounded bg-white/80 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                        <img
+                            src={store.logo}
+                            alt={`${store.name} logo`}
+                            width={96}
+                            height={96}
+                            className="w-24 h-24 object-contain"
+                        />
+                    </div>
+                )}
 			</div>
 			<div className="p-4 text-right">
 				<h3 className="text-lg font-semibold text-gray-900 mb-1">{store.name}</h3>

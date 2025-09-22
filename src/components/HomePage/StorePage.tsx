@@ -19,8 +19,16 @@ interface StoreDetails {
   image: string;
 }
 
+interface StoreCategory {
+  id: string;
+  name: string;
+  storecover: string | null;
+  storelogo: string | null;
+}
+
 export default function StorePage({ storeName, onCategoryClick }: StorePageProps) {
   const [productCategories, setProductCategories] = useState<string[]>([]);
+  const [storeCategories, setStoreCategories] = useState<StoreCategory[]>([]);
   const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
   
   const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useStoreFavorites(
@@ -44,11 +52,16 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
   useEffect(() => {
     if (storeData) {
       setProductCategories(storeData.categories || []);
+      setStoreCategories(storeData.storeCategories || []);
       if (storeData.store) {
         setStoreDetails(storeData.store);
       }
     }
   }, [storeData]);
+
+  // اختيار صور الغلاف واللوجو من أقسام المتجر (الأولى المتاحة)
+  const coverUrl = storeCategories.find((c) => c.storecover)?.storecover || storeDetails?.image || null;
+  const logoUrl = storeCategories.find((c) => c.storelogo)?.storelogo || null;
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans" dir="rtl">
@@ -56,10 +69,10 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
       <div className="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden bg-gray-200">
         {isLoading ? (
           <div className="w-full h-full animate-pulse bg-gray-300"></div>
-        ) : storeDetails?.image ? (
+        ) : coverUrl ? (
           <img
-            src={storeDetails.image}
-            alt={storeDetails.name}
+            src={coverUrl}
+            alt={storeDetails?.name || "cover"}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -94,7 +107,19 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
               </>
             ) : storeDetails ? (
               <>
-                <h1 className="text-2xl font-bold text-gray-900">{storeDetails.name}</h1>
+                {/* اسم المتجر مع اللوجو بجانبه */}
+                <div className="flex items-center justify-end gap-3">
+                  {logoUrl && (
+                    <img
+                      src={logoUrl}
+                      alt={storeDetails.name}
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 object-contain rounded"
+                    />
+                  )}
+                  <h1 className="text-2xl font-bold text-gray-900">{storeDetails.name}</h1>
+                </div>
                 <p className="text-gray-600 mt-1">{storeDetails.type}</p>
                 <div className="flex items-center justify-end text-sm text-gray-500 mt-2">
                   <span className="mr-2">متاح للتوصيل</span>
@@ -107,7 +132,7 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
                   <div className="flex items-center justify-end text-sm text-gray-600 mt-1">
                     <span className="mr-1">{storeDetails.rating}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   </div>
                 )}
@@ -142,19 +167,19 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
               </div>
             ))
           ) : (
-            productCategories.map((category, index) => (
+            storeCategories.map((category) => (
             <button
-              key={index}
-              onClick={() => onCategoryClick(category)}
+              key={category.id}
+              onClick={() => onCategoryClick(category.name)}
               className="flex flex-col items-center text-center p-2 rounded-lg bg-white shadow-sm hover:bg-gray-100 transition-colors relative"
             >
-              <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                {/* Placeholder for icon/image */}
+              <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                {/* لم نعد نستخدم لوجو القسم هنا حسب طلبك */}
                 <span className="text-xs text-gray-500">
-                  {category.slice(0, 3)}
+                  {category.name.slice(0, 3)}
                 </span>
               </div>
-              <p className="mt-2 text-sm font-semibold text-gray-700">{category}</p>
+              <p className="mt-2 text-sm font-semibold text-gray-700">{category.name}</p>
             </button>
           ))
           )}

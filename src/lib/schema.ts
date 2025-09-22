@@ -202,6 +202,8 @@ export const TB_store_categories = pgTable("store_categories", {
 		.notNull()
 		.references(() => TB_stores.id), // كل قسم فرعي مرتبط بمتجر
 	name: text("name").notNull(), // اسم القسم الفرعي
+	storecover: text("storecover"), // صورة غطاء المتجر (أبعاد مختلفة)
+	storelogo: text("storelogo"), // شعار المتجر (أبعاد مختلفة)
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

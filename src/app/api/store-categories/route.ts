@@ -53,6 +53,8 @@ export async function GET(request: NextRequest) {
 			.select({
 				id: TB_store_categories.id,
 				name: TB_store_categories.name,
+				storecover: TB_store_categories.storecover,
+				storelogo: TB_store_categories.storelogo,
 			})
 			.from(TB_store_categories)
 			.where(eq(TB_store_categories.storeId, store[0].id))
@@ -60,6 +62,7 @@ export async function GET(request: NextRequest) {
 
 		const result = { 
 			categories: storeCategories.map(cat => cat.name), // إرجاع أسماء فقط مثل الـ array الأصلي
+			storeCategories: storeCategories, // إرجاع الأقسام كاملة مع الصور
 			storeExists: true,
 			store: {
 				id: store[0].id,

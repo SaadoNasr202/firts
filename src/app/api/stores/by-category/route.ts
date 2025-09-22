@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { TB_stores, TB_categories } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { TB_stores, TB_categories, TB_store_categories } from "@/lib/schema";
+import { eq, inArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
@@ -66,14 +66,41 @@ export async function GET(request: NextRequest) {
 			return url;
 		};
 
-		const normalizedStoresAll = storesPage.map((s) => ({
-			...s,
-			image: normalizeImageUrl(s.image),
-		}));
+        const normalizedStoresAll = storesPage.map((s) => ({
+            ...s,
+            image: normalizeImageUrl(s.image),
+        }));
+
+        // جلب شعارات المتاجر (storelogo) من أول قسم مرتبط بكل متجر
+        const storeIds = normalizedStoresAll.map((s) => s.id);
+        let storeLogosMap = new Map<string, string | null>();
+        if (storeIds.length > 0) {
+            try {
+                const logos = await db
+                    .select({
+                        storeId: TB_store_categories.storeId,
+                        storelogo: TB_store_categories.storelogo,
+                    })
+                    .from(TB_store_categories)
+                    .where(inArray(TB_store_categories.storeId, storeIds));
+
+                // نختار أول لوجو موجود لكل متجر
+                for (const row of logos) {
+                    if (!storeLogosMap.has(row.storeId) && row.storelogo) {
+                        storeLogosMap.set(row.storeId, row.storelogo);
+                    }
+                }
+            } catch {}
+        }
+
+        const enrichedStoresAll = normalizedStoresAll.map((s) => ({
+            ...s,
+            logo: storeLogosMap.get(s.id) ?? null,
+        }));
 
 		// قص النتائج للحد المطلوب وتحديد إن كان هناك المزيد
-		const hasMore = normalizedStoresAll.length > pageSize;
-		const normalizedStores = hasMore ? normalizedStoresAll.slice(0, pageSize) : normalizedStoresAll;
+        const hasMore = enrichedStoresAll.length > pageSize;
+        const normalizedStores = hasMore ? enrichedStoresAll.slice(0, pageSize) : enrichedStoresAll;
 
 		return NextResponse.json({ 
 			stores: normalizedStores,
