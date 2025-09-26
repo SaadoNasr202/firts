@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
 				type: TB_stores.type,
 				rating: TB_stores.rating,
 				image: TB_stores.image,
+				location: TB_stores.location,
 			})
 			.from(TB_stores)
 			.where(eq(TB_stores.categoryId, category[0].id))

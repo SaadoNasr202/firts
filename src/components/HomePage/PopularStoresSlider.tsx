@@ -9,6 +9,10 @@ interface Store {
 	image?: string;
 	type?: string;
 	rating?: string;
+	location?: string;
+	distance?: number;
+	logo?: string | null;
+	hasProducts?: boolean;
 }
 
 interface PopularStoresSliderProps {
@@ -20,26 +24,55 @@ export default function PopularStoresSlider({
 }: PopularStoresSliderProps) {
 	const [stores, setStores] = useState<Store[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+
+	useEffect(() => {
+		// الحصول على موقع المستخدم
+		const getUserLocation = () => {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						const { latitude, longitude } = position.coords;
+						setUserLocation({ lat: latitude, lng: longitude });
+					},
+					(error) => {
+						console.warn('فشل في الحصول على الموقع:', error);
+						// استخدام موقع افتراضي (الرياض) إذا فشل الحصول على الموقع
+						setUserLocation({ lat: 24.7136, lng: 46.6753 });
+					}
+				);
+			} else {
+				// استخدام موقع افتراضي إذا لم يكن المتصفح يدعم الموقع
+				setUserLocation({ lat: 24.7136, lng: 46.6753 });
+			}
+		};
+
+		getUserLocation();
+	}, []);
 
 	useEffect(() => {
 		const fetchStores = async () => {
+			if (!userLocation) return;
+
 			try {
-				const response = await fetch("/api/stores/nearby");
+				const response = await fetch(
+					`/api/stores/popular-location?lat=${userLocation.lat}&lng=${userLocation.lng}&limit=8&maxDistance=15&minRating=3.6`
+				);
 				if (response.ok) {
 					const data = await response.json();
 					setStores(data.stores || []);
 				} else {
-					console.error("فشل في جلب المتاجر");
+					console.error("فشل في جلب المتاجر الشهيرة");
 				}
 			} catch (error) {
-				console.error("خطأ في جلب المتاجر:", error);
+				console.error("خطأ في جلب المتاجر الشهيرة:", error);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 
 		fetchStores();
-	}, []);
+	}, [userLocation]);
 
 	const handleScrollRight = () => {
 		document
@@ -171,6 +204,11 @@ export default function PopularStoresSlider({
 							<p className="mt-1 text-sm text-gray-600">
 								{store.type || "متجر شهير"}
 							</p>
+							{store.distance && (
+								<p className="mt-1 text-xs text-green-600 font-medium">
+									📍 {store.distance} كم
+								</p>
+							)}
 						</div>
 					</button>
 				))}

@@ -9,6 +9,10 @@ interface Store {
 	image: string;
 	type?: string;
 	rating?: string;
+	location?: string;
+	distance?: number;
+	logo?: string | null;
+	hasProducts?: boolean;
 }
 
 interface NearbyStoresPageProps {
@@ -20,11 +24,40 @@ export default function NearbyStoresPage({
 }: NearbyStoresPageProps) {
 	const [stores, setStores] = useState<Store[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+
+	useEffect(() => {
+		// الحصول على موقع المستخدم
+		const getUserLocation = () => {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						const { latitude, longitude } = position.coords;
+						setUserLocation({ lat: latitude, lng: longitude });
+					},
+					(error) => {
+						console.warn('فشل في الحصول على الموقع:', error);
+						// استخدام موقع افتراضي (الرياض) إذا فشل الحصول على الموقع
+						setUserLocation({ lat: 24.7136, lng: 46.6753 });
+					}
+				);
+			} else {
+				// استخدام موقع افتراضي إذا لم يكن المتصفح يدعم الموقع
+				setUserLocation({ lat: 24.7136, lng: 46.6753 });
+			}
+		};
+
+		getUserLocation();
+	}, []);
 
 	useEffect(() => {
 		const fetchNearbyStores = async () => {
+			if (!userLocation) return;
+
 			try {
-				const response = await fetch('/api/stores/nearby');
+				const response = await fetch(
+					`/api/stores/nearby-location?lat=${userLocation.lat}&lng=${userLocation.lng}&limit=10&maxDistance=10`
+				);
 				if (response.ok) {
 					const data = await response.json();
 					setStores(data.stores || []);
@@ -39,7 +72,7 @@ export default function NearbyStoresPage({
 		};
 
 		fetchNearbyStores();
-	}, []);
+	}, [userLocation]);
 	const handleScrollRight = () => {
 		document
 			.getElementById("nearby-stores-scroll-container")
@@ -127,6 +160,9 @@ export default function NearbyStoresPage({
 							/>
 						</div>
 						<p className="mt-2 text-xs text-gray-700">{store.name}</p>
+						{store.distance && (
+							<p className="text-xs text-green-600 font-medium">{store.distance} كم</p>
+						)}
 					</button>
 				))}
 			</div>

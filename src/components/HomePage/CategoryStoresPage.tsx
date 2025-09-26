@@ -11,6 +11,7 @@ interface Store {
 	rating?: string;
 	image?: string;
     logo?: string | null;
+	location?: string;
 	hasProducts?: boolean;
 	hasCategories?: boolean;
 }
@@ -29,6 +30,21 @@ function StoreCard({
 	onStoreClick: (storeName: string) => void;
 }) {
 	const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useStoreFavorites(store.id);
+
+	const handleLocationClick = (location: string) => {
+		// تحويل الإحداثيات من النص إلى أرقام
+		const coords = location.split(',').map(coord => parseFloat(coord.trim()));
+		if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+			const [lat, lng] = coords;
+			// فتح خرائط جوجل في تبويب جديد
+			const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+			window.open(googleMapsUrl, '_blank');
+		} else {
+			// إذا لم تكن الإحداثيات صحيحة، فتح خرائط جوجل بالبحث عن اسم المتجر
+			const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(store.name)}`;
+			window.open(searchUrl, '_blank');
+		}
+	};
 
 	return (
 		<div
@@ -68,6 +84,23 @@ function StoreCard({
 					size="md"
 					className="absolute top-4 left-4"
 				/>
+
+				{/* زر عرض الموقع */}
+				{store.location && (
+					<button
+						onClick={(e) => {
+							e.stopPropagation();
+							handleLocationClick(store.location!);
+						}}
+						className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full p-2 shadow-md transition-all duration-200 hover:shadow-lg"
+						title="عرض الموقع"
+					>
+						<svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+						</svg>
+					</button>
+				)}
 
                 {/* شعار المتجر 96x96 تحت زر المفضلة */}
                 {store.logo && (

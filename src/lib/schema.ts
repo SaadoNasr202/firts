@@ -224,6 +224,8 @@ export const TB_stores = pgTable("stores", {
 	categoryId: text("category_id") // FK للقسم
 		.notNull()
 		.references(() => TB_categories.id),
+
+	location: text("location"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
