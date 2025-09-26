@@ -100,7 +100,10 @@ export default function HomePage() {
 						عرض الكل
 					</button>
 				</div>
-				<NearbyStoresPage onStoreClick={handleStoreClick} />
+				<NearbyStoresPage 
+					onStoreClick={handleStoreClick} 
+					selectedLocation={selectedDeliveryAddress}
+				/>
 			</section>
 
 			<section className="mt-8">
@@ -128,7 +131,10 @@ export default function HomePage() {
 						عرض الكل
 					</button>
 				</div>
-				<PopularStoresSlider onStoreClick={handlePopularStoreClick} />
+				<PopularStoresSlider 
+					onStoreClick={handlePopularStoreClick} 
+					selectedLocation={selectedDeliveryAddress}
+				/>
 			</section>
 		</div>
 	);

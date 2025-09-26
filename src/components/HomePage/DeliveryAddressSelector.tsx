@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, ChevronDown } from "lucide-react";
-import { useJsApiLoader } from "@react-google-maps/api";
+import { MapPin, ChevronDown, Plus, Map } from "lucide-react";
+import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 
 interface Address {
 	id: string;
 	address: string;
 	createdAt: string;
 	formattedAddress?: string;
+	lat?: number;
+	lng?: number;
 }
 
 interface DeliveryAddressSelectorProps {
@@ -20,6 +22,7 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 	const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 	const [isOpen, setIsOpen] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [showMapModal, setShowMapModal] = useState(false);
 
 	// تحميل مكتبة جوجل
 	const { isLoaded } = useJsApiLoader({
@@ -111,6 +114,22 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 		onAddressChange?.(address);
 	};
 
+	const handleMapLocationSelect = (lat: number, lng: number, formattedAddress: string) => {
+		const newAddress: Address = {
+			id: `temp_${Date.now()}`,
+			address: `${lat},${lng}`,
+			formattedAddress,
+			lat,
+			lng,
+			createdAt: new Date().toISOString()
+		};
+		
+		setSelectedAddress(newAddress);
+		setIsOpen(false);
+		setShowMapModal(false);
+		onAddressChange?.(newAddress);
+	};
+
 	if (loading) {
 		return (
 			<div className="mb-4 flex items-center justify-center rounded-lg border border-gray-200 bg-white p-3">
@@ -134,6 +153,7 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 	}
 
 	return (
+		<>
 		<div className="mb-4">
 			<div className="relative">
 				<button
@@ -154,6 +174,26 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 
 				{isOpen && (
 					<div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+						{/* زر اختيار موقع جديد */}
+						<button
+							onClick={() => setShowMapModal(true)}
+							className="w-full p-3 text-right transition-colors hover:bg-green-50 border-b border-gray-100"
+						>
+							<div className="flex items-center gap-2">
+								<Plus className="h-4 w-4 text-green-600" />
+								<div className="flex-1">
+									<div className="text-xs font-medium text-green-600">
+										اختيار موقع جديد من الخريطة
+									</div>
+									<div className="text-xs text-gray-500">
+										اضغط لتحديد موقعك على الخريطة
+									</div>
+								</div>
+								<Map className="h-4 w-4 text-green-600" />
+							</div>
+						</button>
+						
+						{/* العناوين المحفوظة */}
 						{addresses.map((address) => (
 							<button
 								key={address.id}
@@ -175,6 +215,158 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 								</div>
 							</button>
 						))}
+					</div>
+				)}
+			</div>
+		</div>
+		{/* مودال الخريطة */}
+		{showMapModal && (
+			<MapLocationModal
+				isOpen={showMapModal}
+				onClose={() => setShowMapModal(false)}
+				onLocationSelect={handleMapLocationSelect}
+				isLoaded={isLoaded}
+			/>
+		)}
+	</>
+	);
+}
+
+// مكون مودال الخريطة
+interface MapLocationModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	onLocationSelect: (lat: number, lng: number, formattedAddress: string) => void;
+	isLoaded: boolean;
+}
+
+function MapLocationModal({ isOpen, onClose, onLocationSelect, isLoaded }: MapLocationModalProps) {
+	const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number} | null>(null);
+	const [formattedAddress, setFormattedAddress] = useState<string>("");
+
+	useEffect(() => {
+		if (isOpen && isLoaded) {
+			// تحديد موقع افتراضي (الرياض)
+			const defaultLocation = { lat: 24.7136, lng: 46.6753 };
+			setSelectedLocation(defaultLocation);
+			
+			// الحصول على العنوان المنسق للموقع الافتراضي
+			if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+				const geocoder = new google.maps.Geocoder();
+				geocoder.geocode({ location: defaultLocation }, (results, status) => {
+					if (status === 'OK' && results && results.length > 0) {
+						setFormattedAddress(results[0].formatted_address);
+					}
+				});
+			}
+		}
+	}, [isOpen, isLoaded]);
+
+	const handleMapClick = (event: google.maps.MapMouseEvent) => {
+		if (event.latLng) {
+			const lat = event.latLng.lat();
+			const lng = event.latLng.lng();
+			setSelectedLocation({ lat, lng });
+			
+			// الحصول على العنوان المنسق
+			if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+				const geocoder = new google.maps.Geocoder();
+				geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+					if (status === 'OK' && results && results.length > 0) {
+						setFormattedAddress(results[0].formatted_address);
+					} else {
+						setFormattedAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+					}
+				});
+			}
+		}
+	};
+
+	const handleConfirm = () => {
+		if (selectedLocation) {
+			onLocationSelect(selectedLocation.lat, selectedLocation.lng, formattedAddress);
+		}
+	};
+
+	if (!isOpen) return null;
+
+	return (
+		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+			<div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-hidden">
+				{/* Header */}
+				<div className="flex items-center justify-between p-4 border-b">
+					<h3 className="text-lg font-semibold text-gray-900">اختيار موقعك</h3>
+					<button
+						onClick={onClose}
+						className="text-gray-400 hover:text-gray-600"
+					>
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
+
+				{/* Map Container */}
+				<div className="h-96 relative">
+					{isLoaded ? (
+						<GoogleMap
+							mapContainerStyle={{ width: '100%', height: '100%' }}
+							center={selectedLocation || { lat: 24.7136, lng: 46.6753 }}
+							zoom={13}
+							onClick={handleMapClick}
+							options={{
+								streetViewControl: false,
+								mapTypeControl: false,
+								fullscreenControl: false,
+							}}
+						>
+							{selectedLocation && (
+								<Marker
+									position={selectedLocation}
+									icon={{
+										url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+											<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+												<circle cx="16" cy="16" r="12" fill="#3B82F6" stroke="white" stroke-width="3"/>
+												<circle cx="16" cy="16" r="6" fill="white"/>
+											</svg>
+										`),
+										scaledSize: new google.maps.Size(32, 32),
+									}}
+								/>
+							)}
+						</GoogleMap>
+					) : (
+						<div className="flex items-center justify-center h-full bg-gray-100">
+							<div className="text-center">
+								<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+								<p className="text-gray-600">جارٍ تحميل الخريطة...</p>
+							</div>
+						</div>
+					)}
+				</div>
+
+				{/* Address Display */}
+				{selectedLocation && (
+					<div className="p-4 border-t bg-gray-50">
+						<div className="flex items-center gap-2 mb-2">
+							<MapPin className="h-4 w-4 text-blue-600" />
+							<span className="text-sm font-medium text-gray-700">الموقع المحدد:</span>
+						</div>
+						<p className="text-sm text-gray-600 mb-3">{formattedAddress}</p>
+						<div className="flex gap-2">
+							<button
+								onClick={handleConfirm}
+								className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+							>
+								تأكيد الموقع
+							</button>
+							<button
+								onClick={onClose}
+								className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+							>
+								إلغاء
+							</button>
+						</div>
 					</div>
 				)}
 			</div>

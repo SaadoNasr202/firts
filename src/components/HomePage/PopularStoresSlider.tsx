@@ -17,17 +17,29 @@ interface Store {
 
 interface PopularStoresSliderProps {
 	onStoreClick: (storeName: string) => void;
+	selectedLocation?: any;
 }
 
 export default function PopularStoresSlider({
 	onStoreClick,
+	selectedLocation,
 }: PopularStoresSliderProps) {
 	const [stores, setStores] = useState<Store[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
 	useEffect(() => {
-		// الحصول على موقع المستخدم
+		// استخدام الموقع المختار أولاً، ثم الموقع الحالي للمستخدم
+		if (selectedLocation && selectedLocation.address) {
+			// تحليل الإحداثيات من العنوان المختار
+			const coords = selectedLocation.address.split(',').map(coord => parseFloat(coord.trim()));
+			if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+				setUserLocation({ lat: coords[0], lng: coords[1] });
+				return;
+			}
+		}
+
+		// إذا لم يكن هناك موقع مختار، الحصول على موقع المستخدم
 		const getUserLocation = () => {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -48,7 +60,7 @@ export default function PopularStoresSlider({
 		};
 
 		getUserLocation();
-	}, []);
+	}, [selectedLocation]);
 
 	useEffect(() => {
 		const fetchStores = async () => {
