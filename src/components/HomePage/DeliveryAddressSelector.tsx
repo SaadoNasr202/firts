@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, ChevronDown, Plus, Map } from "lucide-react";
+import { MapPin, ChevronDown, Plus, Map, Trash2 } from "lucide-react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 
 interface Address {
@@ -114,20 +114,101 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 		onAddressChange?.(address);
 	};
 
-	const handleMapLocationSelect = (lat: number, lng: number, formattedAddress: string) => {
-		const newAddress: Address = {
-			id: `temp_${Date.now()}`,
-			address: `${lat},${lng}`,
-			formattedAddress,
-			lat,
-			lng,
-			createdAt: new Date().toISOString()
-		};
+	const handleDeleteAddress = async (addressId: string, event: React.MouseEvent) => {
+		event.stopPropagation(); // منع فتح القائمة المنسدلة
 		
-		setSelectedAddress(newAddress);
-		setIsOpen(false);
-		setShowMapModal(false);
-		onAddressChange?.(newAddress);
+		try {
+			const response = await fetch(`/api/address?id=${addressId}`, {
+				method: 'DELETE',
+			});
+
+			if (response.ok) {
+				// إزالة العنوان من القائمة
+				setAddresses(prev => prev.filter(addr => addr.id !== addressId));
+				
+				// إذا كان العنوان المحذوف هو المحدد حالياً، نختار عنوان آخر
+				if (selectedAddress?.id === addressId) {
+					const remainingAddresses = addresses.filter(addr => addr.id !== addressId);
+					if (remainingAddresses.length > 0) {
+						setSelectedAddress(remainingAddresses[0]);
+						onAddressChange?.(remainingAddresses[0]);
+					} else {
+						setSelectedAddress(null);
+						onAddressChange?.(null);
+					}
+				}
+			} else {
+				console.error('فشل في حذف العنوان');
+			}
+		} catch (error) {
+			console.error('خطأ في حذف العنوان:', error);
+		}
+	};
+
+	const handleMapLocationSelect = async (lat: number, lng: number, formattedAddress: string) => {
+		try {
+			// حفظ العنوان الجديد في قاعدة البيانات
+			const response = await fetch('/api/address', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					address: `${lat},${lng}`,
+				}),
+			});
+
+			if (response.ok) {
+				const result = await response.json();
+				const newAddress: Address = {
+					id: result.addressId,
+					address: `${lat},${lng}`,
+					formattedAddress,
+					lat,
+					lng,
+					createdAt: new Date().toISOString()
+				};
+				
+				// إضافة العنوان الجديد إلى قائمة العناوين
+				setAddresses(prev => [newAddress, ...prev]);
+				setSelectedAddress(newAddress);
+				setIsOpen(false);
+				setShowMapModal(false);
+				onAddressChange?.(newAddress);
+			} else {
+				console.error('فشل في حفظ العنوان الجديد');
+				// في حالة الفشل، نستخدم العنوان كعنوان مؤقت
+				const tempAddress: Address = {
+					id: `temp_${Date.now()}`,
+					address: `${lat},${lng}`,
+					formattedAddress,
+					lat,
+					lng,
+					createdAt: new Date().toISOString()
+				};
+				
+				setSelectedAddress(tempAddress);
+				setIsOpen(false);
+				setShowMapModal(false);
+				onAddressChange?.(tempAddress);
+			}
+		} catch (error) {
+			console.error('خطأ في حفظ العنوان:', error);
+			// في حالة الفشل، نستخدم العنوان كعنوان مؤقت
+			const tempAddress: Address = {
+				id: `temp_${Date.now()}`,
+				address: `${lat},${lng}`,
+				formattedAddress,
+				lat,
+				lng,
+				createdAt: new Date().toISOString()
+			};
+			
+			setSelectedAddress(tempAddress);
+			setIsOpen(false);
+			setShowMapModal(false);
+			onAddressChange?.(tempAddress);
+		}
 	};
 
 	if (loading) {
@@ -195,14 +276,16 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 						
 						{/* العناوين المحفوظة */}
 						{addresses.map((address) => (
-							<button
+							<div
 								key={address.id}
-								onClick={() => handleAddressSelect(address)}
-								className={`w-full p-3 text-right transition-colors hover:bg-gray-50 ${
+								className={`relative w-full p-3 text-right transition-colors hover:bg-gray-50 ${
 									selectedAddress?.id === address.id ? 'bg-blue-50' : ''
 								}`}
 							>
-								<div className="flex items-start gap-2">
+								<button
+									onClick={() => handleAddressSelect(address)}
+									className="w-full flex items-start gap-2"
+								>
 									<MapPin className="mt-0.5 h-3 w-3 text-gray-400" />
 									<div className="flex-1">
 										<div className="text-xs font-medium text-gray-800 line-clamp-2">
@@ -212,8 +295,18 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 											{new Date(address.createdAt).toLocaleDateString('ar-SA')}
 										</div>
 									</div>
-								</div>
-							</button>
+								</button>
+								{/* زر الحذف */}
+								{!address.id.startsWith('temp_') && (
+									<button
+										onClick={(e) => handleDeleteAddress(address.id, e)}
+										className="absolute left-3 top-1/2 transform -translate-y-1/2 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+										title="حذف العنوان"
+									>
+										<Trash2 className="h-3 w-3" />
+									</button>
+								)}
+							</div>
 						))}
 					</div>
 				)}

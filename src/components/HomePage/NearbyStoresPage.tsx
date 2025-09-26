@@ -32,7 +32,7 @@ export default function NearbyStoresPage({
 		// استخدام الموقع المختار أولاً، ثم الموقع الحالي للمستخدم
 		if (selectedLocation && selectedLocation.address) {
 			// تحليل الإحداثيات من العنوان المختار
-			const coords = selectedLocation.address.split(',').map(coord => parseFloat(coord.trim()));
+			const coords = selectedLocation.address.split(',').map((coord: string) => parseFloat(coord.trim()));
 			if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
 				setUserLocation({ lat: coords[0], lng: coords[1] });
 				return;
