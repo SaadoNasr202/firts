@@ -173,13 +173,8 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
               onClick={() => onCategoryClick(category.name)}
               className="flex flex-col items-center text-center p-2 rounded-lg bg-white shadow-sm hover:bg-gray-100 transition-colors relative"
             >
-              <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                {/* لم نعد نستخدم لوجو القسم هنا حسب طلبك */}
-                <span className="text-xs text-gray-500">
-                  {category.name.slice(0, 3)}
-                </span>
-              </div>
-              <p className="mt-2 text-sm font-semibold text-gray-700">{category.name}</p>
+              
+              <p className="mt-2 text-l font-semibold text-gray-700">{category.name}</p>
             </button>
           ))
           )}
