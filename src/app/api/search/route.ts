@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { TB_stores, TB_products } from "@/lib/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { or, like, and, eq } from "drizzle-orm";
+import { or, like, and, eq, inArray } from "drizzle-orm";
 import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +15,8 @@ interface SearchResult {
 	rating?: number;
 	price?: string;
 	storeName?: string;
+	hasProducts?: boolean;
+	hasCategories?: boolean;
 }
 
 export async function GET(request: NextRequest) {
@@ -67,6 +69,19 @@ export async function GET(request: NextRequest) {
 				)
 				.limit(10);
 
+			// جلب معلومات المنتجات للمتاجر
+			const storeIds = stores.map(store => store.id);
+			const storesWithProducts = new Set<string>();
+			
+			if (storeIds.length > 0) {
+				const products = await db
+					.select({ storeId: TB_products.storeId })
+					.from(TB_products)
+					.where(inArray(TB_products.storeId, storeIds));
+				
+				products.forEach(p => storesWithProducts.add(p.storeId));
+			}
+
 			// تحويل المتاجر إلى نتائج البحث
 			stores.forEach(store => {
 				results.push({
@@ -76,6 +91,8 @@ export async function GET(request: NextRequest) {
 					image: store.image,
 					description: `${store.name} - ${store.type || "متجر"}`,
 					rating: typeof store.rating === 'number' ? store.rating : 0,
+					hasProducts: storesWithProducts.has(store.id),
+					hasCategories: true, // نفترض أن جميع المتاجر لها أقسام
 				});
 			});
 		} catch (storeError) {

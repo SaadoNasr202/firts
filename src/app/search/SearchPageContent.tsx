@@ -12,6 +12,8 @@ interface SearchResult {
 	rating?: number;
 	price?: string;
 	storeName?: string;
+	hasProducts?: boolean;
+	hasCategories?: boolean;
 }
 
 export default function SearchPageContent() {
@@ -77,6 +79,10 @@ export default function SearchPageContent() {
 
 	const handleResultClick = (result: SearchResult) => {
 		if (result.type === 'store') {
+			// منع النقر على المتاجر التي لا تحتوي على منتجات
+			if (!result.hasProducts) {
+				return;
+			}
 			window.location.href = `/store?store=${encodeURIComponent(result.name)}&source=search`;
 		} else if (result.type === 'product') {
 			window.location.href = `/product-details?product=${encodeURIComponent(result.name)}&store=${encodeURIComponent(result.storeName || '')}`;
@@ -203,7 +209,11 @@ export default function SearchPageContent() {
 								<div
 									key={`${result.type}-${result.id}`}
 									onClick={() => handleResultClick(result)}
-									className="bg-white border border-gray-200 rounded-xl p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+									className={`bg-white border border-gray-200 rounded-xl p-6 transition-all duration-300 ${
+										result.type === 'store' && !result.hasProducts
+											? 'cursor-default opacity-75'
+											: 'cursor-pointer transform hover:scale-105 hover:shadow-lg'
+									}`}
 								>
 									{/* صورة النتيجة */}
 									<div className="relative mb-4">
@@ -249,6 +259,15 @@ export default function SearchPageContent() {
 													))}
 												</div>
 												<span className="text-sm text-gray-600 mr-2">{result.rating}</span>
+											</div>
+										)}
+
+										{/* رسالة "سيتم الإضافة قريباً" للمتاجر بدون منتجات */}
+										{result.type === 'store' && !result.hasProducts && (
+											<div className="mt-3 p-2 bg-orange-50 border border-orange-200 rounded-md">
+												<p className="text-xs text-orange-700 text-center font-medium">
+													سيتم الإضافة قريباً
+												</p>
 											</div>
 										)}
 

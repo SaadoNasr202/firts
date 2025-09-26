@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { TB_stores, TB_categories, TB_store_categories } from "@/lib/schema";
-import { eq, inArray } from "drizzle-orm";
+import { TB_stores, TB_categories, TB_store_categories, TB_products } from "@/lib/schema";
+import { eq, inArray, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
@@ -40,9 +40,8 @@ export async function GET(request: NextRequest) {
 			});
 		}
 
-		// جلب المتاجر التي تنتمي لهذا القسم
-		// نجلب (pageSize + 1) عنصر لمعرفة إن كان هناك المزيد
-		const storesPage = await db
+		// جلب جميع المتاجر التي تنتمي لهذا القسم أولاً
+		const allStores = await db
 			.select({
 				id: TB_stores.id,
 				name: TB_stores.name,
@@ -52,9 +51,7 @@ export async function GET(request: NextRequest) {
 			})
 			.from(TB_stores)
 			.where(eq(TB_stores.categoryId, category[0].id))
-			.orderBy(TB_stores.createdAt)
-			.limit(pageSize + 1)
-			.offset(offset);
+			.orderBy(TB_stores.createdAt);
 
 		// تطبيع روابط الصور لضمان العرض الصحيح في الواجهة
 		const normalizeImageUrl = (raw?: string | null) => {
@@ -66,7 +63,7 @@ export async function GET(request: NextRequest) {
 			return url;
 		};
 
-        const normalizedStoresAll = storesPage.map((s) => ({
+        const normalizedStoresAll = allStores.map((s) => ({
             ...s,
             image: normalizeImageUrl(s.image),
         }));
@@ -93,25 +90,58 @@ export async function GET(request: NextRequest) {
             } catch {}
         }
 
+        // جلب معلومات المنتجات لكل متجر
+        const storeIdsForProducts = normalizedStoresAll.map(s => s.id);
+        const storesWithProducts = new Set<string>();
+        
+        if (storeIdsForProducts.length > 0) {
+            const products = await db
+                .select({ storeId: TB_products.storeId })
+                .from(TB_products)
+                .where(inArray(TB_products.storeId, storeIdsForProducts));
+            
+            products.forEach(p => storesWithProducts.add(p.storeId));
+        }
+
         const enrichedStoresAll = normalizedStoresAll.map((s) => ({
             ...s,
             logo: storeLogosMap.get(s.id) ?? null,
+            hasProducts: storesWithProducts.has(s.id),
+            hasCategories: true, // نفترض أن جميع المتاجر لها أقسام
         }));
 
-		// قص النتائج للحد المطلوب وتحديد إن كان هناك المزيد
-        const hasMore = enrichedStoresAll.length > pageSize;
-        const normalizedStores = hasMore ? enrichedStoresAll.slice(0, pageSize) : enrichedStoresAll;
+        // إزالة التكرار: نأخذ أول مطعم لكل اسم
+        const uniqueStores = new Map<string, typeof enrichedStoresAll[0]>();
+        enrichedStoresAll.forEach(store => {
+            if (!uniqueStores.has(store.name)) {
+                uniqueStores.set(store.name, store);
+            }
+        });
+        const deduplicatedStores = Array.from(uniqueStores.values());
+
+        // ترتيب بسيط: المطاعم مع المنتجات أولاً
+        const sortedStores = deduplicatedStores.sort((a, b) => {
+            if (a.hasProducts === b.hasProducts) return 0;
+            return a.hasProducts ? -1 : 1;
+        });
+
+		// تطبيق الـ pagination بعد الترتيب
+		const startIndex = offset;
+		const endIndex = offset + pageSize;
+		const paginatedStores = sortedStores.slice(startIndex, endIndex);
+		const hasMore = endIndex < sortedStores.length;
 
 		return NextResponse.json({ 
-			stores: normalizedStores,
+			stores: paginatedStores,
 			categoryExists: true,
 			category: {
 				id: category[0].id,
 				name: category[0].name
 			},
 			hasMore,
-			nextOffset: offset + normalizedStores.length,
-			limit: pageSize
+			nextOffset: hasMore ? endIndex : offset + paginatedStores.length,
+			limit: pageSize,
+			total: sortedStores.length
 		});
 	} catch (error) {
 		console.error("خطأ في جلب المتاجر حسب القسم:", error);
