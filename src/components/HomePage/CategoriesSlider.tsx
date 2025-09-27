@@ -77,6 +77,22 @@ export default function CategoriesSlider({
 		fetchCategories(true);
 	};
 
+	// دالة للحصول على الأيقونة واللون حسب اسم القسم
+	const getCategoryStyle = (categoryName: string) => {
+		const styles: { [key: string]: { icon: string; color: string; textColor: string } } = {
+			"المطاعم": { icon: "🍽️", color: "bg-red-50 border-red-200 hover:bg-red-100", textColor: "text-red-700" },
+			"السوبرماركت": { icon: "🛒", color: "bg-blue-50 border-blue-200 hover:bg-blue-100", textColor: "text-blue-700" },
+			"الصيدليات": { icon: "💊", color: "bg-green-50 border-green-200 hover:bg-green-100", textColor: "text-green-700" },
+			"الإلكترونيات": { icon: "📱", color: "bg-purple-50 border-purple-200 hover:bg-purple-100", textColor: "text-purple-700" },
+			"الملابس": { icon: "👕", color: "bg-pink-50 border-pink-200 hover:bg-pink-100", textColor: "text-pink-700" },
+			"المنزل": { icon: "🏠", color: "bg-indigo-50 border-indigo-200 hover:bg-indigo-100", textColor: "text-indigo-700" },
+			"هايبر شلة": { icon: "🏪", color: "bg-purple-50 border-purple-200 hover:bg-purple-100", textColor: "text-purple-700" },
+			"استلام وتسليم": { icon: "📦", color: "bg-indigo-50 border-indigo-200 hover:bg-indigo-100", textColor: "text-indigo-700" }
+		};
+		
+		return styles[categoryName] || { icon: "📂", color: "bg-gray-50 border-gray-200 hover:bg-gray-100", textColor: "text-gray-700" };
+	};
+
 	// إذا كان يتم تحميل البيانات
 	if (isLoading) {
 		return (
@@ -140,35 +156,25 @@ export default function CategoriesSlider({
 			{/* حاوية الأقسام */}
 			<div
 				id="categories-scroll-container"
-				className="scrollbar-hide flex gap-5 space-x-reverse overflow-x-auto px-4 pb-2"
+				className="scrollbar-hide flex gap-6 space-x-reverse overflow-x-auto px-4 pb-2"
 			>
-				{categories.map((category) => (
-					<button
-						key={category.id}
-						className="flex w-[85px] flex-shrink-0 cursor-pointer flex-col items-center text-center"
-						onClick={() => onCategoryClick(category.name)}
-					>
-						<div className="flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-md">
-							{/* أيقونة افتراضية للقسم */}
-							<svg
-								className="h-10 w-10 text-white"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-								/>
-							</svg>
-						</div>
-						<p className="mt-2 text-xs font-medium text-gray-700">
-							{category.name}
-						</p>
-					</button>
-				))}
+				{categories.map((category) => {
+					const style = getCategoryStyle(category.name);
+					return (
+						<button
+							key={category.id}
+							className={`flex w-[100px] flex-shrink-0 cursor-pointer flex-col items-center text-center transition-all duration-300 transform hover:scale-105`}
+							onClick={() => onCategoryClick(category.name)}
+						>
+							<div className={`flex h-[85px] w-[85px] items-center justify-center overflow-hidden rounded-full border-2 shadow-md ${style.color}`}>
+								<span className="text-3xl">{style.icon}</span>
+							</div>
+							<p className={`mt-2 text-xs font-medium ${style.textColor} line-clamp-2`}>
+								{category.name}
+							</p>
+						</button>
+					);
+				})}
 			</div>
 
 			{/* سهم التنقل الأيمن */}
