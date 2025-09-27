@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 
 // تحديد نوع البيانات
 interface Category {
@@ -19,26 +20,45 @@ export default function CategoriesSlider({
 }: CategoriesSliderProps) {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+
+	// دالة جلب الأقسام
+	const fetchCategories = async (forceRefresh = false) => {
+		try {
+			// إضافة timestamp لضمان عدم استخدام التخزين المؤقت إذا كان forceRefresh = true
+			const url = forceRefresh ? `/api/categories?t=${Date.now()}` : "/api/categories";
+			const response = await fetch(url);
+			if (response.ok) {
+				const data = await response.json();
+				setCategories(data.categories || []);
+				setLastFetchTime(Date.now());
+			} else {
+				console.error("فشل في جلب الأقسام");
+			}
+		} catch (error) {
+			console.error("خطأ في جلب الأقسام:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const fetchCategories = async () => {
-			try {
-				const response = await fetch("/api/categories");
-				if (response.ok) {
-					const data = await response.json();
-					setCategories(data.categories || []);
-				} else {
-					console.error("فشل في جلب الأقسام");
-				}
-			} catch (error) {
-				console.error("خطأ في جلب الأقسام:", error);
-			} finally {
-				setIsLoading(false);
+		fetchCategories();
+	}, []);
+
+	// إعادة تحميل الأقسام عند التركيز على النافذة (إذا مر أكثر من دقيقة)
+	useEffect(() => {
+		const handleFocus = () => {
+			const now = Date.now();
+			// إذا مر أكثر من دقيقة منذ آخر جلب، أعد التحميل
+			if (now - lastFetchTime > 60000) {
+				fetchCategories(true);
 			}
 		};
 
-		fetchCategories();
-	}, []);
+		window.addEventListener('focus', handleFocus);
+		return () => window.removeEventListener('focus', handleFocus);
+	}, [lastFetchTime]);
 
 	const handleScrollRight = () => {
 		document
@@ -50,6 +70,11 @@ export default function CategoriesSlider({
 		document
 			.getElementById("categories-scroll-container")
 			?.scrollBy({ left: -200, behavior: "smooth" });
+	};
+
+	const handleRefresh = () => {
+		setIsLoading(true);
+		fetchCategories(true);
 	};
 
 	// إذا كان يتم تحميل البيانات
@@ -82,6 +107,15 @@ export default function CategoriesSlider({
 
 	return (
 		<div className="relative flex items-center">
+			{/* زر إعادة التحميل */}
+			<button
+				onClick={handleRefresh}
+				className="absolute -left-12 z-10 hidden rounded-full bg-white p-2 shadow-md md:block hover:bg-gray-50 transition-colors"
+				title="إعادة تحميل الأقسام"
+			>
+				<RefreshCw className="h-4 w-4 text-gray-600" />
+			</button>
+
 			{/* سهم التنقل الأيسر */}
 			<button
 				className="absolute -left-4 z-10 hidden rounded-full bg-white p-2 shadow-md md:block"

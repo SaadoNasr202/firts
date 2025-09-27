@@ -54,8 +54,8 @@ export async function GET() {
 			] as Category[];
 		}
 
-		// حفظ النتائج في التخزين المؤقت لمدة 15 دقيقة
-		cache.set(cacheKeyForCategories, categories, 900);
+		// حفظ النتائج في التخزين المؤقت لمدة دقيقتين فقط
+		cache.set(cacheKeyForCategories, categories, 120);
 
 		return NextResponse.json({ 
 			categories,
