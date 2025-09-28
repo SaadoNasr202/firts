@@ -195,6 +195,7 @@ export const TB_categories = pgTable("categories", {
 	name: text("name").notNull(), // اسم القسم: مطاعم، سوبرماركت، صيدلية، إلخ
 	description: text("description"), // وصف اختياري
 	createdAt: timestamp("created_at").defaultNow().notNull(),
+	image: text("image"),
 });
 export const TB_store_categories = pgTable("store_categories", {
 	id: text("id").primaryKey(),

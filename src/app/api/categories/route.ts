@@ -9,6 +9,7 @@ interface Category {
 	id: string;
 	name: string;
 	description?: string;
+	image?: string;
 }
 
 export async function GET() {
@@ -33,12 +34,14 @@ export async function GET() {
 				id: TB_categories.id,
 				name: TB_categories.name,
 				description: TB_categories.description,
+				image: TB_categories.image,
 			}).from(TB_categories).orderBy(TB_categories.createdAt);
 			
 			categories = result.map(cat => ({
 				id: cat.id,
 				name: cat.name,
-				description: cat.description || undefined
+				description: cat.description || undefined,
+				image: cat.image || undefined
 			}));
 		} catch (dbError) {
 			console.log("جدول categories غير موجود في قاعدة البيانات، سيتم استخدام بيانات افتراضية مؤقتة");
