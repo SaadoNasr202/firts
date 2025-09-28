@@ -1,8 +1,8 @@
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
+import SearchPage from "@/components/HomePage/SearchPage";
 import { Metadata } from "next";
 import { Suspense } from "react";
-import SearchPageContent from "./SearchPageContent";
 
 export const metadata: Metadata = {
   title: "البحث - شلة",
@@ -36,7 +36,7 @@ export default function SearchPageRoute() {
 						<p className="text-gray-600">جاري تحميل صفحة البحث...</p>
 					</div>
 				}>
-					<SearchPageContent />
+					<SearchPage />
 				</Suspense>
 			</div>
 			<Shellafooter />

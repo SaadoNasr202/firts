@@ -1,10 +1,8 @@
 import StorePage from "@/components/HomePage/StorePage";
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Suspense } from "react";
 import { Metadata } from "next";
-import StorePageContent from "./StorePageContent";
 
 export const metadata: Metadata = {
   title: "المتجر - شلة",
@@ -33,7 +31,7 @@ export default function StorePageRoute() {
             <NavBarCondition />
             <div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
                 <Suspense fallback={null}>
-                    <StorePageContent />
+                    <StorePage />
                 </Suspense>
             </div>
             <Shellafooter />

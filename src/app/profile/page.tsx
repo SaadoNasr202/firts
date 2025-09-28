@@ -2,7 +2,6 @@ import NavBarCondition from "@/components/Profile/NavBarConditon";
 import ProfileList from "@/components/Profile/ProfileList";
 import Shellafooter from "@/components/shellafooter";
 import { Metadata } from "next";
-import ProfileContent from "./ProfileContent";
 
 export const metadata: Metadata = {
   title: "الملف الشخصي - شلة",
@@ -29,7 +28,7 @@ export default function Profile() {
 	return (
 		<>
 			<NavBarCondition />
-			<ProfileContent />
+			<ProfileList />
 			<Shellafooter />
 		</>
 	);

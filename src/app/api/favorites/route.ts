@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 		// هون صار عندك userId من الجلسة
 		const userId = user.id;
 
-		// المنتجات المفضلة مع تفاصيلها
+		// المنتجات المفضلة مع تفاصيلها ومعلومات المتجر
 		const favProducts = await db
 			.select({
 				id: TB_products.id,
@@ -42,9 +42,12 @@ export async function GET(req: NextRequest) {
 				price: TB_products.price,
 				originalPrice: TB_products.originalPrice,
 				unit: TB_products.unit,
+				storeId: TB_products.storeId,
+				storeName: TB_stores.name,
 			})
 			.from(TB_favouriteusers)
 			.innerJoin(TB_products, eq(TB_favouriteusers.productId, TB_products.id))
+			.innerJoin(TB_stores, eq(TB_products.storeId, TB_stores.id))
 			.where(eq(TB_favouriteusers.userId, userId));
 
 		// المتاجر المفضلة مع تفاصيلها

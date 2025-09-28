@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useStoreFavorites } from "@/hooks/useFavorites";
 import FavoriteButton from "@/components/ui/FavoriteButton";
+import Breadcrumb from "@/components/HomePage/Breadcrumb";
+import { useSearchParams } from "next/navigation";
 
 interface Store {
 	id: string;
@@ -17,8 +19,9 @@ interface Store {
 }
 
 interface CategoryStoresPageProps {
-	categoryName: string;
-	onStoreClick: (storeName: string) => void;
+	categoryName?: string;
+	onStoreClick?: (storeName: string) => void;
+	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم مكون
 }
 
 // مكون بطاقة المتجر مع زر المفضلة
@@ -139,7 +142,11 @@ function StoreCard({
 	);
 }
 
-export default function CategoryStoresPage({ categoryName, onStoreClick }: CategoryStoresPageProps) {
+export default function CategoryStoresPage({ 
+	categoryName: propCategoryName, 
+	onStoreClick: propOnStoreClick, 
+	isFullPage = false 
+}: CategoryStoresPageProps) {
 	const [stores, setStores] = useState<Store[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -147,11 +154,37 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 	const [nextOffset, setNextOffset] = useState(0);
 	const pageSize = 20;
 
+	// استخدام URL parameters للصفحة الكاملة
+	const searchParams = useSearchParams();
+	const urlCategoryName = searchParams.get("category") || "";
+	
+	// تحديد البيانات المستخدمة
+	const categoryName = isFullPage ? urlCategoryName : propCategoryName;
+	const onStoreClick = isFullPage ? undefined : propOnStoreClick;
+
+	// دالة التعامل مع النقر على المتجر للصفحة الكاملة
+	const handleStoreClick = (storeName: string) => {
+		if (isFullPage) {
+			window.location.href = `/store?store=${encodeURIComponent(storeName)}&category=${encodeURIComponent(categoryName || "")}`;
+		} else if (propOnStoreClick) {
+			propOnStoreClick(storeName);
+		}
+	};
+
+	// دالة التعامل مع النقر على Breadcrumb
+	const handleBreadcrumbClick = (index: number) => {
+		if (index === 0) {
+			window.location.href = "/HomePage";
+		} else {
+			window.location.href = "/categories";
+		}
+	};
+
 	useEffect(() => {
 		const fetchCategoryStores = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName)}&limit=${pageSize}&offset=0`);
+				const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName || "")}&limit=${pageSize}&offset=0`);
 				if (response.ok) {
 					const data = await response.json();
 					setStores(data.stores || []);
@@ -167,16 +200,16 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 			}
 		};
 
-		if (categoryName) {
+		if (categoryName && categoryName.trim() !== "") {
 			fetchCategoryStores();
 		}
-	}, [categoryName]);
+	}, [categoryName, isFullPage]);
 
 	const handleLoadMore = async () => {
-		if (!hasMore || isLoadingMore) return;
+		if (!hasMore || isLoadingMore || !categoryName) return;
 		setIsLoadingMore(true);
 		try {
-			const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName)}&limit=${pageSize}&offset=${nextOffset}`);
+			const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName || "")}&limit=${pageSize}&offset=${nextOffset}`);
 			if (response.ok) {
 				const data = await response.json();
 				setStores(prev => [...prev, ...(data.stores || [])]);
@@ -192,43 +225,135 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 
 	// عرض حالة التحميل
 	if (isLoading) {
-		return (
-			<div className="p-4 md:p-8" dir="rtl">
-				<div className="h-8 w-48 animate-pulse bg-gray-300 rounded mb-6"></div>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-					{[1, 2, 3, 4, 5, 6].map((item) => (
-						<div key={item} className="bg-white rounded-lg shadow-md overflow-hidden">
-							<div className="h-48 animate-pulse bg-gray-300"></div>
-							<div className="p-4">
-								<div className="h-6 w-3/4 animate-pulse bg-gray-300 rounded mb-2"></div>
-								<div className="h-4 w-1/2 animate-pulse bg-gray-300 rounded mb-2"></div>
-								<div className="h-4 w-1/3 animate-pulse bg-gray-300 rounded"></div>
-							</div>
+		if (isFullPage) {
+			return (
+				<>
+					<div className="mb-4">
+						<Breadcrumb
+							path={["الرئيسية", categoryName || "القسم"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
+						/>
+					</div>
+					<div className="p-4 md:p-8" dir="rtl">
+						<div className="h-8 w-48 animate-pulse bg-gray-300 rounded mb-6"></div>
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+							{[1, 2, 3, 4, 5, 6].map((item) => (
+								<div key={item} className="bg-white rounded-lg shadow-md overflow-hidden">
+									<div className="h-48 animate-pulse bg-gray-300"></div>
+									<div className="p-4">
+										<div className="h-6 w-3/4 animate-pulse bg-gray-300 rounded mb-2"></div>
+										<div className="h-4 w-1/2 animate-pulse bg-gray-300 rounded mb-2"></div>
+										<div className="h-4 w-1/3 animate-pulse bg-gray-300 rounded"></div>
+									</div>
+								</div>
+							))}
 						</div>
-					))}
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<div className="p-4 md:p-8" dir="rtl">
+					<div className="h-8 w-48 animate-pulse bg-gray-300 rounded mb-6"></div>
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+						{[1, 2, 3, 4, 5, 6].map((item) => (
+							<div key={item} className="bg-white rounded-lg shadow-md overflow-hidden">
+								<div className="h-48 animate-pulse bg-gray-300"></div>
+								<div className="p-4">
+									<div className="h-6 w-3/4 animate-pulse bg-gray-300 rounded mb-2"></div>
+									<div className="h-4 w-1/2 animate-pulse bg-gray-300 rounded mb-2"></div>
+									<div className="h-4 w-1/3 animate-pulse bg-gray-300 rounded"></div>
+								</div>
+							</div>
+						))}
+					</div>
 				</div>
-			</div>
-		);
+			);
+		}
 	}
 
 	// إذا لم توجد متاجر
 	if (stores.length === 0) {
-		return (
-			<div className="p-4 md:p-8" dir="rtl">
-				<h2 className="text-2xl font-bold text-gray-900 mb-6">{categoryName}</h2>
-				<div className="flex items-center justify-center py-12">
-					<div className="text-center">
-						<svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-						</svg>
-						<p className="text-gray-500 text-lg">لا توجد متاجر متاحة في {categoryName}</p>
-						<p className="text-gray-400 text-sm mt-2">جرب تصفح أقسام أخرى</p>
+		if (isFullPage) {
+			return (
+				<>
+					<div className="mb-4">
+						<Breadcrumb
+							path={["الرئيسية", categoryName || "القسم"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
+						/>
+					</div>
+					<div className="p-4 md:p-8" dir="rtl">
+						<h2 className="text-2xl font-bold text-gray-900 mb-6">{categoryName}</h2>
+						<div className="flex items-center justify-center py-12">
+							<div className="text-center">
+								<svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+								</svg>
+								<p className="text-gray-500 text-lg">لا توجد متاجر متاحة في {categoryName}</p>
+								<p className="text-gray-400 text-sm mt-2">جرب تصفح أقسام أخرى</p>
+							</div>
+						</div>
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<div className="p-4 md:p-8" dir="rtl">
+					<h2 className="text-2xl font-bold text-gray-900 mb-6">{categoryName}</h2>
+					<div className="flex items-center justify-center py-12">
+						<div className="text-center">
+							<svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+							</svg>
+							<p className="text-gray-500 text-lg">لا توجد متاجر متاحة في {categoryName}</p>
+							<p className="text-gray-400 text-sm mt-2">جرب تصفح أقسام أخرى</p>
+						</div>
 					</div>
 				</div>
-			</div>
+			);
+		}
+	}
+
+	// عرض الصفحة الكاملة
+	if (isFullPage) {
+		return (
+			<>
+				<div className="mb-4">
+					<Breadcrumb
+						path={["الرئيسية", categoryName || "القسم"]}
+						onBreadcrumbClick={handleBreadcrumbClick}
+					/>
+				</div>
+				<div className="p-4 md:p-8" dir="rtl">
+					<h2 className="text-2xl font-bold text-gray-900 mb-6">{categoryName}</h2>
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+						{stores.map((store) => (
+							<StoreCard
+								key={store.id}
+								store={store}
+								onStoreClick={handleStoreClick}
+							/>
+						))}
+					</div>
+					{/* زر عرض المزيد */}
+					{hasMore && (
+						<div className="mt-8 flex justify-center">
+							<button
+								onClick={handleLoadMore}
+								disabled={isLoadingMore}
+								className={`px-6 py-2 rounded-md text-white transition-colors ${isLoadingMore ? 'bg-gray-400' : 'bg-[#0EA5E9] hover:bg-[#0284C7]'}`}
+							>
+								{isLoadingMore ? '...جاري التحميل' : 'عرض المزيد'}
+							</button>
+						</div>
+					)}
+				</div>
+			</>
 		);
 	}
 
+	// عرض المكون (الوضع الافتراضي)
 	return (
 		<div className="p-4 md:p-8" dir="rtl">
 			<h2 className="text-2xl font-bold text-gray-900 mb-6">{categoryName}</h2>
@@ -237,7 +362,7 @@ export default function CategoryStoresPage({ categoryName, onStoreClick }: Categ
 					<StoreCard
 						key={store.id}
 						store={store}
-						onStoreClick={onStoreClick}
+						onStoreClick={onStoreClick || (() => {})}
 					/>
 				))}
 			</div>

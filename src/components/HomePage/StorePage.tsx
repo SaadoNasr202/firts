@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from "next/navigation";
 import { useStoreFavorites } from "@/hooks/useFavorites";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
+import Breadcrumb from "@/components/HomePage/Breadcrumb";
 
-// Define the component's props
+// Define the component's props - لم تعد بحاجة لـ storeName و onCategoryClick كـ props
 interface StorePageProps {
-  storeName: string;
-  onCategoryClick: (categoryName: string) => void;
+  // يمكن إضافة props أخرى هنا إذا لزم الأمر
 }
 
 interface StoreDetails {
@@ -26,7 +27,13 @@ interface StoreCategory {
   storelogo: string | null;
 }
 
-export default function StorePage({ storeName, onCategoryClick }: StorePageProps) {
+export default function StorePage({}: StorePageProps) {
+  // استخراج المعاملات من URL
+  const searchParams = useSearchParams();
+  const storeName = searchParams.get("store") || "";
+  const categoryName = searchParams.get("category") || "";
+  const source = searchParams.get("source") || "";
+
   const [productCategories, setProductCategories] = useState<string[]>([]);
   const [storeCategories, setStoreCategories] = useState<StoreCategory[]>([]);
   const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
@@ -34,6 +41,31 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
   const { isFavorite, isLoading: favoriteLoading, toggleFavorite } = useStoreFavorites(
     storeDetails?.id || ""
   );
+
+  // دالة التعامل مع النقر على الفئة
+  const handleCategoryClick = (categoryName: string) => {
+    window.location.href = `/products?store=${encodeURIComponent(storeName)}&category=${encodeURIComponent(categoryName)}`;
+  };
+
+  // دالة التعامل مع النقر على Breadcrumb
+  const handleBreadcrumbClick = (index: number) => {
+    if (index === 0) {
+      window.location.href = "/HomePage";
+    } else if (source === "nearby") {
+      window.location.href = "/nearby-stores";
+    } else if (source === "discounts") {
+      window.location.href = "/discounts";
+    } else if (source === "popular") {
+      window.location.href = "/popular-stores";
+    } else if (categoryName) {
+      window.location.href = `/category-stores?category=${encodeURIComponent(categoryName)}`;
+    }
+  };
+
+  // التحقق من وجود اسم المتجر
+  if (!storeName) {
+    return <div className="text-center text-gray-600">المتجر غير محدد.</div>;
+  }
 
   // استخدام التخزين المؤقت على مستوى العميل
   const { data: storeData, isLoading, error } = useClientCache(
@@ -64,8 +96,18 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
   const logoUrl = storeCategories.find((c) => c.storelogo)?.storelogo || null;
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans" dir="rtl">
-      {/* Store Header Section */}
+    <>
+      {/* Breadcrumb Section */}
+      <div className="mb-4">
+        <Breadcrumb 
+          path={["الرئيسية", storeName]} 
+          onBreadcrumbClick={handleBreadcrumbClick} 
+        />
+      </div>
+
+      {/* Store Content */}
+      <div className="min-h-screen bg-gray-50 font-sans" dir="rtl">
+        {/* Store Header Section */}
       <div className="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden bg-gray-200">
         {isLoading ? (
           <div className="w-full h-full animate-pulse bg-gray-300"></div>
@@ -170,7 +212,7 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
             storeCategories.map((category) => (
             <button
               key={category.id}
-              onClick={() => onCategoryClick(category.name)}
+              onClick={() => handleCategoryClick(category.name)}
               className="flex flex-col items-center text-center p-2 rounded-lg bg-white shadow-sm hover:bg-gray-100 transition-colors relative"
             >
               
@@ -180,6 +222,7 @@ export default function StorePage({ storeName, onCategoryClick }: StorePageProps
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

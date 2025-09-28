@@ -60,7 +60,7 @@ export function useCart() {
 		setIsLoading(true);
 		try {
 			const response = await fetch('/api/cart/clear', {
-				method: 'POST',
+				method: 'DELETE',
 			});
 
 			if (response.ok) {

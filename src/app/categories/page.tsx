@@ -1,9 +1,7 @@
 import CategoriesSlider from "@/components/HomePage/CategoriesSlider";
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Metadata } from "next";
-import CategoriesPageContent from "./CategoriesPageContent";
 
 export const metadata: Metadata = {
   title: "أقسامنا - شلة",
@@ -31,7 +29,7 @@ export default function CategoriesPageRoute() {
 		<>
 			<NavBarCondition />
 			<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-				<CategoriesPageContent />
+				<CategoriesSlider isFullPage={true} />
 			</div>
 			<Shellafooter />
 		</>

@@ -1,10 +1,8 @@
 import ProductsPage from "@/components/HomePage/ProductsPage";
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Suspense } from "react";
 import { Metadata } from "next";
-import ProductsPageContent from "./ProductsPageContent";
 
 export const metadata: Metadata = {
   title: "المنتجات - شلة",
@@ -33,7 +31,7 @@ export default function ProductsPageRoute() {
             <NavBarCondition />
             <div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
                 <Suspense fallback={null}>
-                    <ProductsPageContent />
+                    <ProductsPage isFullPage={true} />
                 </Suspense>
             </div>
             <Shellafooter />

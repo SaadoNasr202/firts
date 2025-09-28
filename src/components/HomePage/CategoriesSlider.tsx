@@ -2,6 +2,8 @@
 
 import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
+import Breadcrumb from "@/components/HomePage/Breadcrumb";
+import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
 
 // تحديد نوع البيانات
 interface Category {
@@ -13,18 +15,40 @@ interface Category {
 
 // تحديد نوع الخاصية (prop)
 interface CategoriesSliderProps {
-	onCategoryClick: (categoryName: string) => void;
+	onCategoryClick?: (categoryName: string) => void;
+	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم شريط تمرير
 }
 
 export default function CategoriesSlider({
 	onCategoryClick,
+	isFullPage = false,
 }: CategoriesSliderProps) {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+	const [searchTerm, setSearchTerm] = useState("");
 
-	// دالة جلب الأقسام
+	// استخدام التخزين المؤقت على مستوى العميل للصفحة الكاملة
+	const {
+		data: categoriesData,
+		isLoading: cacheLoading,
+		error: cacheError,
+	} = useClientCache(
+		cacheKeys.categories(),
+		async () => {
+			const response = await fetch("/api/categories");
+			if (!response.ok) {
+				throw new Error("فشل في جلب الأقسام");
+			}
+			return response.json();
+		},
+		900, // 15 دقيقة
+	);
+
+	// دالة جلب الأقسام (للشريط فقط)
 	const fetchCategories = async (forceRefresh = false) => {
+		if (isFullPage) return; // لا نحتاج هذا للصفحة الكاملة
+		
 		try {
 			// إضافة timestamp لضمان عدم استخدام التخزين المؤقت إذا كان forceRefresh = true
 			const url = forceRefresh
@@ -46,11 +70,15 @@ export default function CategoriesSlider({
 	};
 
 	useEffect(() => {
-		fetchCategories();
-	}, []);
+		if (!isFullPage) {
+			fetchCategories();
+		}
+	}, [isFullPage]);
 
-	// إعادة تحميل الأقسام عند التركيز على النافذة (إذا مر أكثر من دقيقة)
+	// إعادة تحميل الأقسام عند التركيز على النافذة (إذا مر أكثر من دقيقة) - للشريط فقط
 	useEffect(() => {
+		if (isFullPage) return;
+		
 		const handleFocus = () => {
 			const now = Date.now();
 			// إذا مر أكثر من دقيقة منذ آخر جلب، أعد التحميل
@@ -61,7 +89,7 @@ export default function CategoriesSlider({
 
 		window.addEventListener("focus", handleFocus);
 		return () => window.removeEventListener("focus", handleFocus);
-	}, [lastFetchTime]);
+	}, [lastFetchTime, isFullPage]);
 
 	const handleScrollRight = () => {
 		document
@@ -76,8 +104,32 @@ export default function CategoriesSlider({
 	};
 
 	const handleRefresh = () => {
+		if (isFullPage) return; // لا نحتاج هذا للصفحة الكاملة
 		setIsLoading(true);
 		fetchCategories(true);
+	};
+
+	// دالة التعامل مع النقر على القسم
+	const handleCategoryClick = (categoryName: string) => {
+		if (onCategoryClick) {
+			onCategoryClick(categoryName);
+		} else {
+			// سلوك افتراضي للصفحة الكاملة
+			if (categoryName === "هايبر شلة") {
+				window.location.href = "/hyper-shella";
+			} else if (categoryName === "استلام وتسليم") {
+				window.location.href = "/PickUp";
+			} else {
+				window.location.href = `/category-stores?category=${encodeURIComponent(categoryName)}`;
+			}
+		}
+	};
+
+	// دالة التعامل مع النقر على Breadcrumb
+	const handleBreadcrumbClick = (index: number) => {
+		if (index === 0) {
+			window.location.href = "/HomePage";
+		}
 	};
 
 	// دالة للحصول على الأيقونة واللون حسب اسم القسم
@@ -136,34 +188,229 @@ export default function CategoriesSlider({
 		);
 	};
 
+	// تحديد البيانات المستخدمة
+	const currentCategories = isFullPage ? (categoriesData?.categories || []) : categories;
+	const currentIsLoading = isFullPage ? cacheLoading : isLoading;
+	const currentError = isFullPage ? cacheError : null;
+
+	// فلترة الأقسام للصفحة الكاملة
+	const filteredCategories = isFullPage 
+		? currentCategories.filter(
+			(category: Category) =>
+				category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				(category.description &&
+					category.description.toLowerCase().includes(searchTerm.toLowerCase())),
+		)
+		: currentCategories;
+
 	// إذا كان يتم تحميل البيانات
-	if (isLoading) {
-		return (
-			<div className="relative flex items-center">
-				<div className="scrollbar-hide flex gap-8 space-x-reverse overflow-x-auto px-4 pb-2">
-					{[1, 2, 3, 4, 5].map((item) => (
-						<div
-							key={item}
-							className="flex w-[85px] flex-shrink-0 flex-col items-center text-center"
-						>
-							<div className="h-[85px] w-[85px] animate-pulse rounded-full bg-gray-300"></div>
-							<div className="mt-2 h-3 w-16 animate-pulse rounded bg-gray-300"></div>
-						</div>
-					))}
+	if (currentIsLoading) {
+		if (isFullPage) {
+			return (
+				<>
+					<div className="mb-6">
+						<Breadcrumb
+							path={["الرئيسية", "أقسامنا"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
+						/>
+					</div>
+					<div className="py-12 text-center">
+						<div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-[#ADF0D1]"></div>
+						<p className="text-gray-600">جاري تحميل الأقسام...</p>
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<div className="relative flex items-center">
+					<div className="scrollbar-hide flex gap-8 space-x-reverse overflow-x-auto px-4 pb-2">
+						{[1, 2, 3, 4, 5].map((item) => (
+							<div
+								key={item}
+								className="flex w-[85px] flex-shrink-0 flex-col items-center text-center"
+							>
+								<div className="h-[85px] w-[85px] animate-pulse rounded-full bg-gray-300"></div>
+								<div className="mt-2 h-3 w-16 animate-pulse rounded bg-gray-300"></div>
+							</div>
+						))}
+					</div>
 				</div>
-			</div>
-		);
+			);
+		}
+	}
+
+	// عرض رسالة الخطأ
+	if (currentError) {
+		if (isFullPage) {
+			return (
+				<>
+					<div className="mb-6">
+						<Breadcrumb
+							path={["الرئيسية", "أقسامنا"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
+						/>
+					</div>
+					<div className="py-12 text-center">
+						<div className="mb-4 text-6xl">❌</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">حدث خطأ</h3>
+						<p className="text-gray-500">{currentError}</p>
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<div className="flex items-center justify-center py-8">
+					<div className="text-center">
+						<div className="text-6xl mb-4">❌</div>
+						<h3 className="text-xl font-semibold text-gray-700 mb-2">حدث خطأ</h3>
+						<p className="text-gray-500">{currentError}</p>
+					</div>
+				</div>
+			);
+		}
 	}
 
 	// إذا لم توجد أقسام
-	if (categories.length === 0) {
+	if (currentCategories.length === 0) {
+		if (isFullPage) {
+			return (
+				<>
+					<div className="mb-6">
+						<Breadcrumb
+							path={["الرئيسية", "أقسامنا"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
+						/>
+					</div>
+					<div className="py-12 text-center">
+						<div className="mb-4 text-6xl">📂</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">لا توجد أقسام</h3>
+						<p className="text-gray-500">لم يتم العثور على أي أقسام</p>
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<div className="flex items-center justify-center py-8">
+					<p className="text-gray-500">لا توجد أقسام متاحة حالياً</p>
+				</div>
+			);
+		}
+	}
+
+	// عرض الصفحة الكاملة
+	if (isFullPage) {
 		return (
-			<div className="flex items-center justify-center py-8">
-				<p className="text-gray-500">لا توجد أقسام متاحة حالياً</p>
-			</div>
+			<>
+				<div className="mb-6">
+					<Breadcrumb
+						path={["الرئيسية", "أقسامنا"]}
+						onBreadcrumbClick={handleBreadcrumbClick}
+					/>
+				</div>
+
+				{/* العنوان والوصف */}
+				<div className="mb-8 text-center">
+					<h1 className="mb-4 text-3xl font-bold text-gray-900">أقسامنا</h1>
+					<p className="mx-auto max-w-2xl text-lg text-gray-600">
+						اكتشف جميع أقسام شلة واختر ما يناسب احتياجاتك من مطاعم، سوبرماركت،
+						صيدليات وأكثر
+					</p>
+				</div>
+
+				{/* شريط البحث */}
+				<div className="mb-8">
+					<div className="mx-auto max-w-md">
+						<div className="relative">
+							<input
+								type="text"
+								placeholder="ابحث عن قسم..."
+								value={searchTerm}
+								onChange={(e) => setSearchTerm(e.target.value)}
+								className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-right focus:border-transparent focus:ring-2 focus:ring-green-500"
+							/>
+							<div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
+								<svg
+									className="h-5 w-5 text-gray-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+									/>
+								</svg>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* شبكة الأقسام */}
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+					{filteredCategories.map((category: Category) => {
+						const style = getCategoryStyle(category.name);
+						return (
+							<div
+								key={category.id}
+								onClick={() => handleCategoryClick(category.name)}
+								className={`${style.color} transform cursor-pointer rounded-xl border-2 p-6 transition-all duration-300 hover:scale-105 hover:shadow-lg`}
+							>
+								<div className="text-center">
+									<div className="mb-4 flex justify-center">
+										{category.image ? (
+											<div className="relative h-24 w-24 overflow-hidden">
+												<img
+													src={category.image}
+													alt={category.name}
+													className="absolute inset-0 h-full w-full items-center rounded-full object-cover"
+													onError={(e) => {
+														// في حالة فشل تحميل الصورة، عرض الأيقونة النصية
+														const target = e.target as HTMLImageElement;
+														target.style.display = "none";
+														const parent = target.parentElement;
+														if (parent) {
+															parent.innerHTML = `<div class="w-full h-full flex items-center justify-center rounded-full ${style.color}"><div class="text-4xl">${style.icon}</div></div>`;
+														}
+													}}
+												/>
+											</div>
+										) : (
+											<div
+												className={`flex h-24 w-24 items-center justify-center rounded-full shadow-lg ${style.color}`}
+											>
+												<div className="text-4xl">{style.icon}</div>
+											</div>
+										)}
+									</div>
+									<h3 className={`text-xl font-bold ${style.textColor} mb-2`}>
+										{category.name}
+									</h3>
+									<p className="text-sm text-gray-600">
+										{category.description || "اكتشف أفضل المنتجات في هذا القسم"}
+									</p>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+
+				{/* رسالة في حالة عدم وجود نتائج */}
+				{filteredCategories.length === 0 && !currentIsLoading && (
+					<div className="py-12 text-center">
+						<div className="mb-4 text-6xl">🔍</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							لم نجد أي أقسام
+						</h3>
+						<p className="text-gray-500">جرب البحث بكلمات مختلفة</p>
+					</div>
+				)}
+			</>
 		);
 	}
 
+	// عرض الشريط (الوضع الافتراضي)
 	return (
 		<div className="relative flex items-center">
 			{/* زر إعادة التحميل */}
@@ -201,13 +448,13 @@ export default function CategoriesSlider({
 				id="categories-scroll-container"
 				className="scrollbar-hide flex gap-6 space-x-reverse overflow-x-auto px-4 pb-2"
 			>
-				{categories.map((category) => {
+				{filteredCategories.map((category: Category) => {
 					const style = getCategoryStyle(category.name);
 					return (
 						<button
 							key={category.id}
 							className={`flex w-[100px] flex-shrink-0 transform cursor-pointer flex-col items-center text-center transition-all duration-300 hover:scale-105`}
-							onClick={() => onCategoryClick(category.name)}
+							onClick={() => handleCategoryClick(category.name)}
 						>
 							<div className="relative h-[90px] w-[90px] overflow-hidden rounded-full">
 								{category.image ? (

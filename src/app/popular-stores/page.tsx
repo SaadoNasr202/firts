@@ -1,9 +1,7 @@
 import PopularStoresSlider from "@/components/HomePage/PopularStoresSlider";
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Metadata } from "next";
-import PopularStoresPageContent from "./PopularStoresPageContent";
 
 export const metadata: Metadata = {
   title: "أشهر المحلات في منطقتك - شلة",
@@ -31,7 +29,7 @@ export default function PopularStoresPageRoute() {
 		<>
 			<NavBarCondition />
 			<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-				<PopularStoresPageContent />
+				<PopularStoresSlider isFullPage={true} />
 			</div>
 			<Shellafooter />
 		</>

@@ -16,7 +16,7 @@ interface SearchResult {
 	hasCategories?: boolean;
 }
 
-export default function SearchPageContent() {
+export default function SearchPage() {
 	const searchParams = useSearchParams();
 	const query = searchParams.get('q') || '';
 	

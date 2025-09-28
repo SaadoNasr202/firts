@@ -1,10 +1,8 @@
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import CategoryStoresPage from "@/components/HomePage/CategoryStoresPage";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Metadata } from "next";
 import { Suspense } from "react";
-import CategoryStoresPageContent from "./CategoryStoresPageContent";
 
 export const metadata: Metadata = {
 	title: "متاجر القسم - شلة",
@@ -36,7 +34,7 @@ export default function CategoryStoresPageRoute() {
 			<NavBarCondition />
 			<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
 				<Suspense fallback={null}>
-					<CategoryStoresPageContent />
+					<CategoryStoresPage isFullPage={true} />
 				</Suspense>
 			</div>
 			<Shellafooter />
