@@ -63,10 +63,10 @@ export async function GET(request: NextRequest) {
 			.where(
 				and(
 					sql`${TB_stores.location} IS NOT NULL AND ${TB_stores.location} != ''`,
-					sql`CAST(${TB_stores.rating} AS DECIMAL) >= ${minRating}`
+					sql`CAST(NULLIF(${TB_stores.rating}, '') AS DECIMAL) >= ${minRating}`
 				)
 			)
-			.orderBy(sql`CAST(${TB_stores.rating} AS DECIMAL) DESC`); // ترتيب حسب التقييم
+			.orderBy(sql`CAST(NULLIF(${TB_stores.rating}, '') AS DECIMAL) DESC`); // ترتيب حسب التقييم
 
 		// تطبيع روابط الصور
 		const normalizeImageUrl = (raw?: string | null) => {
