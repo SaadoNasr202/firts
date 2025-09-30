@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
-import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
+import { NearbyStore } from "@/lib/types/api";
+import { useEffect, useState } from "react";
 
 // تحديد نوع البيانات
 interface Store {
@@ -21,47 +21,85 @@ interface PopularStoresSliderProps {
 	onStoreClick?: (storeName: string) => void;
 	selectedLocation?: any;
 	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم شريط تمرير
+	getNearbyStoresAction: (args: {
+		lat: number;
+		lng: number;
+		limit?: number;
+		maxDistance?: number;
+	}) => Promise<
+		| {
+				stores: NearbyStore[];
+				userLocation: { lat: number; lng: number };
+				maxDistance: number;
+				total: number;
+				success?: true;
+		  }
+		| { error: string }
+	>;
 }
 
 export default function PopularStoresSlider({
 	onStoreClick,
 	selectedLocation,
 	isFullPage = false,
+	getNearbyStoresAction,
 }: PopularStoresSliderProps) {
 	const [stores, setStores] = useState<Store[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
-	
+	const [userLocation, setUserLocation] = useState<{
+		lat: number;
+		lng: number;
+	} | null>(null);
+
 	// state للصفحة الكاملة
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("الكل");
 	const [sortBy, setSortBy] = useState("rating");
 	const [showOnlyPopular, setShowOnlyPopular] = useState(false);
 
-	// استخدام التخزين المؤقت على مستوى العميل للصفحة الكاملة
-	const {
-		data: storesData,
-		isLoading: cacheLoading,
-		error: cacheError,
-	} = useClientCache(
-		cacheKeys.stores(),
-		async () => {
-			const response = await fetch('/api/stores/nearby');
-			if (!response.ok) {
-				throw new Error('فشل في جلب المتاجر');
+	// استخدام Server Action للصفحة الكاملة
+	const [storesData, setStoresData] = useState<any>(null);
+	const [cacheLoading, setCacheLoading] = useState(false);
+	const [cacheError, setCacheError] = useState<string | null>(null);
+
+	// جلب البيانات للصفحة الكاملة
+	useEffect(() => {
+		if (!isFullPage || !userLocation) return;
+		
+		const fetchFullPageStores = async () => {
+			setCacheLoading(true);
+			setCacheError(null);
+			try {
+				const result = await getNearbyStoresAction({
+					lat: userLocation.lat,
+					lng: userLocation.lng,
+					limit: 200,
+					maxDistance: 15,
+				});
+				if ((result as any).stores) {
+					setStoresData({ stores: (result as any).stores });
+				} else if ((result as any).error) {
+					setCacheError((result as any).error);
+				}
+			} catch (error) {
+				setCacheError("فشل في جلب المتاجر");
+			} finally {
+				setCacheLoading(false);
 			}
-			return response.json();
-		},
-		600 // 10 دقائق
-	);
+		};
+
+		fetchFullPageStores();
+	}, [isFullPage, userLocation, getNearbyStoresAction]);
 
 	useEffect(() => {
 		if (isFullPage) return; // لا نحتاج هذا للصفحة الكاملة
-		
+
 		// استخدام الموقع المختار أولاً، ثم الموقع الحالي للمستخدم
 		if (selectedLocation && selectedLocation.address) {
 			// تحليل الإحداثيات من العنوان المختار
-			const coords = selectedLocation.address.split(',').map((coord: string) => parseFloat(coord.trim()));
+			const coords = selectedLocation.address
+				.split(",")
+				.map((coord: string) => parseFloat(coord.trim()));
 			if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
 				setUserLocation({ lat: coords[0], lng: coords[1] });
 				return;
@@ -77,10 +115,10 @@ export default function PopularStoresSlider({
 						setUserLocation({ lat: latitude, lng: longitude });
 					},
 					(error) => {
-						console.warn('فشل في الحصول على الموقع:', error);
+						console.warn("فشل في الحصول على الموقع:", error);
 						// استخدام موقع افتراضي (الرياض) إذا فشل الحصول على الموقع
 						setUserLocation({ lat: 24.7136, lng: 46.6753 });
-					}
+					},
 				);
 			} else {
 				// استخدام موقع افتراضي إذا لم يكن المتصفح يدعم الموقع
@@ -93,19 +131,21 @@ export default function PopularStoresSlider({
 
 	useEffect(() => {
 		if (isFullPage) return; // لا نحتاج هذا للصفحة الكاملة
-		
+
 		const fetchStores = async () => {
 			if (!userLocation) return;
 
 			try {
-				const response = await fetch(
-					`/api/stores/popular-location?lat=${userLocation.lat}&lng=${userLocation.lng}&limit=8&maxDistance=15&minRating=3.6`
-				);
-				if (response.ok) {
-					const data = await response.json();
-					setStores(data.stores || []);
-				} else {
-					console.error("فشل في جلب المتاجر الشهيرة");
+				const result = await getNearbyStoresAction({
+					lat: userLocation.lat,
+					lng: userLocation.lng,
+					limit: 8,
+					maxDistance: 15,
+				});
+				if ((result as any).stores) {
+					setStores((result as any).stores || []);
+				} else if ((result as any).error) {
+					console.error("فشل في جلب المتاجر الشهيرة:", (result as any).error);
 				}
 			} catch (error) {
 				console.error("خطأ في جلب المتاجر الشهيرة:", error);
@@ -115,7 +155,7 @@ export default function PopularStoresSlider({
 		};
 
 		fetchStores();
-	}, [userLocation, isFullPage]);
+	}, [userLocation, isFullPage, getNearbyStoresAction]);
 
 	const handleScrollRight = () => {
 		document
@@ -148,19 +188,52 @@ export default function PopularStoresSlider({
 	// دالة لتوليد معلومات إضافية للمتاجر
 	const getStoreInfo = (store: Store) => {
 		// توليد مسافة عشوائية (في التطبيق الحقيقي ستكون من GPS)
-		const distances = ["0.3 كم", "0.5 كم", "0.8 كم", "1.2 كم", "1.5 كم", "2.0 كم"];
-		const deliveryTimes = ["10-20 دقيقة", "15-25 دقيقة", "20-30 دقيقة", "25-35 دقيقة", "30-40 دقيقة", "35-45 دقيقة"];
-		const deliveryFees = ["2 ريال", "3 ريال", "4 ريال", "5 ريال", "6 ريال", "8 ريال"];
-		const minimumOrders = ["20 ريال", "25 ريال", "30 ريال", "35 ريال", "40 ريال", "45 ريال", "50 ريال"];
-		
-		const randomDistance = distances[Math.floor(Math.random() * distances.length)];
-		const randomDeliveryTime = deliveryTimes[Math.floor(Math.random() * deliveryTimes.length)];
-		const randomDeliveryFee = deliveryFees[Math.floor(Math.random() * deliveryFees.length)];
-		const randomMinimumOrder = minimumOrders[Math.floor(Math.random() * minimumOrders.length)];
-		
+		const distances = [
+			"0.3 كم",
+			"0.5 كم",
+			"0.8 كم",
+			"1.2 كم",
+			"1.5 كم",
+			"2.0 كم",
+		];
+		const deliveryTimes = [
+			"10-20 دقيقة",
+			"15-25 دقيقة",
+			"20-30 دقيقة",
+			"25-35 دقيقة",
+			"30-40 دقيقة",
+			"35-45 دقيقة",
+		];
+		const deliveryFees = [
+			"2 ريال",
+			"3 ريال",
+			"4 ريال",
+			"5 ريال",
+			"6 ريال",
+			"8 ريال",
+		];
+		const minimumOrders = [
+			"20 ريال",
+			"25 ريال",
+			"30 ريال",
+			"35 ريال",
+			"40 ريال",
+			"45 ريال",
+			"50 ريال",
+		];
+
+		const randomDistance =
+			distances[Math.floor(Math.random() * distances.length)];
+		const randomDeliveryTime =
+			deliveryTimes[Math.floor(Math.random() * deliveryTimes.length)];
+		const randomDeliveryFee =
+			deliveryFees[Math.floor(Math.random() * deliveryFees.length)];
+		const randomMinimumOrder =
+			minimumOrders[Math.floor(Math.random() * minimumOrders.length)];
+
 		// توليد عدد التقييمات عشوائياً
 		const reviewCount = Math.floor(Math.random() * 1000) + 100;
-		
+
 		return {
 			distance: randomDistance,
 			deliveryTime: randomDeliveryTime,
@@ -169,50 +242,59 @@ export default function PopularStoresSlider({
 			reviewCount,
 			description: `${store.name} - ${store.type || "متجر"} عالي الجودة`,
 			isOpen: Math.random() > 0.1, // 90% من المتاجر مفتوحة
-			isPopular: Math.random() > 0.3 // 70% من المتاجر مشهورة
+			isPopular: Math.random() > 0.3, // 70% من المتاجر مشهورة
 		};
 	};
 
 	// تحديد البيانات المستخدمة
-	const currentStores = isFullPage ? (storesData?.stores || []) : stores;
+	const currentStores = isFullPage ? storesData?.stores || [] : stores;
 	const currentIsLoading = isFullPage ? cacheLoading : isLoading;
 	const currentError = isFullPage ? cacheError : null;
 
 	// فلترة وترتيب المتاجر للصفحة الكاملة
-	const filteredStores = isFullPage 
+	const filteredStores = isFullPage
 		? currentStores.filter((store: Store) => {
-			const storeInfo = getStoreInfo(store);
-			const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				storeInfo.description.toLowerCase().includes(searchTerm.toLowerCase());
-			const matchesCategory = selectedCategory === "الكل" || store.type === selectedCategory;
-			const matchesPopular = !showOnlyPopular || storeInfo.isPopular;
-			return matchesSearch && matchesCategory && matchesPopular;
-		})
+				const storeInfo = getStoreInfo(store);
+				const matchesSearch =
+					store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+					storeInfo.description
+						.toLowerCase()
+						.includes(searchTerm.toLowerCase());
+				const matchesCategory =
+					selectedCategory === "الكل" || store.type === selectedCategory;
+				const matchesPopular = !showOnlyPopular || storeInfo.isPopular;
+				return matchesSearch && matchesCategory && matchesPopular;
+			})
 		: currentStores;
 
-	const sortedStores = isFullPage 
+	const sortedStores = isFullPage
 		? [...filteredStores].sort((a: Store, b: Store) => {
-			const aInfo = getStoreInfo(a);
-			const bInfo = getStoreInfo(b);
-			
-			switch (sortBy) {
-				case "rating":
-					return (parseFloat(b.rating || "0")) - (parseFloat(a.rating || "0"));
-				case "reviewCount":
-					return bInfo.reviewCount - aInfo.reviewCount;
-				case "distance":
-					return parseFloat(aInfo.distance) - parseFloat(bInfo.distance);
-				case "deliveryTime":
-					return parseInt(aInfo.deliveryTime) - parseInt(bInfo.deliveryTime);
-				default:
-					return 0;
-			}
-		})
+				const aInfo = getStoreInfo(a);
+				const bInfo = getStoreInfo(b);
+
+				switch (sortBy) {
+					case "rating":
+						return parseFloat(b.rating || "0") - parseFloat(a.rating || "0");
+					case "reviewCount":
+						return bInfo.reviewCount - aInfo.reviewCount;
+					case "distance":
+						return parseFloat(aInfo.distance) - parseFloat(bInfo.distance);
+					case "deliveryTime":
+						return parseInt(aInfo.deliveryTime) - parseInt(bInfo.deliveryTime);
+					default:
+						return 0;
+				}
+			})
 		: filteredStores;
 
 	// الحصول على الأقسام الفريدة للصفحة الكاملة
-	const categories = isFullPage 
-		? ["الكل", ...new Set(currentStores.map((store: Store) => store.type).filter(Boolean))] as string[]
+	const categories = isFullPage
+		? ([
+				"الكل",
+				...new Set(
+					currentStores.map((store: Store) => store.type).filter(Boolean),
+				),
+			] as string[])
 		: [];
 
 	// إذا كان يتم تحميل البيانات
@@ -221,13 +303,13 @@ export default function PopularStoresSlider({
 			return (
 				<>
 					<div className="mb-6">
-						<Breadcrumb 
-							path={["الرئيسية", "أشهر المحلات في منطقتك"]} 
-							onBreadcrumbClick={handleBreadcrumbClick} 
+						<Breadcrumb
+							path={["الرئيسية", "أشهر المحلات في منطقتك"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
 						/>
 					</div>
-					<div className="text-center py-12">
-						<div className="h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-[#ADF0D1] mx-auto mb-4"></div>
+					<div className="py-12 text-center">
+						<div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-[#ADF0D1]"></div>
 						<p className="text-gray-600">جاري تحميل المحلات...</p>
 					</div>
 				</>
@@ -238,10 +320,13 @@ export default function PopularStoresSlider({
 					<div className="scrollbar-hide flex gap-4 overflow-x-auto px-4 pb-2">
 						{/* عرض skeleton أثناء التحميل */}
 						{[1, 2, 3, 4].map((item) => (
-							<div key={item} className="flex w-80 flex-shrink-0 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm md:w-96">
+							<div
+								key={item}
+								className="flex w-80 flex-shrink-0 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm md:w-96"
+							>
 								<div className="h-48 animate-pulse bg-gray-300"></div>
 								<div className="p-4">
-									<div className="h-5 w-32 animate-pulse rounded bg-gray-300 mb-2"></div>
+									<div className="mb-2 h-5 w-32 animate-pulse rounded bg-gray-300"></div>
 									<div className="h-4 w-24 animate-pulse rounded bg-gray-300"></div>
 								</div>
 							</div>
@@ -258,14 +343,16 @@ export default function PopularStoresSlider({
 			return (
 				<>
 					<div className="mb-6">
-						<Breadcrumb 
-							path={["الرئيسية", "أشهر المحلات في منطقتك"]} 
-							onBreadcrumbClick={handleBreadcrumbClick} 
+						<Breadcrumb
+							path={["الرئيسية", "أشهر المحلات في منطقتك"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
 						/>
 					</div>
-					<div className="text-center py-12">
-						<div className="text-6xl mb-4">❌</div>
-						<h3 className="text-xl font-semibold text-gray-700 mb-2">حدث خطأ</h3>
+					<div className="py-12 text-center">
+						<div className="mb-4 text-6xl">❌</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							حدث خطأ
+						</h3>
 						<p className="text-gray-500">{currentError}</p>
 					</div>
 				</>
@@ -274,8 +361,10 @@ export default function PopularStoresSlider({
 			return (
 				<div className="flex items-center justify-center py-8">
 					<div className="text-center">
-						<div className="text-6xl mb-4">❌</div>
-						<h3 className="text-xl font-semibold text-gray-700 mb-2">حدث خطأ</h3>
+						<div className="mb-4 text-6xl">❌</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							حدث خطأ
+						</h3>
 						<p className="text-gray-500">{currentError}</p>
 					</div>
 				</div>
@@ -289,14 +378,16 @@ export default function PopularStoresSlider({
 			return (
 				<>
 					<div className="mb-6">
-						<Breadcrumb 
-							path={["الرئيسية", "أشهر المحلات في منطقتك"]} 
-							onBreadcrumbClick={handleBreadcrumbClick} 
+						<Breadcrumb
+							path={["الرئيسية", "أشهر المحلات في منطقتك"]}
+							onBreadcrumbClick={handleBreadcrumbClick}
 						/>
 					</div>
-					<div className="text-center py-12">
-						<div className="text-6xl mb-4">🏆</div>
-						<h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد محلات</h3>
+					<div className="py-12 text-center">
+						<div className="mb-4 text-6xl">🏆</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							لا توجد محلات
+						</h3>
 						<p className="text-gray-500">لا توجد محلات شهيرة متاحة حالياً</p>
 					</div>
 				</>
@@ -315,35 +406,48 @@ export default function PopularStoresSlider({
 		return (
 			<>
 				<div className="mb-6">
-					<Breadcrumb 
-						path={["الرئيسية", "أشهر المحلات في منطقتك"]} 
-						onBreadcrumbClick={handleBreadcrumbClick} 
+					<Breadcrumb
+						path={["الرئيسية", "أشهر المحلات في منطقتك"]}
+						onBreadcrumbClick={handleBreadcrumbClick}
 					/>
 				</div>
 
 				{/* العنوان والوصف */}
 				<div className="mb-8 text-center">
-					<h1 className="text-3xl font-bold text-gray-900 mb-4">أشهر المحلات في منطقتك</h1>
-					<p className="text-lg text-gray-600 max-w-2xl mx-auto">
-						اكتشف أشهر وأفضل المحلات والمطاعم في منطقتك مع تقييمات العملاء وتوصيل سريع
+					<h1 className="mb-4 text-3xl font-bold text-gray-900">
+						أشهر المحلات في منطقتك
+					</h1>
+					<p className="mx-auto max-w-2xl text-lg text-gray-600">
+						اكتشف أشهر وأفضل المحلات والمطاعم في منطقتك مع تقييمات العملاء
+						وتوصيل سريع
 					</p>
 				</div>
 
 				{/* شريط البحث والتصفية */}
 				<div className="mb-8 space-y-4">
 					{/* شريط البحث */}
-					<div className="max-w-md mx-auto">
+					<div className="mx-auto max-w-md">
 						<div className="relative">
 							<input
 								type="text"
 								placeholder="ابحث عن محل..."
 								value={searchTerm}
 								onChange={(e) => setSearchTerm(e.target.value)}
-								className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right"
+								className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 text-right focus:border-transparent focus:ring-2 focus:ring-green-500"
 							/>
-							<div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-								<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							<div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
+								<svg
+									className="h-5 w-5 text-gray-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+									/>
 								</svg>
 							</div>
 						</div>
@@ -355,10 +459,12 @@ export default function PopularStoresSlider({
 						<select
 							value={selectedCategory}
 							onChange={(e) => setSelectedCategory(e.target.value)}
-							className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
 						>
-							{categories.map(category => (
-								<option key={category} value={category}>{category}</option>
+							{categories.map((category) => (
+								<option key={category} value={category}>
+									{category}
+								</option>
 							))}
 						</select>
 
@@ -366,7 +472,7 @@ export default function PopularStoresSlider({
 						<select
 							value={sortBy}
 							onChange={(e) => setSortBy(e.target.value)}
-							className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+							className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-green-500"
 						>
 							<option value="rating">الأعلى تقييماً</option>
 							<option value="reviewCount">الأكثر تقييماً</option>
@@ -388,18 +494,18 @@ export default function PopularStoresSlider({
 				</div>
 
 				{/* شبكة المحلات */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 					{sortedStores.map((store: Store) => {
 						const storeInfo = getStoreInfo(store);
 						return (
 							<div
 								key={store.id}
 								onClick={() => handleStoreClick(store.name)}
-								className="bg-white border border-gray-200 rounded-xl p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg relative"
+								className="relative transform cursor-pointer rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:scale-105 hover:shadow-lg"
 							>
 								{/* شارة المحل الشهير */}
 								{storeInfo.isPopular && (
-									<div className="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+									<div className="absolute top-4 left-4 rounded-full bg-yellow-500 px-3 py-1 text-sm font-bold text-white">
 										⭐ مشهور
 									</div>
 								)}
@@ -409,34 +515,40 @@ export default function PopularStoresSlider({
 									<img
 										src={store.image || "/supermarket.png"}
 										alt={store.name}
-										className="w-full h-32 object-cover rounded-lg"
+										className="h-32 w-full rounded-lg object-cover"
 									/>
 									{/* حالة المحل */}
-									<div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
-										storeInfo.isOpen 
-											? 'bg-green-100 text-green-800' 
-											: 'bg-red-100 text-red-800'
-									}`}>
-										{storeInfo.isOpen ? 'مفتوح' : 'مغلق'}
+									<div
+										className={`absolute top-2 right-2 rounded-full px-2 py-1 text-xs font-semibold ${
+											storeInfo.isOpen
+												? "bg-green-100 text-green-800"
+												: "bg-red-100 text-red-800"
+										}`}
+									>
+										{storeInfo.isOpen ? "مفتوح" : "مغلق"}
 									</div>
 								</div>
 
 								{/* معلومات المحل */}
 								<div>
-									<h3 className="text-lg font-bold text-gray-900 mb-1">{store.name}</h3>
-									<p className="text-sm text-gray-600 mb-2">{storeInfo.description}</p>
-									
+									<h3 className="mb-1 text-lg font-bold text-gray-900">
+										{store.name}
+									</h3>
+									<p className="mb-2 text-sm text-gray-600">
+										{storeInfo.description}
+									</p>
+
 									{/* التقييم وعدد التقييمات */}
-									<div className="flex items-center justify-between mb-3">
+									<div className="mb-3 flex items-center justify-between">
 										<div className="flex items-center">
 											<div className="flex items-center">
 												{[...Array(5)].map((_, i) => (
 													<svg
 														key={i}
-														className={`w-4 h-4 ${
-															i < Math.floor(parseFloat(store.rating || "0")) 
-																? 'text-yellow-400' 
-																: 'text-gray-300'
+														className={`h-4 w-4 ${
+															i < Math.floor(parseFloat(store.rating || "0"))
+																? "text-yellow-400"
+																: "text-gray-300"
 														}`}
 														fill="currentColor"
 														viewBox="0 0 20 20"
@@ -445,13 +557,17 @@ export default function PopularStoresSlider({
 													</svg>
 												))}
 											</div>
-											<span className="text-sm text-gray-600 mr-2">{store.rating || 0}</span>
+											<span className="mr-2 text-sm text-gray-600">
+												{store.rating || 0}
+											</span>
 										</div>
-										<span className="text-xs text-gray-500">({storeInfo.reviewCount} تقييم)</span>
+										<span className="text-xs text-gray-500">
+											({storeInfo.reviewCount} تقييم)
+										</span>
 									</div>
 
 									{/* المسافة ووقت التوصيل */}
-									<div className="flex justify-between text-sm text-gray-500 mb-2">
+									<div className="mb-2 flex justify-between text-sm text-gray-500">
 										<span>📍 {storeInfo.distance}</span>
 										<span>⏱️ {storeInfo.deliveryTime}</span>
 									</div>
@@ -469,10 +585,14 @@ export default function PopularStoresSlider({
 
 				{/* رسالة في حالة عدم وجود نتائج */}
 				{filteredStores.length === 0 && !currentIsLoading && (
-					<div className="text-center py-12">
-						<div className="text-6xl mb-4">🏆</div>
-						<h3 className="text-xl font-semibold text-gray-700 mb-2">لم نجد أي محلات</h3>
-						<p className="text-gray-500">جرب البحث بكلمات مختلفة أو غير الفلتر</p>
+					<div className="py-12 text-center">
+						<div className="mb-4 text-6xl">🏆</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							لم نجد أي محلات
+						</h3>
+						<p className="text-gray-500">
+							جرب البحث بكلمات مختلفة أو غير الفلتر
+						</p>
 					</div>
 				)}
 			</>
@@ -512,7 +632,7 @@ export default function PopularStoresSlider({
 					<button
 						key={store.id}
 						onClick={() => handleStoreClick(store.name)}
-						className="flex w-80 flex-shrink-0 cursor-pointer flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm md:w-96 hover:shadow-md transition-shadow"
+						className="flex w-80 flex-shrink-0 cursor-pointer flex-col overflow-hidden rounded-lg bg-gray-100 shadow-sm transition-shadow hover:shadow-md md:w-96"
 					>
 						<div className="relative h-48 bg-gray-200">
 							{store.image ? (
@@ -523,7 +643,7 @@ export default function PopularStoresSlider({
 									onError={(e) => {
 										// في حالة فشل تحميل الصورة، عرض خلفية افتراضية
 										const target = e.target as HTMLImageElement;
-										target.style.display = 'none';
+										target.style.display = "none";
 										const parent = target.parentElement;
 										if (parent) {
 											parent.innerHTML = `
@@ -538,7 +658,7 @@ export default function PopularStoresSlider({
 								/>
 							) : (
 								// خلفية افتراضية إذا لم توجد صورة
-								<div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
+								<div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
 									<svg
 										className="h-16 w-16 text-white"
 										fill="none"
@@ -570,7 +690,7 @@ export default function PopularStoresSlider({
 								{store.type || "متجر شهير"}
 							</p>
 							{store.distance && (
-								<p className="mt-1 text-xs text-green-600 font-medium">
+								<p className="mt-1 text-xs font-medium text-green-600">
 									📍 {store.distance} كم
 								</p>
 							)}

@@ -1,9 +1,9 @@
 import NearbyStoresPage from "@/components/HomePage/NearbyStoresPage";
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
+import { getNearbyStoresAction } from "@/lib/ServerAction/nebry";
 import { Metadata } from "next";
-import NearbyStoresPageContent from "./NearbyStoresPageContent";
+// Removed old content component; using unified component
 
 export const metadata: Metadata = {
   title: "المتاجر القريبة منك - شلة",
@@ -31,7 +31,7 @@ export default function NearbyStoresPageRoute() {
 		<>
 			<NavBarCondition />
 			<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-				<NearbyStoresPageContent />
+				<NearbyStoresPage isFullPage={true} getNearbyStoresAction={getNearbyStoresAction} />
 			</div>
 			<Shellafooter />
 		</>

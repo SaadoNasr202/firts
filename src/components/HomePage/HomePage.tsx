@@ -2,6 +2,7 @@
 
 "use client";
 
+import { Discount, NearbyStore } from "@/lib/types/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CategoriesSlider from "./CategoriesSlider";
@@ -9,8 +10,41 @@ import DeliveryAddressSelector from "./DeliveryAddressSelector";
 import DiscountSlider from "./DiscountSlider";
 import NearbyStoresPage from "./NearbyStoresPage";
 import PopularStoresSlider from "./PopularStoresSlider";
+// Local Category type for action typing
+type Category = {
+	id: string;
+	name: string;
+	description?: string;
+	image?: string;
+};
 
-export default function HomePage() {
+export default function HomePageHomePage({
+	getCategoriesAction,
+	getNearbyStoresAction,
+	getDiscountsAction,
+}: {
+	getCategoriesAction: () => Promise<
+		| { categories: Category[]; cached: boolean; success: boolean }
+		| { error: string }
+	>;
+	getNearbyStoresAction: (args: {
+		lat: number;
+		lng: number;
+		limit?: number;
+		maxDistance?: number;
+	}) => Promise<
+		| {
+				stores: NearbyStore[];
+				userLocation: { lat: number; lng: number };
+				maxDistance: number;
+				total: number;
+		  }
+		| { error: string }
+	>;
+	getDiscountsAction: () => Promise<
+		{ discounts: Discount[]; success: boolean } | { error: string }
+	>;
+}) {
 	const router = useRouter();
 
 	const [selectedDeliveryAddress, setSelectedDeliveryAddress] =
@@ -72,7 +106,10 @@ export default function HomePage() {
 						عرض الكل
 					</button>
 				</div>
-				<CategoriesSlider onCategoryClick={handleCategoryClick} />
+				<CategoriesSlider
+					onCategoryClick={handleCategoryClick}
+					getCategoriesAction={getCategoriesAction}
+				/>
 			</section>
 
 			<section>
@@ -100,9 +137,10 @@ export default function HomePage() {
 						عرض الكل
 					</button>
 				</div>
-				<NearbyStoresPage 
-					onStoreClick={handleStoreClick} 
+				<NearbyStoresPage
+					onStoreClick={handleStoreClick}
 					selectedLocation={selectedDeliveryAddress}
+					getNearbyStoresAction={getNearbyStoresAction}
 				/>
 			</section>
 
@@ -116,7 +154,10 @@ export default function HomePage() {
 						عرض الكل
 					</button>
 				</div>
-				<DiscountSlider onDiscountClick={handleDiscountClick} />
+				<DiscountSlider
+					onDiscountClick={handleDiscountClick}
+					getDiscountsAction={getDiscountsAction}
+				/>
 			</section>
 
 			<section className="mt-8">
@@ -131,9 +172,10 @@ export default function HomePage() {
 						عرض الكل
 					</button>
 				</div>
-				<PopularStoresSlider 
-					onStoreClick={handlePopularStoreClick} 
+				<PopularStoresSlider
+					onStoreClick={handlePopularStoreClick}
 					selectedLocation={selectedDeliveryAddress}
+					getNearbyStoresAction={getNearbyStoresAction}
 				/>
 			</section>
 		</div>

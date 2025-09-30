@@ -1,9 +1,9 @@
 "use client";
 
+import Breadcrumb from "@/components/HomePage/Breadcrumb";
+// ملاحظة: تم إلغاء استخدام API والكاش على العميل؛ سيتم الاعتماد على Server Action فقط
 import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
-import Breadcrumb from "@/components/HomePage/Breadcrumb";
-import { useClientCache, cacheKeys } from "@/hooks/useClientCache";
 
 // تحديد نوع البيانات
 interface Category {
@@ -17,79 +17,49 @@ interface Category {
 interface CategoriesSliderProps {
 	onCategoryClick?: (categoryName: string) => void;
 	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم شريط تمرير
+	getCategoriesAction: () => Promise<
+		| { categories: Category[]; cached: boolean; success: boolean }
+		| { error: string }
+	>;
 }
 
 export default function CategoriesSlider({
 	onCategoryClick,
 	isFullPage = false,
+	getCategoriesAction,
 }: CategoriesSliderProps) {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 	const [searchTerm, setSearchTerm] = useState("");
 
-	// استخدام التخزين المؤقت على مستوى العميل للصفحة الكاملة
-	const {
-		data: categoriesData,
-		isLoading: cacheLoading,
-		error: cacheError,
-	} = useClientCache(
-		cacheKeys.categories(),
-		async () => {
-			const response = await fetch("/api/categories");
-			if (!response.ok) {
-				throw new Error("فشل في جلب الأقسام");
-			}
-			return response.json();
-		},
-		900, // 15 دقيقة
-	);
-
-	// دالة جلب الأقسام (للشريط فقط)
-	const fetchCategories = async (forceRefresh = false) => {
-		if (isFullPage) return; // لا نحتاج هذا للصفحة الكاملة
-		
-		try {
-			// إضافة timestamp لضمان عدم استخدام التخزين المؤقت إذا كان forceRefresh = true
-			const url = forceRefresh
-				? `/api/categories?t=${Date.now()}`
-				: "/api/categories";
-			const response = await fetch(url);
-			if (response.ok) {
-				const data = await response.json();
-				setCategories(data.categories || []);
-				setLastFetchTime(Date.now());
-			} else {
-				console.error("فشل في جلب الأقسام");
-			}
-		} catch (error) {
-			console.error("خطأ في جلب الأقسام:", error);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
+	// جلب الأقسام عبر Server Action (أساسي)
 	useEffect(() => {
-		if (!isFullPage) {
-			fetchCategories();
-		}
-	}, [isFullPage]);
-
-	// إعادة تحميل الأقسام عند التركيز على النافذة (إذا مر أكثر من دقيقة) - للشريط فقط
-	useEffect(() => {
-		if (isFullPage) return;
-		
-		const handleFocus = () => {
-			const now = Date.now();
-			// إذا مر أكثر من دقيقة منذ آخر جلب، أعد التحميل
-			if (now - lastFetchTime > 60000) {
-				fetchCategories(true);
+		let cancelled = false;
+		(async () => {
+			try {
+				setIsLoading(true);
+				const result = await getCategoriesAction();
+				if (cancelled) return;
+				if (result && 'categories' in result) {
+					setCategories(result.categories || []);
+				}
+			} catch (e) {
+				// سيتم الاعتماد على fallback عند الحاجة
+			} finally {
+				if (!cancelled) setIsLoading(false);
 			}
-		};
+		})();
+		return () => { cancelled = true; };
+	}, [getCategoriesAction]);
 
-		window.addEventListener("focus", handleFocus);
-		return () => window.removeEventListener("focus", handleFocus);
-	}, [lastFetchTime, isFullPage]);
+// تم إلغاء التخزين المؤقت على العميل
+
+// تمت إزالة أي استدعاء API للأقسام
+
+// لا يوجد فولباك للـ API
+
+// أزلنا إعادة التحميل المعتمدة على API عند التركيز
 
 	const handleScrollRight = () => {
 		document
@@ -103,11 +73,20 @@ export default function CategoriesSlider({
 			?.scrollBy({ left: -200, behavior: "smooth" });
 	};
 
-	const handleRefresh = () => {
-		if (isFullPage) return; // لا نحتاج هذا للصفحة الكاملة
-		setIsLoading(true);
-		fetchCategories(true);
-	};
+const handleRefresh = () => {
+    setIsLoading(true);
+    (async () => {
+        try {
+            const result = await getCategoriesAction();
+            if (result && 'categories' in result) {
+                setCategories(result.categories || []);
+                setLastFetchTime(Date.now());
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    })();
+};
 
 	// دالة التعامل مع النقر على القسم
 	const handleCategoryClick = (categoryName: string) => {
@@ -188,19 +167,21 @@ export default function CategoriesSlider({
 		);
 	};
 
-	// تحديد البيانات المستخدمة
-	const currentCategories = isFullPage ? (categoriesData?.categories || []) : categories;
-	const currentIsLoading = isFullPage ? cacheLoading : isLoading;
-	const currentError = isFullPage ? cacheError : null;
+// تحديد البيانات المستخدمة (Server Action فقط)
+const currentCategories = categories;
+const currentIsLoading = isLoading;
+const currentError = null as unknown as string | null;
 
 	// فلترة الأقسام للصفحة الكاملة
-	const filteredCategories = isFullPage 
+	const filteredCategories = isFullPage
 		? currentCategories.filter(
-			(category: Category) =>
-				category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				(category.description &&
-					category.description.toLowerCase().includes(searchTerm.toLowerCase())),
-		)
+				(category: Category) =>
+					category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+					(category.description &&
+						category.description
+							.toLowerCase()
+							.includes(searchTerm.toLowerCase())),
+			)
 		: currentCategories;
 
 	// إذا كان يتم تحميل البيانات
@@ -252,7 +233,9 @@ export default function CategoriesSlider({
 					</div>
 					<div className="py-12 text-center">
 						<div className="mb-4 text-6xl">❌</div>
-						<h3 className="mb-2 text-xl font-semibold text-gray-700">حدث خطأ</h3>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							حدث خطأ
+						</h3>
 						<p className="text-gray-500">{currentError}</p>
 					</div>
 				</>
@@ -261,8 +244,10 @@ export default function CategoriesSlider({
 			return (
 				<div className="flex items-center justify-center py-8">
 					<div className="text-center">
-						<div className="text-6xl mb-4">❌</div>
-						<h3 className="text-xl font-semibold text-gray-700 mb-2">حدث خطأ</h3>
+						<div className="mb-4 text-6xl">❌</div>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							حدث خطأ
+						</h3>
 						<p className="text-gray-500">{currentError}</p>
 					</div>
 				</div>
@@ -283,7 +268,9 @@ export default function CategoriesSlider({
 					</div>
 					<div className="py-12 text-center">
 						<div className="mb-4 text-6xl">📂</div>
-						<h3 className="mb-2 text-xl font-semibold text-gray-700">لا توجد أقسام</h3>
+						<h3 className="mb-2 text-xl font-semibold text-gray-700">
+							لا توجد أقسام
+						</h3>
 						<p className="text-gray-500">لم يتم العثور على أي أقسام</p>
 					</div>
 				</>

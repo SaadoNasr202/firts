@@ -3,6 +3,7 @@ import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Suspense } from "react";
 import { Metadata } from "next";
+import { getStoreCategoriesAction } from "@/lib/ServerAction/store";
 
 export const metadata: Metadata = {
   title: "المتجر - شلة",
@@ -31,7 +32,7 @@ export default function StorePageRoute() {
             <NavBarCondition />
             <div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
                 <Suspense fallback={null}>
-                    <StorePage />
+                    <StorePage getStoreCategoriesAction={getStoreCategoriesAction} />
                 </Suspense>
             </div>
             <Shellafooter />

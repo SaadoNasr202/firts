@@ -3,7 +3,7 @@ import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import NavBarCondition from "@/components/Profile/NavBarConditon";
 import Shellafooter from "@/components/shellafooter";
 import { Metadata } from "next";
-import DiscountsPageContent from "./DiscountsPageContent";
+import { getDiscountsAction } from "@/lib/ServerAction/Discount";
 
 export const metadata: Metadata = {
   title: "أقوى الخصومات - شلة",
@@ -31,7 +31,7 @@ export default function DiscountsPageRoute() {
 		<>
 			<NavBarCondition />
 			<div className="min-h-screen bg-gray-50 p-4 font-sans md:p-8" dir="rtl">
-				<DiscountsPageContent />
+                <DiscountSlider isFullPage={true} getDiscountsAction={getDiscountsAction}/>
 			</div>
 			<Shellafooter />
 		</>
