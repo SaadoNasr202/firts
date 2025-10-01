@@ -76,7 +76,7 @@ export default function HomePageHomePage({
 			router.push("/PickUp");
 		} else {
 			router.push(
-				`/category-stores?category=${encodeURIComponent(categoryName)}`,
+				`/category-stores/${encodeURIComponent(categoryName)}`,
 			);
 		}
 	};

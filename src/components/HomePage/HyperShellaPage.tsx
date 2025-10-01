@@ -1,11 +1,22 @@
 "use client";
 
+import Breadcrumb from "@/components/HomePage/Breadcrumb";
+import { getStoresByCategory } from "@/lib/ServerAction/store";
+import { HyperShellaCategoriesResult } from "@/lib/types/api";
 import { useEffect, useState } from "react";
 
 // Define the component's props
 interface StorePageProps {
-	storeName: string;
-	onCategoryClick: (categoryName: string) => void;
+	storeName?: string;
+	onCategoryClick?: (categoryName: string) => void;
+	isFullPage?: boolean;
+
+	getHyperShellaCategories(): Promise<HyperShellaCategoriesResult>;
+	getProductsAction(params?: {
+		limit?: number;
+		category?: string;
+		exclude?: string;
+	}): Promise<{ products: any[]; success: boolean; error?: string }>;
 }
 
 interface StoreDetails {
@@ -16,8 +27,11 @@ interface StoreDetails {
 	image: string;
 }
 export default function HyperPage({
-	storeName,
+	storeName = "هايبر شلة",
 	onCategoryClick,
+	isFullPage = false,
+	getHyperShellaCategories,
+	getProductsAction,
 }: StorePageProps) {
 	const [productCategories, setProductCategories] = useState<string[]>([]);
 	const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
@@ -39,15 +53,30 @@ export default function HyperPage({
 	);
 	const [isLoadingPopular, setIsLoadingPopular] = useState(false);
 
+	// دالة التعامل مع النقر على القسم
+	const handleCategoryClick = (categoryName: string) => {
+		if (isFullPage) {
+			window.location.href = `/products?store=${encodeURIComponent("هايبر شلة")}&category=${encodeURIComponent(categoryName)}`;
+		} else if (onCategoryClick) {
+			onCategoryClick(categoryName);
+		}
+	};
+
+	// دالة التعامل مع النقر على Breadcrumb
+	const handleBreadcrumbClick = (index: number) => {
+		if (index === 0) {
+			window.location.href = "/HomePage";
+		}
+	};
+
 	// جلب أقسام هايبر شلة من قاعدة البيانات
 	useEffect(() => {
 		const fetchHyperShellaCategories = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch("/api/hyper-shella-categories");
-				if (response.ok) {
-					const data = await response.json();
-					// جلب الأقسام من API هايبر شلة
+				const data = await getHyperShellaCategories();
+				if (data.success && "categories" in data) {
+					// جلب الأقسام من server action
 					setProductCategories(
 						data.categories?.map((cat: any) => cat.name) || [],
 					);
@@ -79,9 +108,8 @@ export default function HyperPage({
 			setIsLoadingProducts(true);
 			try {
 				// جلب المنتجات الموصى بها
-				const productsResponse = await fetch("/api/products");
-				if (productsResponse.ok) {
-					const productsData = await productsResponse.json();
+				const productsData = await getProductsAction({ limit: 50 });
+				if (productsData.success) {
 					setRecommendedProducts(productsData.products?.slice(0, 10) || []);
 					setFreshOffers(
 						productsData.products
@@ -93,11 +121,8 @@ export default function HyperPage({
 				}
 
 				// جلب متاجر السوبرماركت
-				const storesResponse = await fetch(
-					"/api/stores/by-category?category=سوبر ماركت",
-				);
-				if (storesResponse.ok) {
-					const storesData = await storesResponse.json();
+				const storesData = await getStoresByCategory("سوبر ماركت", "10", "0");
+				if (storesData.categoryExists) {
 					setSupermarketStores(storesData.stores?.slice(0, 10) || []);
 				}
 			} catch (error) {
@@ -116,9 +141,8 @@ export default function HyperPage({
 			setIsLoadingPopular(true);
 			try {
 				// جلب المنتجات الأكثر شهرة
-				const productsResponse = await fetch("/api/products");
-				if (productsResponse.ok) {
-					const productsData = await productsResponse.json();
+				const productsData = await getProductsAction({ limit: 50 });
+				if (productsData.success) {
 					// أخذ المنتجات الأكثر شهرة (يمكن تحسين هذا لاحقاً بإضافة rating أو popularity)
 					setPopularProducts(productsData.products?.slice(0, 10) || []);
 
@@ -190,6 +214,15 @@ export default function HyperPage({
 			className={`font-tajawal flex min-h-screen w-full flex-col bg-[#FFFFFF] text-gray-800`}
 			dir="rtl"
 		>
+			{/* Breadcrumb للصفحة الكاملة */}
+			{isFullPage && (
+				<div className="mb-4">
+					<Breadcrumb
+						path={["الرئيسية", "هايبر شلة"]}
+						onBreadcrumbClick={handleBreadcrumbClick}
+					/>
+				</div>
+			)}
 			<main className="flex-grow">
 				{/* picture section */}
 				<section>
@@ -227,7 +260,7 @@ export default function HyperPage({
 								productCategories.map((category, index) => (
 									<button
 										key={index}
-										onClick={() => onCategoryClick(category)}
+										onClick={() => handleCategoryClick(category)}
 										className="flex flex-col items-center rounded-lg bg-white p-2 text-center shadow-sm transition-colors hover:bg-gray-100"
 									>
 										<div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200">

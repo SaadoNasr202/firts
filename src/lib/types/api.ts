@@ -76,3 +76,15 @@ export type StoreCategoriesResult =
 			success: false;
 	  }
 	| { error: string; success: false };
+// ✅ تعريف شكل النتيجة
+export interface HyperShellaCategoriesResult {
+  categories: {
+    id: string;
+    name: string;
+    image: string | null;
+  }[];
+  success: boolean;
+  isDefault?: boolean;
+  message?: string;
+  error?: string;
+}

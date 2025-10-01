@@ -4,16 +4,11 @@ import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import { cacheKeys, useClientCache } from "@/hooks/useClientCache";
 import { useStoreFavorites } from "@/hooks/useFavorites";
-import { StoreCategoriesResult } from "@/lib/types/api";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Define the component's props - لم تعد بحاجة لـ storeName و onCategoryClick كـ props
-interface StorePageProps {
-	getStoreCategoriesAction: (
-		storeName: string,
-	) => Promise<StoreCategoriesResult>;
-}
+interface StorePageProps {}
 
 interface StoreDetails {
 	id: string;
@@ -30,9 +25,7 @@ interface StoreCategory {
 	storelogo: string | null;
 }
 
-export default function StorePage({
-	getStoreCategoriesAction,
-}: StorePageProps) {
+export default function StorePage({}: StorePageProps) {
 	// استخراج المعاملات من URL
 	const searchParams = useSearchParams();
 	const storeName = searchParams.get("store") || "";
@@ -65,7 +58,7 @@ export default function StorePage({
 		} else if (source === "popular") {
 			window.location.href = "/popular-stores";
 		} else if (categoryName) {
-			window.location.href = `/category-stores?category=${encodeURIComponent(categoryName)}`;
+			window.location.href = `/category-stores/${encodeURIComponent(categoryName)}`;
 		}
 	};
 

@@ -99,7 +99,7 @@ const handleRefresh = () => {
 			} else if (categoryName === "استلام وتسليم") {
 				window.location.href = "/PickUp";
 			} else {
-				window.location.href = `/category-stores?category=${encodeURIComponent(categoryName)}`;
+				window.location.href = `/category-stores/${encodeURIComponent(categoryName)}`;
 			}
 		}
 	};

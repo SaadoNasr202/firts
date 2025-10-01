@@ -1,84 +1,166 @@
 "use server";
 
-import { cache, isValidCacheData } from "@/lib/cache";
 import { db } from "@/lib/db";
-import { TB_store_categories, TB_stores } from "@/lib/schema";
-import { eq } from "drizzle-orm";
-import { StoreCategoriesResult } from "../types/api";
+import {
+	TB_categories,
+	TB_products,
+	TB_store_categories,
+	TB_stores,
+} from "@/lib/schema";
+import { eq, inArray } from "drizzle-orm";
 
-export async function getStoreCategoriesAction(
-	storeName: string,
-): Promise<StoreCategoriesResult> {
+// السيرفر أكشن: بترجع Promise فيها البيانات
+export async function getStoresByCategory(
+	categoryName: string,
+	limitParam?: string,
+	offsetParam?: string,
+): Promise<{
+	stores: any[];
+	categoryExists: boolean;
+	category?: { id: string; name: string };
+	hasMore?: boolean;
+	nextOffset?: number;
+	limit?: number;
+	total?: number;
+	error?: string;
+}> {
 	try {
-		if (!storeName) {
-			return { error: "اسم المتجر مطلوب", success: false };
-		}
+		// ضبط الباجينغ
+		const pageSizeRaw = Number.parseInt(limitParam ?? "20", 10);
+		const pageSize = Number.isNaN(pageSizeRaw)
+			? 20
+			: Math.min(Math.max(pageSizeRaw, 1), 50);
+		const offsetRaw = Number.parseInt(offsetParam ?? "0", 10);
+		const offset = Number.isNaN(offsetRaw) ? 0 : Math.max(offsetRaw, 0);
 
-		const cacheKeyForStore = `store-categories:${storeName}`;
-		const cachedData = cache.get<any>(cacheKeyForStore);
-
-		if (isValidCacheData(cachedData)) {
+		if (!categoryName) {
 			return {
-				...cachedData,
-				cached: true,
-				success: true,
+				error: "اسم القسم مطلوب",
+				stores: [],
+				categoryExists: false,
 			};
 		}
 
-		// البحث عن المتجر
-		const store = await db
+		// البحث عن القسم
+		const category = await db
 			.select()
-			.from(TB_stores)
-			.where(eq(TB_stores.name, storeName))
+			.from(TB_categories)
+			.where(eq(TB_categories.name, categoryName))
 			.limit(1);
 
-		if (store.length === 0) {
-			const emptyResult = {
-				categories: [] as string[], // تعديل
-				storeExists: false as const,
-				storeCategories: [], // 👈 ضفناها
-				cached: false,
-				success: false as const,
+		if (category.length === 0) {
+			return {
+				stores: [],
+				categoryExists: false,
 			};
-			cache.set(cacheKeyForStore, emptyResult, 60);
-			return emptyResult;
 		}
 
-		// جلب الأقسام الخاصة بالمتجر
-		const storeCategories = await db
+		// جلب جميع المتاجر
+		const allStores = await db
 			.select({
-				id: TB_store_categories.id,
-				name: TB_store_categories.name,
-				storecover: TB_store_categories.storecover,
-				storelogo: TB_store_categories.storelogo,
+				id: TB_stores.id,
+				name: TB_stores.name,
+				type: TB_stores.type,
+				rating: TB_stores.rating,
+				image: TB_stores.image,
+				location: TB_stores.location,
 			})
-			.from(TB_store_categories)
-			.where(eq(TB_store_categories.storeId, store[0].id))
-			.orderBy(TB_store_categories.createdAt);
+			.from(TB_stores)
+			.where(eq(TB_stores.categoryId, category[0].id))
+			.orderBy(TB_stores.createdAt);
 
-		const result: StoreCategoriesResult = {
-			categories: storeCategories.map((cat) => cat.name),
-			storeCategories,
-			storeExists: true,
-			store: {
-				id: store[0].id,
-				name: store[0].name,
-				type: store[0].type,
-				rating: store[0].rating
-					? parseFloat(store[0].rating as unknown as string) // 👈 تحويل string → number
-					: null,
-				image: store[0].image,
-			},
-			cached: false,
-			success: true,
+		// دالة لتطبيع روابط الصور
+		const normalizeImageUrl = (raw?: string | null) => {
+			if (!raw) return raw as unknown as string;
+			let url = String(raw).trim().replace(/\\/g, "/");
+			if (url.startsWith("lh3.googleusercontent.com")) {
+				url = `https://${url}`;
+			}
+			return url;
 		};
 
-		// التخزين المؤقت 10 دقائق
-		cache.set(cacheKeyForStore, result, 600);
+		const normalizedStoresAll = allStores.map((s) => ({
+			...s,
+			image: normalizeImageUrl(s.image),
+		}));
 
-		return result;
+		// جلب الشعارات
+		const storeIds = normalizedStoresAll.map((s) => s.id);
+		let storeLogosMap = new Map<string, string | null>();
+		if (storeIds.length > 0) {
+			try {
+				const logos = await db
+					.select({
+						storeId: TB_store_categories.storeId,
+						storelogo: TB_store_categories.storelogo,
+					})
+					.from(TB_store_categories)
+					.where(inArray(TB_store_categories.storeId, storeIds));
+
+				for (const row of logos) {
+					if (!storeLogosMap.has(row.storeId) && row.storelogo) {
+						storeLogosMap.set(row.storeId, row.storelogo);
+					}
+				}
+			} catch {}
+		}
+
+		// جلب معلومات المنتجات
+		const storesWithProducts = new Set<string>();
+		if (storeIds.length > 0) {
+			const products = await db
+				.select({ storeId: TB_products.storeId })
+				.from(TB_products)
+				.where(inArray(TB_products.storeId, storeIds));
+
+			products.forEach((p) => storesWithProducts.add(p.storeId));
+		}
+
+		const enrichedStoresAll = normalizedStoresAll.map((s) => ({
+			...s,
+			logo: storeLogosMap.get(s.id) ?? null,
+			hasProducts: storesWithProducts.has(s.id),
+			hasCategories: true,
+		}));
+
+		// إزالة التكرار بالاسم
+		const uniqueStores = new Map<string, (typeof enrichedStoresAll)[0]>();
+		enrichedStoresAll.forEach((store) => {
+			if (!uniqueStores.has(store.name)) {
+				uniqueStores.set(store.name, store);
+			}
+		});
+		const deduplicatedStores = Array.from(uniqueStores.values());
+
+		// ترتيب: اللي عنده منتجات أولاً
+		const sortedStores = deduplicatedStores.sort((a, b) => {
+			if (a.hasProducts === b.hasProducts) return 0;
+			return a.hasProducts ? -1 : 1;
+		});
+
+		// تطبيق الباجينغ
+		const startIndex = offset;
+		const endIndex = offset + pageSize;
+		const paginatedStores = sortedStores.slice(startIndex, endIndex);
+		const hasMore = endIndex < sortedStores.length;
+
+		return {
+			stores: paginatedStores,
+			categoryExists: true,
+			category: {
+				id: category[0].id,
+				name: category[0].name,
+			},
+			hasMore,
+			nextOffset: hasMore ? endIndex : offset + paginatedStores.length,
+			limit: pageSize,
+			total: sortedStores.length,
+		};
 	} catch (error) {
-		console.error("خطأ في جلب أقسام المتجر:", error);
-		return { error: "فشل في جلب أقسام المتجر", success: false };
+		console.error("خطأ في جلب المتاجر حسب القسم:", error);
+		return {
+			stores: [],
+			categoryExists: false,
+		};
 	}
 }

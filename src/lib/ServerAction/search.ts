@@ -1,10 +1,9 @@
-import { db } from "@/lib/db";
-import { TB_stores, TB_products } from "@/lib/schema";
-import { NextRequest, NextResponse } from "next/server";
-import { or, like, and, eq, inArray } from "drizzle-orm";
-import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
+"use server";
 
-export const dynamic = 'force-dynamic';
+import { cache, cacheKey, isValidCacheData } from "@/lib/cache";
+import { db } from "@/lib/db";
+import { TB_products, TB_stores } from "@/lib/schema";
+import { eq, inArray, like, or } from "drizzle-orm";
 
 interface SearchResult {
 	id: string;
@@ -19,32 +18,33 @@ interface SearchResult {
 	hasCategories?: boolean;
 }
 
-export async function GET(request: NextRequest) {
+export async function searchAction(query: string): Promise<{
+	results: SearchResult[];
+	success: boolean;
+	query?: string;
+	total?: number;
+	cached?: boolean;
+	error?: string;
+}> {
 	try {
-		const { searchParams } = new URL(request.url);
-		const query = searchParams.get('q');
-
 		if (!query || query.trim().length === 0) {
-			return NextResponse.json({ 
-				results: [],
-				success: true 
-			});
+			return { results: [], success: true };
 		}
 
 		const trimmedQuery = query.trim();
-		
-		// التحقق من التخزين المؤقت أولاً
+
+		// التحقق من الكاش
 		const cacheKeyForQuery = cacheKey.search(trimmedQuery);
 		const cachedResults = cache.get<SearchResult[]>(cacheKeyForQuery);
-		
+
 		if (isValidCacheData(cachedResults)) {
-			return NextResponse.json({ 
+			return {
 				results: cachedResults,
 				success: true,
 				query: trimmedQuery,
 				total: cachedResults.length,
-				cached: true
-			});
+				cached: true,
+			};
 		}
 
 		const searchTerm = `%${trimmedQuery}%`;
@@ -64,35 +64,35 @@ export async function GET(request: NextRequest) {
 				.where(
 					or(
 						like(TB_stores.name, searchTerm),
-						like(TB_stores.type, searchTerm)
-					)
+						like(TB_stores.type, searchTerm),
+					),
 				)
 				.limit(10);
 
 			// جلب معلومات المنتجات للمتاجر
-			const storeIds = stores.map(store => store.id);
+			const storeIds = stores.map((store) => store.id);
 			const storesWithProducts = new Set<string>();
-			
+
 			if (storeIds.length > 0) {
 				const products = await db
 					.select({ storeId: TB_products.storeId })
 					.from(TB_products)
 					.where(inArray(TB_products.storeId, storeIds));
-				
-				products.forEach(p => storesWithProducts.add(p.storeId));
+
+				products.forEach((p) => storesWithProducts.add(p.storeId));
 			}
 
 			// تحويل المتاجر إلى نتائج البحث
-			stores.forEach(store => {
+			stores.forEach((store) => {
 				results.push({
 					id: store.id,
 					name: store.name,
 					type: "store",
 					image: store.image,
 					description: `${store.name} - ${store.type || "متجر"}`,
-					rating: typeof store.rating === 'number' ? store.rating : 0,
+					rating: typeof store.rating === "number" ? store.rating : 0,
 					hasProducts: storesWithProducts.has(store.id),
-					hasCategories: true, // نفترض أن جميع المتاجر لها أقسام
+					hasCategories: true,
 				});
 			});
 		} catch (storeError) {
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
 				.limit(10);
 
 			// تحويل المنتجات إلى نتائج البحث
-			products.forEach(product => {
+			products.forEach((product) => {
 				results.push({
 					id: product.id,
 					name: product.name,
@@ -133,31 +133,27 @@ export async function GET(request: NextRequest) {
 
 		// ترتيب النتائج (المتاجر أولاً، ثم المنتجات)
 		results.sort((a, b) => {
-			if (a.type === 'store' && b.type === 'product') return -1;
-			if (a.type === 'product' && b.type === 'store') return 1;
+			if (a.type === "store" && b.type === "product") return -1;
+			if (a.type === "product" && b.type === "store") return 1;
 			return 0;
 		});
 
-		// حفظ النتائج في التخزين المؤقت لمدة 5 دقائق
+		// حفظ النتائج في الكاش 5 دقائق
 		cache.set(cacheKeyForQuery, results, 300);
 
-		return NextResponse.json({ 
+		return {
 			results,
 			success: true,
 			query: trimmedQuery,
 			total: results.length,
-			cached: false
-		});
-
+			cached: false,
+		};
 	} catch (error) {
 		console.error("خطأ في البحث:", error);
-		return NextResponse.json(
-			{ 
-				error: "فشل في البحث",
-				results: [],
-				success: false 
-			},
-			{ status: 500 }
-		);
+		return {
+			error: "فشل في البحث",
+			results: [],
+			success: false,
+		};
 	}
 }

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useStoreFavorites } from "@/hooks/useFavorites";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
-import { useSearchParams } from "next/navigation";
+import { getStoresByCategory } from "@/lib/ServerAction/store";
 
 interface Store {
 	id: string;
@@ -154,12 +154,8 @@ export default function CategoryStoresPage({
 	const [nextOffset, setNextOffset] = useState(0);
 	const pageSize = 20;
 
-	// استخدام URL parameters للصفحة الكاملة
-	const searchParams = useSearchParams();
-	const urlCategoryName = searchParams.get("category") || "";
-	
 	// تحديد البيانات المستخدمة
-	const categoryName = isFullPage ? urlCategoryName : propCategoryName;
+	const categoryName = propCategoryName;
 	const onStoreClick = isFullPage ? undefined : propOnStoreClick;
 
 	// دالة التعامل مع النقر على المتجر للصفحة الكاملة
@@ -184,15 +180,14 @@ export default function CategoryStoresPage({
 		const fetchCategoryStores = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName || "")}&limit=${pageSize}&offset=0`);
-				if (response.ok) {
-					const data = await response.json();
-					setStores(data.stores || []);
-					setHasMore(Boolean(data.hasMore));
-					setNextOffset(Number(data.nextOffset ?? (data.stores?.length ?? 0)));
-				} else {
-					console.error('فشل في جلب متاجر القسم');
-				}
+				const data = await getStoresByCategory(
+					categoryName || "",
+					pageSize.toString(),
+					"0"
+				);
+				setStores(data.stores || []);
+				setHasMore(Boolean(data.hasMore));
+				setNextOffset(Number(data.nextOffset ?? (data.stores?.length ?? 0)));
 			} catch (error) {
 				console.error('خطأ في جلب متاجر القسم:', error);
 			} finally {
@@ -209,13 +204,14 @@ export default function CategoryStoresPage({
 		if (!hasMore || isLoadingMore || !categoryName) return;
 		setIsLoadingMore(true);
 		try {
-			const response = await fetch(`/api/stores/by-category?category=${encodeURIComponent(categoryName || "")}&limit=${pageSize}&offset=${nextOffset}`);
-			if (response.ok) {
-				const data = await response.json();
-				setStores(prev => [...prev, ...(data.stores || [])]);
-				setHasMore(Boolean(data.hasMore));
-				setNextOffset(Number(data.nextOffset ?? nextOffset));
-			}
+			const data = await getStoresByCategory(
+				categoryName || "",
+				pageSize.toString(),
+				nextOffset.toString()
+			);
+			setStores(prev => [...prev, ...(data.stores || [])]);
+			setHasMore(Boolean(data.hasMore));
+			setNextOffset(Number(data.nextOffset ?? nextOffset));
 		} catch (error) {
 			console.error('خطأ في جلب المزيد من المتاجر:', error);
 		} finally {
