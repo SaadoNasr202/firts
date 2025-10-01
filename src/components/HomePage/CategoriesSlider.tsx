@@ -41,7 +41,7 @@ export default function CategoriesSlider({
 				setIsLoading(true);
 				const result = await getCategoriesAction();
 				if (cancelled) return;
-				if (result && 'categories' in result) {
+				if (result && "categories" in result) {
 					setCategories(result.categories || []);
 				}
 			} catch (e) {
@@ -50,16 +50,18 @@ export default function CategoriesSlider({
 				if (!cancelled) setIsLoading(false);
 			}
 		})();
-		return () => { cancelled = true; };
+		return () => {
+			cancelled = true;
+		};
 	}, [getCategoriesAction]);
 
-// تم إلغاء التخزين المؤقت على العميل
+	// تم إلغاء التخزين المؤقت على العميل
 
-// تمت إزالة أي استدعاء API للأقسام
+	// تمت إزالة أي استدعاء API للأقسام
 
-// لا يوجد فولباك للـ API
+	// لا يوجد فولباك للـ API
 
-// أزلنا إعادة التحميل المعتمدة على API عند التركيز
+	// أزلنا إعادة التحميل المعتمدة على API عند التركيز
 
 	const handleScrollRight = () => {
 		document
@@ -73,20 +75,20 @@ export default function CategoriesSlider({
 			?.scrollBy({ left: -200, behavior: "smooth" });
 	};
 
-const handleRefresh = () => {
-    setIsLoading(true);
-    (async () => {
-        try {
-            const result = await getCategoriesAction();
-            if (result && 'categories' in result) {
-                setCategories(result.categories || []);
-                setLastFetchTime(Date.now());
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    })();
-};
+	const handleRefresh = () => {
+		setIsLoading(true);
+		(async () => {
+			try {
+				const result = await getCategoriesAction();
+				if (result && "categories" in result) {
+					setCategories(result.categories || []);
+					setLastFetchTime(Date.now());
+				}
+			} finally {
+				setIsLoading(false);
+			}
+		})();
+	};
 
 	// دالة التعامل مع النقر على القسم
 	const handleCategoryClick = (categoryName: string) => {
@@ -167,10 +169,10 @@ const handleRefresh = () => {
 		);
 	};
 
-// تحديد البيانات المستخدمة (Server Action فقط)
-const currentCategories = categories;
-const currentIsLoading = isLoading;
-const currentError = null as unknown as string | null;
+	// تحديد البيانات المستخدمة (Server Action فقط)
+	const currentCategories = categories;
+	const currentIsLoading = isLoading;
+	const currentError = null as unknown as string | null;
 
 	// فلترة الأقسام للصفحة الكاملة
 	const filteredCategories = isFullPage

@@ -35,7 +35,7 @@ function ProductDetailsPageContent() {
         if (index === 0) {
             window.location.href = "/HomePage";
         } else if (index === 1) {
-            window.location.href = `/store?store=${encodeURIComponent(storeName)}`;
+            window.location.href = `/store/${encodeURIComponent(storeName)}`;
         } else if (index === 2) {
             window.location.href = `/products?store=${encodeURIComponent(storeName)}&category=${encodeURIComponent(categoryName)}`;
         }

@@ -3,19 +3,8 @@
 import { useEffect, useState } from "react";
 import { MapPin, ChevronDown, Plus, Map, Trash2 } from "lucide-react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
-
-interface Address {
-	id: string;
-	address: string;
-	createdAt: string;
-	formattedAddress?: string;
-	lat?: number;
-	lng?: number;
-}
-
-interface DeliveryAddressSelectorProps {
-	onAddressChange?: (address: Address | null) => void;
-}
+import { getAddressesAction, addAddressAction, deleteAddressAction } from "@/lib/ServerAction/address";
+import { Address, DeliveryAddressSelectorProps, MapLocationModalProps } from "@/lib/api";
 
 export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAddressSelectorProps) {
 	const [addresses, setAddresses] = useState<Address[]>([]);
@@ -31,15 +20,20 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 		libraries: ["places", "geometry"],
 	});
 
-	// جلب العناوين من API
+	// جلب العناوين من server action
 	useEffect(() => {
 		let isMounted = true;
 		
 		async function fetchAddresses() {
 			try {
-				const res = await fetch("/api/address");
-				const data = await res.json();
-				const addressesData = data.addresses || [];
+				const result = await getAddressesAction();
+				
+				if (result.error) {
+					console.error("Error fetching addresses:", result.error);
+					return;
+				}
+				
+				const addressesData = result.addresses || [];
 				
 				// تحويل الإحداثيات إلى عناوين نصية
 				const addressesWithFormatted = await Promise.all(
@@ -118,11 +112,9 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 		event.stopPropagation(); // منع فتح القائمة المنسدلة
 		
 		try {
-			const response = await fetch(`/api/address?id=${addressId}`, {
-				method: 'DELETE',
-			});
+			const result = await deleteAddressAction(addressId);
 
-			if (response.ok) {
+			if (result.success) {
 				// إزالة العنوان من القائمة
 				setAddresses(prev => prev.filter(addr => addr.id !== addressId));
 				
@@ -138,7 +130,7 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 					}
 				}
 			} else {
-				console.error('فشل في حذف العنوان');
+				console.error('فشل في حذف العنوان:', result.error);
 			}
 		} catch (error) {
 			console.error('خطأ في حذف العنوان:', error);
@@ -148,18 +140,9 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 	const handleMapLocationSelect = async (lat: number, lng: number, formattedAddress: string) => {
 		try {
 			// حفظ العنوان الجديد في قاعدة البيانات
-			const response = await fetch('/api/address', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					address: `${lat},${lng}`,
-				}),
-			});
+			const result = await addAddressAction(`${lat},${lng}`);
 
-			if (response.ok) {
-				const result = await response.json();
+			if (result.success && result.addressId) {
 				const newAddress: Address = {
 					id: result.addressId,
 					address: `${lat},${lng}`,
@@ -176,7 +159,7 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 				setShowMapModal(false);
 				onAddressChange?.(newAddress);
 			} else {
-				console.error('فشل في حفظ العنوان الجديد');
+				console.error('فشل في حفظ العنوان الجديد:', result.error);
 				// في حالة الفشل، نستخدم العنوان كعنوان مؤقت
 				const tempAddress: Address = {
 					id: `temp_${Date.now()}`,
@@ -326,12 +309,7 @@ export default function DeliveryAddressSelector({ onAddressChange }: DeliveryAdd
 }
 
 // مكون مودال الخريطة
-interface MapLocationModalProps {
-	isOpen: boolean;
-	onClose: () => void;
-	onLocationSelect: (lat: number, lng: number, formattedAddress: string) => void;
-	isLoaded: boolean;
-}
+// interfaces imported from src/lib/api
 
 function MapLocationModal({ isOpen, onClose, onLocationSelect, isLoaded }: MapLocationModalProps) {
 	const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number} | null>(null);

@@ -2,41 +2,11 @@
 "use client";
 
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
-import { NearbyStore } from "@/lib/types/api";
+import { NearbyStore } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { Store, NearbyStoresPageProps } from "@/lib/api";
 
-interface Store {
-	id: string;
-	name: string;
-	image: string | null;
-	type?: string | null;
-	rating?: number | string | null;
-	location?: string | null;
-	distance?: number;
-	logo?: string | null;
-	hasProducts?: boolean;
-}
-
-interface NearbyStoresPageProps {
-	onStoreClick?: (storeName: string) => void;
-	selectedLocation?: any;
-	isFullPage?: boolean;
-	getNearbyStoresAction: (args: {
-		lat: number;
-		lng: number;
-		limit?: number;
-		maxDistance?: number;
-	}) => Promise<
-		| {
-				stores: NearbyStore[];
-				userLocation: { lat: number; lng: number };
-				maxDistance: number;
-				total: number;
-				success?: true;
-		  }
-		| { error: string }
-	>;
-}
+// interfaces imported from src/lib/api
 
 export default function NearbyStoresPage({
 	onStoreClick,
@@ -129,18 +99,27 @@ export default function NearbyStoresPage({
       setPageLoading(true);
       setError(null);
       try {
+        console.log("🔍 NearbyStoresPage: بدء جلب المتاجر من server action");
+        console.log("📍 الموقع:", { lat: userLocation.lat, lng: userLocation.lng });
+        
         const result = await getNearbyStoresAction({
           lat: userLocation.lat,
           lng: userLocation.lng,
           limit: 200,
           maxDistance: 15,
         });
+        
+        console.log("📦 النتيجة:", result);
+        
         if ((result as any).stores) {
+          console.log(`✅ عدد المتاجر: ${(result as any).stores.length}`);
           setFullPageStores(((result as any).stores || []) as Store[]);
         } else if ((result as any).error) {
+          console.error("❌ خطأ:", (result as any).error);
           setError((result as any).error);
         }
       } catch (err) {
+        console.error("❌ خطأ في catch:", err);
         setError(err);
       } finally {
         setPageLoading(false);
@@ -342,7 +321,7 @@ export default function NearbyStoresPage({
 							<div
 								key={store.id}
 								onClick={() =>
-									(window.location.href = `/store?store=${encodeURIComponent(store.name)}&source=nearby`)
+									(window.location.href = `/store/${encodeURIComponent(store.name)}?source=nearby`)
 								}
 								className="transform cursor-pointer rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:scale-105 hover:shadow-lg"
 							>
@@ -397,7 +376,7 @@ export default function NearbyStoresPage({
 					})}
 				</div>
 
-				{filteredStores.length === 0 && !pageLoading && (
+				{sortedStores.length === 0 && !pageLoading && (
 					<div className="py-12 text-center">
 						<div className="mb-4 text-6xl">🏪</div>
 						<h3 className="mb-2 text-xl font-semibold text-gray-700">

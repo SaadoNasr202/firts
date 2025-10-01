@@ -3,25 +3,11 @@
 import { searchAction } from "@/lib/ServerAction/search";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SearchResult } from "@/lib/api";
 
-interface SearchResult {
-	id: string;
-	name: string;
-	type: "store" | "product";
-	image: string | null;
-	description?: string;
-	rating?: number;
-	price?: string;
-	storeName?: string;
-	hasProducts?: boolean;
-	hasCategories?: boolean;
-}
+// interfaces imported from src/lib/api
 
-interface SearchPagePROP {
-	// No longer needed - we'll import searchAction directly
-}
-
-export default function SearchPage({}: SearchPagePROP) {
+export default function SearchPage({}: {}) {
 	const searchParams = useSearchParams();
 	const query = searchParams.get("q") || "";
 
@@ -89,7 +75,7 @@ export default function SearchPage({}: SearchPagePROP) {
 			if (!result.hasProducts) {
 				return;
 			}
-			window.location.href = `/store?store=${encodeURIComponent(result.name)}&source=search`;
+			window.location.href = `/store/${encodeURIComponent(result.name)}?source=search`;
 		} else if (result.type === "product") {
 			window.location.href = `/product-details?product=${encodeURIComponent(result.name)}&store=${encodeURIComponent(result.storeName || "")}`;
 		}

@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
+import { FavoriteState, UseFavoritesReturn } from "@/lib/api";
+import { 
+  addStoreToFavoritesAction, 
+  removeStoreFromFavoritesAction, 
+  checkStoreFavoriteAction,
+  addProductToFavoritesAction,
+  removeProductFromFavoritesAction,
+  checkProductFavoriteAction
+} from '@/lib/ServerAction/favorites';
 
-interface FavoriteState {
-  isFavorite: boolean;
-  isLoading: boolean;
-}
-
-interface UseFavoritesReturn {
-  isFavorite: boolean;
-  isLoading: boolean;
-  toggleFavorite: () => Promise<void>;
-  checkFavoriteStatus: () => Promise<void>;
-}
+// interfaces imported from src/lib/api
 
 // Hook للمنتجات المفضلة
 export function useProductFavorites(productId: string): UseFavoritesReturn {
@@ -23,18 +22,17 @@ export function useProductFavorites(productId: string): UseFavoritesReturn {
     if (!productId) return;
     
     try {
-      const response = await fetch(
-        `/api/favorites/products?productId=${encodeURIComponent(productId)}`
-      );
+      const result = await checkProductFavoriteAction(productId);
       
-      if (response.ok) {
-        const data = await response.json();
-        setState(prev => ({ ...prev, isFavorite: data.isFavorite }));
-      } else if (response.status === 401) {
-        // المستخدم غير مسجل دخول
-        setState(prev => ({ ...prev, isFavorite: false }));
+      if (result.error) {
+        if (result.error.includes("تسجيل الدخول")) {
+          // المستخدم غير مسجل دخول
+          setState(prev => ({ ...prev, isFavorite: false }));
+        } else {
+          console.error('فشل في التحقق من حالة المفضلة:', result.error);
+        }
       } else {
-        console.error('فشل في التحقق من حالة المفضلة:', response.status);
+        setState(prev => ({ ...prev, isFavorite: result.isFavorite }));
       }
     } catch (error) {
       console.error('خطأ في التحقق من حالة المفضلة:', error);
@@ -47,27 +45,24 @@ export function useProductFavorites(productId: string): UseFavoritesReturn {
     setState(prev => ({ ...prev, isLoading: true }));
     
     try {
-      const method = state.isFavorite ? 'DELETE' : 'POST';
-      const response = await fetch('/api/favorites/products', {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productId }),
-      });
+      let result;
+      if (state.isFavorite) {
+        result = await removeProductFromFavoritesAction(productId);
+      } else {
+        result = await addProductToFavoritesAction(productId);
+      }
 
-      if (response.ok) {
+      if (result.success) {
         setState(prev => ({ 
           ...prev, 
           isFavorite: !prev.isFavorite,
           isLoading: false 
         }));
-      } else if (response.status === 401) {
+      } else if (result.error?.includes("تسجيل الدخول")) {
         alert('يجب تسجيل الدخول أولاً لإضافة المنتج للمفضلة');
         setState(prev => ({ ...prev, isLoading: false }));
       } else {
-        const errorData = await response.json();
-        console.error('خطأ في تحديث المفضلة:', errorData.error);
+        console.error('خطأ في تحديث المفضلة:', result.error);
         setState(prev => ({ ...prev, isLoading: false }));
       }
     } catch (error) {
@@ -99,18 +94,17 @@ export function useStoreFavorites(storeId: string): UseFavoritesReturn {
     if (!storeId) return;
     
     try {
-      const response = await fetch(
-        `/api/favorites/stores?storeId=${encodeURIComponent(storeId)}`
-      );
+      const result = await checkStoreFavoriteAction(storeId);
       
-      if (response.ok) {
-        const data = await response.json();
-        setState(prev => ({ ...prev, isFavorite: data.isFavorite }));
-      } else if (response.status === 401) {
-        // المستخدم غير مسجل دخول
-        setState(prev => ({ ...prev, isFavorite: false }));
+      if (result.error) {
+        if (result.error.includes("تسجيل الدخول")) {
+          // المستخدم غير مسجل دخول
+          setState(prev => ({ ...prev, isFavorite: false }));
+        } else {
+          console.error('فشل في التحقق من حالة المفضلة:', result.error);
+        }
       } else {
-        console.error('فشل في التحقق من حالة المفضلة:', response.status);
+        setState(prev => ({ ...prev, isFavorite: result.isFavorite }));
       }
     } catch (error) {
       console.error('خطأ في التحقق من حالة المفضلة:', error);
@@ -123,27 +117,24 @@ export function useStoreFavorites(storeId: string): UseFavoritesReturn {
     setState(prev => ({ ...prev, isLoading: true }));
     
     try {
-      const method = state.isFavorite ? 'DELETE' : 'POST';
-      const response = await fetch('/api/favorites/stores', {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ storeId }),
-      });
+      let result;
+      if (state.isFavorite) {
+        result = await removeStoreFromFavoritesAction(storeId);
+      } else {
+        result = await addStoreToFavoritesAction(storeId);
+      }
 
-      if (response.ok) {
+      if (result.success) {
         setState(prev => ({ 
           ...prev, 
           isFavorite: !prev.isFavorite,
           isLoading: false 
         }));
-      } else if (response.status === 401) {
+      } else if (result.error?.includes("تسجيل الدخول")) {
         alert('يجب تسجيل الدخول أولاً لإضافة المتجر للمفضلة');
         setState(prev => ({ ...prev, isLoading: false }));
       } else {
-        const errorData = await response.json();
-        console.error('خطأ في تحديث المفضلة:', errorData.error);
+        console.error('خطأ في تحديث المفضلة:', result.error);
         setState(prev => ({ ...prev, isLoading: false }));
       }
     } catch (error) {

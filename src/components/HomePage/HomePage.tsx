@@ -2,7 +2,7 @@
 
 "use client";
 
-import { Discount, NearbyStore } from "@/lib/types/api";
+import { Discount, NearbyStore, Category } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CategoriesSlider from "./CategoriesSlider";
@@ -10,13 +10,7 @@ import DeliveryAddressSelector from "./DeliveryAddressSelector";
 import DiscountSlider from "./DiscountSlider";
 import NearbyStoresPage from "./NearbyStoresPage";
 import PopularStoresSlider from "./PopularStoresSlider";
-// Local Category type for action typing
-type Category = {
-	id: string;
-	name: string;
-	description?: string;
-	image?: string;
-};
+// Category imported from src/lib/api
 
 export default function HomePageHomePage({
 	getCategoriesAction,
@@ -61,12 +55,12 @@ export default function HomePageHomePage({
 	const handleDiscountClick = (discountTitle: string) => {
 		// معاملة الخصومات كمتاجر - الانتقال لصفحة المتجر
 		router.push(
-			`/store?store=${encodeURIComponent(discountTitle)}&source=discounts`,
+			`/store/${encodeURIComponent(discountTitle)}?source=discounts`,
 		);
 	};
 
 	const handlePopularStoreClick = (storeName: string) => {
-		router.push(`/store?store=${encodeURIComponent(storeName)}&source=popular`);
+		router.push(`/store/${encodeURIComponent(storeName)}?source=popular`);
 	};
 
 	const handleCategoryClick = (categoryName: string) => {
@@ -84,7 +78,7 @@ export default function HomePageHomePage({
 	// هذه الدالة لم تعد مستخدمة في الصفحة الرئيسية
 
 	const handleStoreClick = (storeName: string) => {
-		router.push(`/store?store=${encodeURIComponent(storeName)}&source=nearby`);
+		router.push(`/store/${encodeURIComponent(storeName)}?source=nearby`);
 	};
 
 	return (

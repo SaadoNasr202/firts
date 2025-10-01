@@ -1,14 +1,9 @@
 "use client";
 
 import { useState } from 'react';
+import { FavoriteButtonProps } from "@/lib/api";
 
-interface FavoriteButtonProps {
-  isFavorite: boolean;
-  isLoading: boolean;
-  onToggle: () => void;
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}
+// interface imported from src/lib/api
 
 export default function FavoriteButton({ 
   isFavorite, 

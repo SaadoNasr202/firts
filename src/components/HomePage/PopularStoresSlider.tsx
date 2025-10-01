@@ -1,42 +1,11 @@
 "use client";
 
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
-import { NearbyStore } from "@/lib/types/api";
+import { NearbyStore } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { Store, PopularStoresSliderProps } from "@/lib/api";
 
-// تحديد نوع البيانات
-interface Store {
-	id: string;
-	name: string;
-	image?: string;
-	type?: string;
-	rating?: string;
-	location?: string;
-	distance?: number;
-	logo?: string | null;
-	hasProducts?: boolean;
-}
-
-interface PopularStoresSliderProps {
-	onStoreClick?: (storeName: string) => void;
-	selectedLocation?: any;
-	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم شريط تمرير
-	getNearbyStoresAction: (args: {
-		lat: number;
-		lng: number;
-		limit?: number;
-		maxDistance?: number;
-	}) => Promise<
-		| {
-				stores: NearbyStore[];
-				userLocation: { lat: number; lng: number };
-				maxDistance: number;
-				total: number;
-				success?: true;
-		  }
-		| { error: string }
-	>;
-}
+// interfaces imported from src/lib/api
 
 export default function PopularStoresSlider({
 	onStoreClick,
@@ -70,18 +39,27 @@ export default function PopularStoresSlider({
 			setCacheLoading(true);
 			setCacheError(null);
 			try {
+				console.log("🔍 PopularStoresSlider: بدء جلب المتاجر من server action");
+				console.log("📍 الموقع:", { lat: userLocation.lat, lng: userLocation.lng });
+				
 				const result = await getNearbyStoresAction({
 					lat: userLocation.lat,
 					lng: userLocation.lng,
 					limit: 200,
 					maxDistance: 15,
 				});
+				
+				console.log("📦 النتيجة:", result);
+				
 				if ((result as any).stores) {
+					console.log(`✅ عدد المتاجر: ${(result as any).stores.length}`);
 					setStoresData({ stores: (result as any).stores });
 				} else if ((result as any).error) {
+					console.error("❌ خطأ:", (result as any).error);
 					setCacheError((result as any).error);
 				}
 			} catch (error) {
+				console.error("❌ خطأ في catch:", error);
 				setCacheError("فشل في جلب المتاجر");
 			} finally {
 				setCacheLoading(false);
@@ -108,20 +86,24 @@ export default function PopularStoresSlider({
 
 		// إذا لم يكن هناك موقع مختار، الحصول على موقع المستخدم
 		const getUserLocation = () => {
+			console.log("🔍 PopularStoresSlider: محاولة الحصول على الموقع");
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 					(position) => {
 						const { latitude, longitude } = position.coords;
+						console.log("📍 PopularStoresSlider: تم الحصول على الموقع:", { lat: latitude, lng: longitude });
 						setUserLocation({ lat: latitude, lng: longitude });
 					},
 					(error) => {
-						console.warn("فشل في الحصول على الموقع:", error);
+						console.warn("❌ PopularStoresSlider: فشل في الحصول على الموقع:", error);
 						// استخدام موقع افتراضي (الرياض) إذا فشل الحصول على الموقع
+						console.log("📍 PopularStoresSlider: استخدام الموقع الافتراضي (الرياض)");
 						setUserLocation({ lat: 24.7136, lng: 46.6753 });
 					},
 				);
 			} else {
 				// استخدام موقع افتراضي إذا لم يكن المتصفح يدعم الموقع
+				console.log("📍 PopularStoresSlider: المتصفح لا يدعم الموقع، استخدام الموقع الافتراضي");
 				setUserLocation({ lat: 24.7136, lng: 46.6753 });
 			}
 		};
@@ -172,7 +154,7 @@ export default function PopularStoresSlider({
 	// دالة التعامل مع النقر على المتجر للصفحة الكاملة
 	const handleStoreClick = (storeName: string) => {
 		if (isFullPage) {
-			window.location.href = `/store?store=${encodeURIComponent(storeName)}&source=popular`;
+			window.location.href = `/store/${encodeURIComponent(storeName)}?source=popular`;
 		} else if (onStoreClick) {
 			onStoreClick(storeName);
 		}
@@ -246,56 +228,61 @@ export default function PopularStoresSlider({
 		};
 	};
 
-	// تحديد البيانات المستخدمة
-	const currentStores = isFullPage ? storesData?.stores || [] : stores;
+	// تحديد البيانات المستخدمة - استخدام storesData في الصفحة الكاملة
+	const currentStores = isFullPage ? (storesData?.stores || []) : (stores || []);
 	const currentIsLoading = isFullPage ? cacheLoading : isLoading;
 	const currentError = isFullPage ? cacheError : null;
+	
+	// Debug مفصل
+	console.log("🔍 PopularStoresSlider:", {
+		isFullPage,
+		stores: stores?.length || 0,
+		storesData: storesData?.stores?.length || 0,
+		currentStores: currentStores.length,
+		currentIsLoading,
+		currentError
+	});
 
-	// فلترة وترتيب المتاجر للصفحة الكاملة
-	const filteredStores = isFullPage
-		? currentStores.filter((store: Store) => {
-				const storeInfo = getStoreInfo(store);
-				const matchesSearch =
-					store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					storeInfo.description
-						.toLowerCase()
-						.includes(searchTerm.toLowerCase());
-				const matchesCategory =
-					selectedCategory === "الكل" || store.type === selectedCategory;
-				const matchesPopular = !showOnlyPopular || storeInfo.isPopular;
-				return matchesSearch && matchesCategory && matchesPopular;
-			})
-		: currentStores;
+	// فلترة المتاجر - تعمل في كلا الوضعين
+	const filteredStores = currentStores.filter((store: Store) => {
+		const storeInfo = getStoreInfo(store);
+		const matchesSearch =
+			store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			storeInfo.description
+				.toLowerCase()
+				.includes(searchTerm.toLowerCase());
+		const matchesCategory =
+			selectedCategory === "الكل" || store.type === selectedCategory;
+		const matchesPopular = !showOnlyPopular || storeInfo.isPopular;
+		return matchesSearch && matchesCategory && matchesPopular;
+	});
 
-	const sortedStores = isFullPage
-		? [...filteredStores].sort((a: Store, b: Store) => {
-				const aInfo = getStoreInfo(a);
-				const bInfo = getStoreInfo(b);
+	// ترتيب المتاجر - تعمل في كلا الوضعين
+	const sortedStores = [...filteredStores].sort((a: Store, b: Store) => {
+		const aInfo = getStoreInfo(a);
+		const bInfo = getStoreInfo(b);
 
-				switch (sortBy) {
-					case "rating":
-						return parseFloat(b.rating || "0") - parseFloat(a.rating || "0");
-					case "reviewCount":
-						return bInfo.reviewCount - aInfo.reviewCount;
-					case "distance":
-						return parseFloat(aInfo.distance) - parseFloat(bInfo.distance);
-					case "deliveryTime":
-						return parseInt(aInfo.deliveryTime) - parseInt(bInfo.deliveryTime);
-					default:
-						return 0;
-				}
-			})
-		: filteredStores;
+		switch (sortBy) {
+			case "rating":
+                return parseFloat(String(b.rating || "0")) - parseFloat(String(a.rating || "0"));
+			case "reviewCount":
+				return bInfo.reviewCount - aInfo.reviewCount;
+            case "distance":
+                return parseFloat(String(aInfo.distance)) - parseFloat(String(bInfo.distance));
+            case "deliveryTime":
+                return parseInt(String(aInfo.deliveryTime)) - parseInt(String(bInfo.deliveryTime));
+			default:
+				return 0;
+		}
+	});
 
-	// الحصول على الأقسام الفريدة للصفحة الكاملة
-	const categories = isFullPage
-		? ([
-				"الكل",
-				...new Set(
-					currentStores.map((store: Store) => store.type).filter(Boolean),
-				),
-			] as string[])
-		: [];
+	// الحصول على الأقسام الفريدة - تعمل في كلا الوضعين
+	const categories = [
+		"الكل",
+		...new Set(
+			currentStores.map((store: Store) => store.type).filter(Boolean),
+		),
+	] as string[];
 
 	// إذا كان يتم تحميل البيانات
 	if (currentIsLoading) {
@@ -545,8 +532,8 @@ export default function PopularStoresSlider({
 												{[...Array(5)].map((_, i) => (
 													<svg
 														key={i}
-														className={`h-4 w-4 ${
-															i < Math.floor(parseFloat(store.rating || "0"))
+                                                        className={`h-4 w-4 ${
+                                                            i < Math.floor(parseFloat(String(store.rating || "0")))
 																? "text-yellow-400"
 																: "text-gray-300"
 														}`}
@@ -558,7 +545,7 @@ export default function PopularStoresSlider({
 												))}
 											</div>
 											<span className="mr-2 text-sm text-gray-600">
-												{store.rating || 0}
+                            {String(store.rating || 0)}
 											</span>
 										</div>
 										<span className="text-xs text-gray-500">

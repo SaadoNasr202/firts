@@ -1,28 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Store, CategoryStoresPageProps } from "@/lib/api";
 import { useStoreFavorites } from "@/hooks/useFavorites";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import { getStoresByCategory } from "@/lib/ServerAction/store";
 
-interface Store {
-	id: string;
-	name: string;
-	type: string;
-	rating?: string;
-	image?: string;
-    logo?: string | null;
-	location?: string;
-	hasProducts?: boolean;
-	hasCategories?: boolean;
-}
-
-interface CategoryStoresPageProps {
-	categoryName?: string;
-	onStoreClick?: (storeName: string) => void;
-	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم مكون
-}
+// interfaces imported from src/lib/api
 
 // مكون بطاقة المتجر مع زر المفضلة
 function StoreCard({ 
@@ -161,7 +146,7 @@ export default function CategoryStoresPage({
 	// دالة التعامل مع النقر على المتجر للصفحة الكاملة
 	const handleStoreClick = (storeName: string) => {
 		if (isFullPage) {
-			window.location.href = `/store?store=${encodeURIComponent(storeName)}&category=${encodeURIComponent(categoryName || "")}`;
+			window.location.href = `/store/${encodeURIComponent(storeName)}?category=${encodeURIComponent(categoryName || "")}`;
 		} else if (propOnStoreClick) {
 			propOnStoreClick(storeName);
 		}

@@ -6,31 +6,17 @@ import { cacheKeys, useClientCache } from "@/hooks/useClientCache";
 import { useStoreFavorites } from "@/hooks/useFavorites";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getStoreCategoriesAction } from "@/lib/ServerAction/storeCategories";
+import { StorePageProps, StoreDetails, StoreCategory } from "@/lib/api";
 
-// Define the component's props - لم تعد بحاجة لـ storeName و onCategoryClick كـ props
-interface StorePageProps {}
+// interfaces imported from src/lib/api
 
-interface StoreDetails {
-	id: string;
-	name: string;
-	type: string;
-	rating: string;
-	image: string;
-}
-
-interface StoreCategory {
-	id: string;
-	name: string;
-	storecover: string | null;
-	storelogo: string | null;
-}
-
-export default function StorePage({}: StorePageProps) {
-	// استخراج المعاملات من URL
+export default function StorePage({ storeName: propStoreName, category: propCategory, source: propSource }: StorePageProps = {}) {
+	// استخراج المعاملات من URL أو props
 	const searchParams = useSearchParams();
-	const storeName = searchParams.get("store") || "";
-	const categoryName = searchParams.get("category") || "";
-	const source = searchParams.get("source") || "";
+	const storeName = propStoreName || searchParams.get("store") || "";
+	const categoryName = propCategory || searchParams.get("category") || "";
+	const source = propSource || searchParams.get("source") || "";
 
 	const [productCategories, setProductCategories] = useState<string[]>([]);
 	const [storeCategories, setStoreCategories] = useState<StoreCategory[]>([]);
@@ -75,13 +61,7 @@ export default function StorePage({}: StorePageProps) {
 	} = useClientCache(
 		cacheKeys.storeCategories(storeName),
 		async () => {
-			const response = await fetch(
-				`/api/store-categories?storeName=${encodeURIComponent(storeName)}`,
-			);
-			if (!response.ok) {
-				throw new Error("فشل في جلب بيانات المتجر");
-			}
-			return response.json();
+			return await getStoreCategoriesAction(storeName);
 		},
 		600, // 10 دقائق
 	);

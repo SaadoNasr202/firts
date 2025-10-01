@@ -2,22 +2,9 @@
 
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import { useEffect, useState } from "react";
+import { Discount, DiscountSliderProps } from "@/lib/api";
 
-interface Discount {
-	id: string;
-	title: string;
-	description?: string;
-	time: string;
-	image: string;
-}
-
-interface DiscountSliderProps {
-	onDiscountClick?: (discountTitle: string) => void;
-	isFullPage?: boolean;
-	getDiscountsAction: () => Promise<
-		{ discounts: Discount[]; success: boolean } | { error: string }
-	>;
-}
+// interfaces imported from src/lib/api
 
 export default function DiscountSlider({
 	onDiscountClick,
@@ -54,7 +41,7 @@ export default function DiscountSlider({
 		if (onDiscountClick) {
 			onDiscountClick(title);
 		} else {
-			window.location.href = `/store?store=${encodeURIComponent(title)}&source=discounts`;
+			window.location.href = `/store/${encodeURIComponent(title)}?source=discounts`;
 		}
 	};
 

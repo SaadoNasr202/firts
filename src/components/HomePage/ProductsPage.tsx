@@ -4,24 +4,12 @@ import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import { useCart } from "@/hooks/useCart";
 import { useProductFavorites } from "@/hooks/useFavorites";
+import { getStoreProductsAction } from "@/lib/ServerAction/storeProducts";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Product, ProductsPageProps } from "@/lib/api";
 
-interface Product {
-	id: string;
-	name: string;
-	image: string;
-	price: string;
-	originalPrice?: string;
-	unit?: string;
-}
-
-interface ProductsPageProps {
-	categoryName?: string;
-	storeName?: string;
-	onProductClick?: (productId: string) => void;
-	isFullPage?: boolean; // جديد: لتحديد ما إذا كانت صفحة كاملة أم مكون
-}
+// interfaces imported from src/lib/api
 
 // مكون بطاقة المنتج مع زر المفضلة
 function ProductCard({
@@ -154,7 +142,7 @@ export default function ProductsPage({
 		if (index === 0) {
 			window.location.href = "/HomePage";
 		} else {
-			window.location.href = `/store?store=${encodeURIComponent(storeName || '')}`;
+			window.location.href = `/store/${encodeURIComponent(storeName || '')}`;
 		}
 	};
 
@@ -162,20 +150,26 @@ export default function ProductsPage({
 		const fetchProducts = async () => {
 			setIsLoading(true);
 			try {
-				const response = await fetch(
-					`/api/stores/${encodeURIComponent(storeName || '')}/products?category=${encodeURIComponent(categoryName || '')}`,
-				);
-				if (response.ok) {
-					const data = await response.json();
-					setProducts(data.products || []);
-					if (data.store?.id) {
-						setStoreId(data.store.id);
-					}
-				} else {
-					console.error("فشل في جلب المنتجات");
+				console.log("🔍 ProductsPage: بدء جلب المنتجات من server action");
+				console.log("🏪 المتجر:", storeName);
+				console.log("📂 القسم:", categoryName);
+				
+				const result = await getStoreProductsAction(storeName || '', categoryName || '');
+				
+				console.log("📦 النتيجة:", result);
+				
+				if (result.error) {
+					console.error("❌ خطأ في جلب المنتجات:", result.error);
+					return;
+				}
+				
+				console.log(`✅ عدد المنتجات: ${result.products?.length || 0}`);
+				setProducts(result.products || []);
+				if (result.store?.id) {
+					setStoreId(result.store.id);
 				}
 			} catch (error) {
-				console.error("خطأ في جلب المنتجات:", error);
+				console.error("❌ خطأ في جلب المنتجات:", error);
 			} finally {
 				setIsLoading(false);
 			}

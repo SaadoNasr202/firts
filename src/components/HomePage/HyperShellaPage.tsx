@@ -2,11 +2,12 @@
 
 import Breadcrumb from "@/components/HomePage/Breadcrumb";
 import { getStoresByCategory } from "@/lib/ServerAction/store";
-import { HyperShellaCategoriesResult } from "@/lib/types/api";
+import { HyperShellaCategoriesResult } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { HyperShellaPageProps, HyperShellaStoreDetails } from "@/lib/api";
 
 // Define the component's props
-interface StorePageProps {
+interface StorePageProps extends HyperShellaPageProps {
 	storeName?: string;
 	onCategoryClick?: (categoryName: string) => void;
 	isFullPage?: boolean;
@@ -18,14 +19,6 @@ interface StorePageProps {
 		exclude?: string;
 	}): Promise<{ products: any[]; success: boolean; error?: string }>;
 }
-
-interface StoreDetails {
-	id: string;
-	name: string;
-	type: string;
-	rating: string;
-	image: string;
-}
 export default function HyperPage({
 	storeName = "هايبر شلة",
 	onCategoryClick,
@@ -34,7 +27,7 @@ export default function HyperPage({
 	getProductsAction,
 }: StorePageProps) {
 	const [productCategories, setProductCategories] = useState<string[]>([]);
-	const [storeDetails, setStoreDetails] = useState<StoreDetails | null>(null);
+    const [storeDetails, setStoreDetails] = useState<HyperShellaStoreDetails | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
 	// حالة قسم موصى بها لك

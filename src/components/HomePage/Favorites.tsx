@@ -3,25 +3,9 @@ import { useEffect, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import { useCart } from "@/hooks/useCart";
 import { useRouter } from "next/navigation";
+import { Product, Store } from "@/lib/api";
 
-interface Product {
-	id: string;
-	name: string;
-	image: string;
-	price: string;
-	originalPrice: string;
-	unit: string;
-	storeId?: string; // إضافة معرف المتجر
-	storeName?: string; // إضافة اسم المتجر
-}
-
-interface Store {
-	id: string;
-	name: string;
-	type: string;
-	rating: string;
-	image: string;
-}
+// interfaces imported from src/lib/api
 
 export default function Favorites() {
 	const [products, setProducts] = useState<Product[]>([]);
@@ -50,7 +34,7 @@ export default function Favorites() {
 
 	// دالة التعامل مع النقر على المتجر
 	const handleStoreClick = (store: Store) => {
-		router.push(`/store?store=${encodeURIComponent(store.name)}&source=favorites`);
+		router.push(`/store/${encodeURIComponent(store.name)}?source=favorites`);
 	};
 
 	// دالة إضافة المنتج إلى السلة
@@ -206,9 +190,9 @@ export default function Favorites() {
 								<span className="text-lg font-bold text-orange-500">
 									{product.price}
 								</span>
-								<span className="text-sm text-gray-500 line-through">
-									{product.originalPrice}
-								</span>
+                            <span className="text-sm text-gray-500 line-through">
+                                {product.originalPrice || ""}
+                            </span>
 							</div>
 						</div>
 					))}
@@ -224,8 +208,8 @@ export default function Favorites() {
 							onClick={() => handleStoreClick(store)}
 							className="flex flex-col items-center rounded-lg border bg-white p-4 cursor-pointer hover:shadow-md transition-shadow"
 						>
-							<img
-								src={store.image}
+                            <img
+                                src={store.image || ""}
 								alt={store.name}
 								className="mb-2 h-20 w-20"
 							/>
